@@ -7,26 +7,25 @@ module.exports = {
 
         const command = client.commands.get(interaction.commandName);
 
-        const embed = new EmbedBuilder()
-        .setColor("Red")
-        .setDescription(`There was an error while executing this command!\n\`\`\`Command not found\`\`\``)
-
         if (!command) return
         
         try{
 
-
             await command.execute(interaction, client);
         } catch (error) {
             console.log(error);
+
+            const embed = new EmbedBuilder()
+            .setColor("Red")
+            .setDescription(`There was an error while executing this command!\n\`\`\`${error}\`\`\``)
+
             await interaction.reply({
-                content: [embed],
+                embeds: [embed] , 
                 ephemeral: true
             });
         } 
 
     },
     
-
 
 };
