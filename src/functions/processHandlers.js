@@ -35,19 +35,14 @@ module.exports = (db) => {
 
 };
 
-const color = {
-    red: '\x1b[31m',
-    orange: '\x1b[38;5;202m',
-    yellow: '\x1b[33m',
-    green: '\x1b[32m',
-    blue: '\x1b[36m',
-    reset: '\x1b[0m',
-}
+const client = require('../index')
+
+client.logs = require('../utils/logs')
 
 function error(message) {
-    console.log(`${color.blue}[ ERROR ] ${message}${color.reset}`);
+    client.logs.error(`[ERROR] ${message}`);
 }
 
 function warn(message) {
-    console.log(`${color.orange}[ WARN ]${color.reset} ${message}`);
+    client.logs.warn(`[WARN] ${message}`);
 }

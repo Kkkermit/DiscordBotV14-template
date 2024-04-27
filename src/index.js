@@ -39,7 +39,6 @@ partials: [
 
 require('./functions/processHandlers')()
 
-
 client.commands = new Collection();
 
 require('dotenv').config();

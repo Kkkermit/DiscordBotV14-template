@@ -19,7 +19,7 @@ module.exports = (client) => {
 
                 if (command.name) {
                     client.commands.set(command.name, command);
-                    table.addRow(file, "✅");
+                    table.addRow(file, "Loaded");
             
                     if (command.aliases && Array.isArray(command.aliases)) {
                       command.aliases.forEach((alias) => {
@@ -27,7 +27,7 @@ module.exports = (client) => {
                       });
                     }
                   } else {
-                    table.addRow(file, "✅");
+                    table.addRow(file, "Loaded");
                     continue;
                   }
             }
@@ -38,11 +38,24 @@ module.exports = (client) => {
             orange: '\x1b[38;5;202m',
             yellow: '\x1b[33m',
             green: '\x1b[32m',
-            blue: '\x1b[36m',
-            reset: '\x1b[0m',
+            blue: '\x1b[34m',
+            reset: '\x1b[0m'
         }
 
-        console.log(`${color.green}${table.toString()}, \n✅ Loaded Slash Commands`);
+        function getTimestamp() {
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const hours = date.getHours();
+            const minutes = date.getMinutes();
+            const seconds = date.getSeconds();
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+
+        client.logs = require('../utils/logs')
+
+        console.log(`${color.blue}${table.toString()} \n[${getTimestamp()}] ${color.reset}[COMMANDS] Loaded ${client.commands.size} SlashCommands`);
 
         const rest = new REST({
             version: '9'
@@ -50,7 +63,7 @@ module.exports = (client) => {
 
         (async () => {
             try {
-                console.log(`${color.yellow}[ DJS ] Started refreshing application (/) commands.`);
+                client.logs.info(`[FUNCTION] Started refreshing application (/) commands.`);
 
                 await rest.put(
                     Routes.applicationCommands(clientId), {
@@ -58,7 +71,7 @@ module.exports = (client) => {
                     },
                 );
 
-                console.log(`${color.yellow}[ DJS ] Successfully reloaded application (/) commands.`);
+                client.logs.success(`[FUNCTION] Successfully reloaded application (/) commands.`);
             } catch (error) {
                 console.error(error);
             }

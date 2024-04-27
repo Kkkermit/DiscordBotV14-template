@@ -9,7 +9,7 @@ module.exports = {
 
         const embed = new EmbedBuilder()
         .setColor("Red")
-        .setDescription(`\`\`\`\n[ There was an error while executing this command! ]\n\`\`\``)
+        .setDescription(`There was an error while executing this command!\n\`\`\`Command not found\`\`\``)
 
         if (!command) return
         
@@ -20,7 +20,7 @@ module.exports = {
         } catch (error) {
             console.log(error);
             await interaction.reply({
-                embeds: [embed], 
+                content: [embed],
                 ephemeral: true
             });
         } 
