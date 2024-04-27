@@ -10,6 +10,6 @@ module.exports = {
         .setColor("Random")
         .setDescription(`Test command successful | ${client.user.username} is online!`)
 
-        await interaction.resply({ content: `<@${interaction.user.id}>` , embeds: [embed]})
+        await interaction.reply({ content: `<@${interaction.user.id}>` , embeds: [embed]})
     }
 }
