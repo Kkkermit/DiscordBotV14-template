@@ -1,5 +1,8 @@
 module.exports = {
     
-    status: "dnd"
+    status: "dnd",
+    eventListeners: 100,
+    embedColor: "Blurple",
+    dev: "Kkermit"
 
 }

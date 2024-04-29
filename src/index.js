@@ -41,7 +41,6 @@ partials: [
 // Rotating Activity //
 
 client.on("ready", async (client) => {
- 
     setInterval(() => {
 
         let activities = [
@@ -57,7 +56,7 @@ client.on("ready", async (client) => {
         } else {
             client.user.setPresence({ activities: [{ name: `${status.name}`, type: ActivityType.Playing }]});
         } 
-    }, 5000);
+    }, 7500);
     client.logs.success(`[STATUS] Rotating status loaded successfully.`)
 }) 
 
@@ -113,14 +112,25 @@ function getTimestamp() {
 
 // Guild Create //
 
-    client.on("guildCreate", async guild => {
+client.on("guildCreate", async guild => {
 
     let theowner = process.env.devid; 
     const channel2 = await guild.channels.cache.random()
     const channelId = channel2.id;
     const invite = await guild.invites.create(channelId)
+
     await guild.fetchOwner().then(({ user }) => { theowner = user; }).catch(() => {});
 
-    console.log(`${color.orange}[${getTimestamp()}]${color.reset} [GUILD_CREATE] ${client.user.username} has been added to a new guild \n${color.orange}> GuildName: ${guild.name} \n> GuildID: ${guild.id} \n> Owner: ${theowner ? `${theowner.tag} (${theowner.id})` : `${theowner} (${guild.ownerId})`} \n> MemberCount: ${guild.memberCount} \n> ServerNumber: ${client.guilds.cache.size} \n> ServerInvite: ${invite}`)
+console.log(`${color.orange}[${getTimestamp()}]${color.reset} [GUILD_CREATE] ${client.user.username} has been added to a new guild. \n${color.orange}> GuildName: ${guild.name} \n> GuildID: ${guild.id} \n> Owner: ${theowner ? `${theowner.tag} (${theowner.id})` : `${theowner} (${guild.ownerId})`} \n> MemberCount: ${guild.memberCount} \n> ServerNumber: ${client.guilds.cache.size} \n> ServerInvite: ${invite}`)
 });
 
+// Guild Delete //
+
+client.on("guildDelete", async guild => {
+
+    let theowner = process.env.devid;
+
+    await guild.fetchOwner().then(({ user }) => { theowner = user; }).catch(() => {});
+
+console.log(`${color.blue}[${getTimestamp()}]${color.reset} [GUILD_DELETE] ${client.user.username} has left a guild. \n${color.blue}> GuildName: ${guild.name} \n> GuildID: ${guild.id} \n> Owner: ${theowner ? `${theowner.tag} (${theowner.id})` : `${theowner} (${guild.ownerId})`} \n> MemberCount: ${guild.memberCount}`)
+});

@@ -22,14 +22,14 @@ module.exports = (client) => {
                     table.addRow(file, "Loaded");
             
                     if (command.aliases && Array.isArray(command.aliases)) {
-                      command.aliases.forEach((alias) => {
-                        client.aliases.set(alias, command.name);
-                      });
+                        command.aliases.forEach((alias) => {
+                            client.aliases.set(alias, command.name);
+                        });
                     }
-                  } else {
+                } else {
                     table.addRow(file, "Loaded");
                     continue;
-                  }
+                }
             }
         }
 
@@ -55,7 +55,7 @@ module.exports = (client) => {
 
         client.logs = require('../utils/logs')
 
-        console.log(`${color.blue}${table.toString()} \n[${getTimestamp()}] ${color.reset}[COMMANDS] Loaded ${client.commands.size} SlashCommands`);
+        console.log(`${color.blue}${table.toString()} \n[${getTimestamp()}] ${color.reset}[COMMANDS] Loaded ${client.commands.size} SlashCommands.`);
 
         const rest = new REST({
             version: '9'
