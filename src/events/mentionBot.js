@@ -6,7 +6,7 @@ module.exports = {
 
     async execute(message, client, interaction) {
         if (message.author.bot) return;
-        if (message.content.includes(`<@${process.env.clientid}>`))  {
+        if (message.content.includes(`<@${client.user.id}>`))  {
         
         const commands = client.commands;
         const commandList = commands.map((command) => `> **/${command.data.name}**: ${command.data.description}`).join('\n');
@@ -17,8 +17,9 @@ module.exports = {
         .setDescription(`${commandList}`)
         .setColor(config.embedColor)
         .setFooter({ text: `Watching over ${client.commands.size} commands.`})
+        .setTimestamp()
 
-        return message.reply({ content: `Hey, ${message.author.username} pinged me!`, embeds: [pingEmbed]});
+        return message.reply({ content: `Hey, <@${message.author.id}> pinged me!`, embeds: [pingEmbed]});
         
         }
     },
