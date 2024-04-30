@@ -53,8 +53,6 @@ module.exports = (client) => {
             return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         }
 
-        client.logs = require('../utils/logs')
-
         console.log(`${color.blue}${table.toString()} \n[${getTimestamp()}] ${color.reset}[COMMANDS] Loaded ${client.commands.size} SlashCommands.`);
 
         const rest = new REST({

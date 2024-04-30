@@ -38,6 +38,8 @@ partials: [
 
 }); 
 
+client.logs = require('./utils/logs')
+
 // Rotating Activity //
 
 client.on("ready", async (client) => {

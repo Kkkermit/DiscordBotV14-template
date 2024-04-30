@@ -14,8 +14,6 @@ module.exports = {
             await command.execute(interaction, client);
         } catch (error) {
 
-            client.logs = require('../utils/logs')
-
             client.logs.error(error);
 
             const embed = new EmbedBuilder()
