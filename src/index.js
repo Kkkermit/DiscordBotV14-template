@@ -2,7 +2,6 @@ const {
     Client, GatewayIntentBits, EmbedBuilder, PermissionsBitField, Permissions, MessageManager, Embed, Collection, Events, Partials, ActivityType, Activity, AuditLogEvent, ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ButtonStyle, ComponentType, AttachmentBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ChannelType
     } = require(`discord.js`);
 const fs = require('fs');
-const config = require('./config')
 
 const client = new Client({ intents: [
     GatewayIntentBits.Guilds, 
@@ -38,7 +37,8 @@ partials: [
 
 }); 
 
-client.logs = require('./utils/logs')
+client.logs = require('./utils/logs');
+client.config = require('./config');
 
 // Rotating Activity //
 
@@ -59,19 +59,18 @@ client.on("ready", async (client) => {
             client.user.setPresence({ activities: [{ name: `${status.name}`, type: ActivityType.Playing }]});
         } 
     }, 7500);
-    client.logs.success(`[STATUS] Rotating status loaded successfully.`)
-}) 
+    client.logs.success(`[STATUS] Rotating status loaded successfully.`);
+});
 
 // Status //
 
 client.on("ready", () => {
-    client.logs.success(`[STATUS] Bot status loaded as ${config.status}.`);
 
-    client.user.setStatus(config.status);
+    client.logs.success(`[STATUS] Bot status loaded as ${client.config.status}.`);
+    client.user.setStatus(client.config.status);
+});
 
-})
-
-require('./functions/processHandlers')()
+require('./functions/processHandlers')();
 
 client.commands = new Collection();
 
@@ -99,7 +98,7 @@ const color = {
     green: '\x1b[32m',
     blue: '\x1b[34m',
     reset: '\x1b[0m'
-}
+};
 
 function getTimestamp() {
     const date = new Date();
@@ -110,7 +109,7 @@ function getTimestamp() {
     const minutes = date.getMinutes();
     const seconds = date.getSeconds();
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-}
+};
 
 // Guild Create //
 
