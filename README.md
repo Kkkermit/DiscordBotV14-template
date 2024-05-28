@@ -27,8 +27,9 @@
 
 ### Whats the trigger folder? -
 
-> The trigger folder is a new thing I've added. This is built for handling ```js message.content.includes``` aspects. 
-> For this, if you **@** the bot, it will return a message with the current **slash commands** in the ``commands`` folder.
+- The trigger folder is a new thing I've added. This is built for handling ```js message.content.includes``` aspects.
+  
+- For this, if you **@** the bot, it will return a message with the current **slash commands** in the ``commands`` folder.
 
 ### I'm getting errors - 
 
