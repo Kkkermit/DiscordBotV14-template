@@ -46,9 +46,11 @@ client.on("ready", async (client) => {
     setInterval(() => {
 
         let activities = [
-            { type: 'Watching', name: `${client.commands.size} commands!`},
+            { type: 'Watching', name: `${client.commands.size} slash commands!`},
+            { type: 'Watching', name: `${client.pcommands.size} prefix commands!`},
             { type: 'Watching', name: `${client.guilds.cache.size} servers!`},
             { type: 'Watching', name: `${client.guilds.cache.reduce((a,b) => a+b.memberCount, 0)} members!`},
+            { type: 'Playing', name: `${client.config.prefix}help | @${client.user.username}`},
         ];
 
         const status = activities[Math.floor(Math.random() * activities.length)];
@@ -62,6 +64,7 @@ client.on("ready", async (client) => {
     client.logs.success(`[STATUS] Rotating status loaded successfully.`);
 });
 
+
 // Status //
 
 client.on("ready", () => {
@@ -73,11 +76,15 @@ client.on("ready", () => {
 require('./functions/processHandlers')();
 
 client.commands = new Collection();
+client.pcommands = new Collection();
+client.aliases = new Collection();
 
 require('dotenv').config();
 
 const functions = fs.readdirSync("./src/functions").filter(file => file.endsWith(".js"));
 const eventFiles = fs.readdirSync("./src/events").filter(file => file.endsWith(".js"));
+const triggerFiles = fs.readdirSync("./src/triggers").filter(file => file.endsWith(".js"));
+const pcommandFolders = fs.readdirSync('./src/prefix');
 const commandFolders = fs.readdirSync("./src/commands");
 
 (async () => {
@@ -85,7 +92,9 @@ const commandFolders = fs.readdirSync("./src/commands");
         require(`./functions/${file}`)(client);
     }
     client.handleEvents(eventFiles, "./src/events");
+    client.handleTriggers(triggerFiles, "./src/triggers")
     client.handleCommands(commandFolders, "./src/commands");
+    client.prefixCommands(pcommandFolders, './src/prefix');
     client.login(process.env.token)
 })();
 
@@ -134,4 +143,55 @@ client.on("guildDelete", async guild => {
     await guild.fetchOwner().then(({ user }) => { theowner = user; }).catch(() => {});
 
 console.log(`${color.blue}[${getTimestamp()}]${color.reset} [GUILD_DELETE] ${client.user.username} has left a guild. \n${color.blue}> GuildName: ${guild.name} \n> GuildID: ${guild.id} \n> Owner: ${theowner ? `${theowner.tag} (${theowner.id})` : `${theowner} (${guild.ownerId})`} \n> MemberCount: ${guild.memberCount}`)
+});
+
+// Command Logging //
+
+client.on(Events.InteractionCreate, async interaction => {
+
+    if (!interaction) return;
+    if (!interaction.isChatInputCommand()) return;
+    else {
+
+        const channel = await client.channels.cache.get(client.config.slashCommandLoggingChannel);
+        const server = interaction.guild.name;
+        const user = interaction.user.username;
+        const userID = interaction.user.id;
+
+        const embed = new EmbedBuilder()
+        .setColor(client.config.embedColor)
+        .setAuthor({ name: `${user} has used a command.`, iconURL: client.user.avatarURL({ dynamic: true })})
+        .setTitle(`${client.user.username} Command Logger`)
+        .addFields({ name: 'Server Name', value: `${server}`})
+        .addFields({ name: 'Command', value: `\`\`\`${interaction}\`\`\``})
+        .addFields({ name: 'User', value: `${user} | ${userID}`})
+        .setTimestamp()
+        .setFooter({ text: `Command Logger ${client.config.devBy}`, iconURL: interaction.user.avatarURL({ dynamic: true })})
+
+        await channel.send({ embeds: [embed] });
+    }
+})
+
+client.on(Events.MessageCreate, async message => {
+
+    const prefix = client.config.prefix
+    if (!message.author.bot && message.content.startsWith(prefix)) {
+
+        const channel = await client.channels.cache.get(client.config.prefixCommandLoggingChannel);
+        const server = message.guild.name;
+        const user = message.author.username;
+        const userID = message.author.id;
+
+        const embed = new EmbedBuilder()
+        .setColor(client.config.embedColor)
+        .setAuthor({ name: `${user} has used a command.`, iconURL: client.user.avatarURL({ dynamic: true }) })
+        .setTitle(`${client.user.username} Command Logger`)
+        .addFields({ name: 'Server Name', value: `${server}` })
+        .addFields({ name: 'Command', value: `\`\`\`${message.content}\`\`\`` })
+        .addFields({ name: 'User', value: `${user} | ${userID}` })
+        .setTimestamp()
+        .setFooter({ text: `Command Logger ${client.config.devBy}`, iconURL: message.author.avatarURL({ dynamic: true }) })
+
+        await channel.send({ embeds: [embed] });
+    }
 });
