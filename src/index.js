@@ -106,6 +106,8 @@ const color = {
     green: '\x1b[32m',
     blue: '\x1b[34m',
     pink: '\x1b[38;5;213m',
+    torquise: '\x1b[38;5;45m',
+    purple: '\x1b[38;5;57m',
     reset: '\x1b[0m'
 }
 
@@ -170,7 +172,7 @@ client.on(Events.InteractionCreate, async interaction => {
         .setFooter({ text: `Command Logger ${client.config.devBy}`, iconURL: interaction.user.avatarURL({ dynamic: true })})
 
         await channel.send({ embeds: [embed] });
-        console.log(`${color.pink}[${getTimestamp()}]${color.reset} [SLASH_COMMAND_USED] ${user} has used a command. \n${color.pink}> Server: ${server} \n> Command: ${interaction} \n> User: ${user} \n> UserID: ${userID}`)
+        console.log(`${color.torquise}[${getTimestamp()}]${color.reset} [SLASH_COMMAND_USED] ${user} has used a command. \n${color.torquise}> Server: ${server} \n> Command: ${interaction} \n> User: ${user} \n> UserID: ${userID}`)
     } catch (error) {
         client.logs.error(`[SLASH_COMMAND_USED] Error while logging command usage. Check if you have the correct channel ID in your config.`);
     }};
@@ -198,7 +200,7 @@ client.on(Events.MessageCreate, async message => {
         .setFooter({ text: `Command Logger ${client.config.devBy}`, iconURL: message.author.avatarURL({ dynamic: true }) })
 
         await channel.send({ embeds: [embed] });
-        console.log(`${color.pink}[${getTimestamp()}]${color.reset} [PREFIX_COMMAND_USED] ${user} has used a command. \n${color.pink}> Server: ${server} \n> Command: ${message.content} \n> User: ${user} \n> UserID: ${userID}`)
+        console.log(`${color.purple}[${getTimestamp()}]${color.reset} [PREFIX_COMMAND_USED] ${user} has used a command. \n${color.purple}> Server: ${server} \n> Command: ${message.content} \n> User: ${user} \n> UserID: ${userID}`)
     } catch (error) {
         client.logs.error(`[PREFIX_COMMAND_USED] Error while logging command usage. Check if you have the correct channel ID in your config.`);
     }};

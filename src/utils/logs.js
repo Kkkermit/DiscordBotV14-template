@@ -7,6 +7,7 @@ const color = {
     green: '\x1b[32m',
     blue: '\x1b[34m',
     pink: '\x1b[38;5;213m',
+    torquise: '\x1b[38;5;45m',
     reset: '\x1b[0m'
 }
 

@@ -10,7 +10,7 @@ module.exports = {
     noPermsMessage: `You **do not** have the permission to do that!`,
 
     // Logging Channels //
-    slashCommandLoggingChannel: "channelID",
-    prefixCommandLoggingChannel: "channelID",
+    slashCommandLoggingChannel: "1129094438669520956",
+    prefixCommandLoggingChannel: "1129094438669520956",
 
 }
