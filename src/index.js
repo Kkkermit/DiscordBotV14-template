@@ -64,7 +64,6 @@ client.on("ready", async (client) => {
     client.logs.success(`[STATUS] Rotating status loaded successfully.`);
 });
 
-
 // Status //
 
 client.on("ready", () => {
@@ -106,8 +105,9 @@ const color = {
     yellow: '\x1b[33m',
     green: '\x1b[32m',
     blue: '\x1b[34m',
+    pink: '\x1b[38;5;213m',
     reset: '\x1b[0m'
-};
+}
 
 function getTimestamp() {
     const date = new Date();
@@ -152,6 +152,7 @@ client.on(Events.InteractionCreate, async interaction => {
     if (!interaction) return;
     if (!interaction.isChatInputCommand()) return;
     else {
+        try {
 
         const channel = await client.channels.cache.get(client.config.slashCommandLoggingChannel);
         const server = interaction.guild.name;
@@ -169,13 +170,17 @@ client.on(Events.InteractionCreate, async interaction => {
         .setFooter({ text: `Command Logger ${client.config.devBy}`, iconURL: interaction.user.avatarURL({ dynamic: true })})
 
         await channel.send({ embeds: [embed] });
-    }
-})
+        console.log(`${color.pink}[${getTimestamp()}]${color.reset} [SLASH_COMMAND_USED] ${user} has used a command. \n${color.pink}> Server: ${server} \n> Command: ${interaction} \n> User: ${user} \n> UserID: ${userID}`)
+    } catch (error) {
+        client.logs.error(`[SLASH_COMMAND_USED] Error while logging command usage. Check if you have the correct channel ID in your config.`);
+    }};
+});
 
 client.on(Events.MessageCreate, async message => {
 
     const prefix = client.config.prefix
     if (!message.author.bot && message.content.startsWith(prefix)) {
+        try {
 
         const channel = await client.channels.cache.get(client.config.prefixCommandLoggingChannel);
         const server = message.guild.name;
@@ -193,5 +198,8 @@ client.on(Events.MessageCreate, async message => {
         .setFooter({ text: `Command Logger ${client.config.devBy}`, iconURL: message.author.avatarURL({ dynamic: true }) })
 
         await channel.send({ embeds: [embed] });
-    }
+        console.log(`${color.pink}[${getTimestamp()}]${color.reset} [PREFIX_COMMAND_USED] ${user} has used a command. \n${color.pink}> Server: ${server} \n> Command: ${message.content} \n> User: ${user} \n> UserID: ${userID}`)
+    } catch (error) {
+        client.logs.error(`[PREFIX_COMMAND_USED] Error while logging command usage. Check if you have the correct channel ID in your config.`);
+    }};
 });
