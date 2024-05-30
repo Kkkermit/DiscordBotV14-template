@@ -10,7 +10,6 @@ module.exports = {
         if (!command) return
         
         try{
-
             await command.execute(interaction, client);
         } catch (error) {
 
@@ -18,15 +17,9 @@ module.exports = {
 
             const embed = new EmbedBuilder()
             .setColor("Red")
-            .setDescription(`There was an error while executing this command!\n\`\`\`${error}\`\`\``)
+            .setDescription(`There was an error while executing this command!\n\`\`\`${error}\`\`\``);
 
-            await interaction.reply({
-                embeds: [embed] , 
-                ephemeral: true
-            });
+            await interaction.reply({ embeds: [embed], ephemeral: true });
         } 
-
     },
-    
-
 };
