@@ -18,14 +18,18 @@ module.exports = {
         if (!command) command = client.pcommands.get(client.aliases.get(cmd));
 
         if (!command) {
+            try {
 
-            const embed = new EmbedBuilder()
-            .setColor("Red")
-            .setTitle(`${client.user.username} prefix system`)
-            .setDescription(`> The command you tried **does not exist**. \n> To see **all** commands, use \`\`${client.config.prefix}help\`\``)
+                const embed = new EmbedBuilder()
+                .setColor("Red")
+                .setTitle(`${client.user.username} prefix system`)
+                .setDescription(`> The command you tried **does not exist**. \n> To see **all** commands, use \`\`${client.config.prefix}help\`\``);
 
-            return message.reply({ embeds: [embed], ephemeral: true});
-        }
+                return message.reply({ embeds: [embed], ephemeral: true});
+            } catch (error) {
+                client.logs.error(`[PREFIX_ERROR] Error sending 'cannot find prefix' embed.`, error);
+            };
+        };
 
         if (!command) return;
 
