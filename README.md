@@ -6,7 +6,7 @@
 
 ### Node version -
 
-- Built using both node versions `18.13.0` and `20.11.1`. To switch versions of node, you will need to install [Node Version Manager](https://www.freecodecamp.org/news/node-version-manager-nvm-install-guide/). If you follow this guide and install it, you can use `nvm install 18.13.0` to install version `18.13.0` and then `nvm use 18.13.0`.
+- Built using both node version `18.13.0`. Some package may struggle to install on newer node versions. If so, you will need to install node version manager to switch between node versions. Guide found [here](https://www.freecodecamp.org/news/node-version-manager-nvm-install-guide/).
 
 ### Setting up -
 
