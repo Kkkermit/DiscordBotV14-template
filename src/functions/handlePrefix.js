@@ -62,13 +62,13 @@ module.exports = (client) => {
 
         (async () => {
             try {
-                client.logs.info(`[PREFIX_COMMANDS] Started refreshing prefix (?) commands.`);
+                client.logs.info(`[FUNCTION] Started refreshing prefix (?) commands.`);
                 await rest.put(
                     Routes.applicationGuildCommands(clientId, guildId),
                     { body: client.commandArray }
                 );
 
-                client.logs.success(`[PREFIX_COMMANDS] Successfully reloaded prefix (?) commands.`);
+                client.logs.success(`[FUNCTION] Successfully reloaded prefix (?) commands.`);
             } catch (error) {
                 console.error(error);
             }

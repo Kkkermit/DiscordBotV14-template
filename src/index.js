@@ -163,7 +163,7 @@ client.on("guildDelete", async guild => {
 // Command Logging //
 
 client.on(Events.InteractionCreate, async interaction => {
-
+    
     if (!interaction) return;
     if (!interaction.isChatInputCommand()) return;
     else {
