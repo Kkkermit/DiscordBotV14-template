@@ -43,33 +43,40 @@ client.config = require('./config');
 // Rotating Activity //
 
 client.on("ready", async (client) => {
-    setInterval(() => {
+    try {
+        setInterval(() => {
 
-        let activities = [
-            { type: 'Watching', name: `${client.commands.size} slash commands!`},
-            { type: 'Watching', name: `${client.pcommands.size} prefix commands!`},
-            { type: 'Watching', name: `${client.guilds.cache.size} servers!`},
-            { type: 'Watching', name: `${client.guilds.cache.reduce((a,b) => a+b.memberCount, 0)} members!`},
-            { type: 'Playing', name: `${client.config.prefix}help | @${client.user.username}`},
-        ];
+            let activities = [
+                { type: 'Watching', name: `${client.commands.size} slash commands!`},
+                { type: 'Watching', name: `${client.pcommands.size} prefix commands!`},
+                { type: 'Watching', name: `${client.guilds.cache.size} servers!`},
+                { type: 'Watching', name: `${client.guilds.cache.reduce((a,b) => a+b.memberCount, 0)} members!`},
+                { type: 'Playing', name: `${client.config.prefix}help | @${client.user.username}`},
+            ];
 
-        const status = activities[Math.floor(Math.random() * activities.length)];
+            const status = activities[Math.floor(Math.random() * activities.length)];
 
-        if (status.type === 'Watching') {
-            client.user.setPresence({ activities: [{ name: `${status.name}`, type: ActivityType.Watching }]});
-        } else {
-            client.user.setPresence({ activities: [{ name: `${status.name}`, type: ActivityType.Playing }]});
-        } 
-    }, 7500);
-    client.logs.success(`[STATUS] Rotating status loaded successfully.`);
+            if (status.type === 'Watching') {
+                client.user.setPresence({ activities: [{ name: `${status.name}`, type: ActivityType.Watching }]});
+            } else {
+                client.user.setPresence({ activities: [{ name: `${status.name}`, type: ActivityType.Playing }]});
+            } 
+        }, 7500);
+        client.logs.success(`[STATUS] Rotating status loaded successfully.`);
+    } catch (error) {
+        client.logs.error(`[STATUS] Error while loading rotating status.`);
+    };
 });
 
 // Status //
 
 client.on("ready", () => {
-
-    client.logs.success(`[STATUS] Bot status loaded as ${client.config.status}.`);
-    client.user.setStatus(client.config.status);
+    try {
+        client.user.setStatus(client.config.status);
+        client.logs.success(`[STATUS] Bot status loaded as ${client.config.status}.`);
+    } catch (error) {
+        client.logs.error(`[STATUS] Error while loading bot status.`);
+    };
 });
 
 require('./functions/processHandlers')();
@@ -125,26 +132,32 @@ function getTimestamp() {
 // Guild Create //
 
 client.on("guildCreate", async guild => {
+    try{ 
+        let theowner = process.env.devid; 
+        const channel2 = await guild.channels.cache.random()
+        const channelId = channel2.id;
+        const invite = await guild.invites.create(channelId)
 
-    let theowner = process.env.devid; 
-    const channel2 = await guild.channels.cache.random()
-    const channelId = channel2.id;
-    const invite = await guild.invites.create(channelId)
+        await guild.fetchOwner().then(({ user }) => { theowner = user; }).catch(() => {});
 
-    await guild.fetchOwner().then(({ user }) => { theowner = user; }).catch(() => {});
-
-console.log(`${color.orange}[${getTimestamp()}]${color.reset} [GUILD_CREATE] ${client.user.username} has been added to a new guild. \n${color.orange}> GuildName: ${guild.name} \n> GuildID: ${guild.id} \n> Owner: ${theowner ? `${theowner.tag} (${theowner.id})` : `${theowner} (${guild.ownerId})`} \n> MemberCount: ${guild.memberCount} \n> ServerNumber: ${client.guilds.cache.size} \n> ServerInvite: ${invite}`)
+        console.log(`${color.orange}[${getTimestamp()}]${color.reset} [GUILD_CREATE] ${client.user.username} has been added to a new guild. \n${color.orange}> GuildName: ${guild.name} \n> GuildID: ${guild.id} \n> Owner: ${theowner ? `${theowner.tag} (${theowner.id})` : `${theowner} (${guild.ownerId})`} \n> MemberCount: ${guild.memberCount} \n> ServerNumber: ${client.guilds.cache.size} \n> ServerInvite: ${invite}`)
+    } catch (error) {
+        client.logs.error(`[GUILD_CREATE] Error while logging guild creation.`);
+    }
 });
 
 // Guild Delete //
 
 client.on("guildDelete", async guild => {
+    try {
+        let theowner = process.env.devid;
 
-    let theowner = process.env.devid;
+        await guild.fetchOwner().then(({ user }) => { theowner = user; }).catch(() => {});
 
-    await guild.fetchOwner().then(({ user }) => { theowner = user; }).catch(() => {});
-
-console.log(`${color.blue}[${getTimestamp()}]${color.reset} [GUILD_DELETE] ${client.user.username} has left a guild. \n${color.blue}> GuildName: ${guild.name} \n> GuildID: ${guild.id} \n> Owner: ${theowner ? `${theowner.tag} (${theowner.id})` : `${theowner} (${guild.ownerId})`} \n> MemberCount: ${guild.memberCount}`)
+        console.log(`${color.blue}[${getTimestamp()}]${color.reset} [GUILD_DELETE] ${client.user.username} has left a guild. \n${color.blue}> GuildName: ${guild.name} \n> GuildID: ${guild.id} \n> Owner: ${theowner ? `${theowner.tag} (${theowner.id})` : `${theowner} (${guild.ownerId})`} \n> MemberCount: ${guild.memberCount}`)
+    } catch (error) {
+        client.logs.error(`[GUILD_DELETE] Error while logging guild deletion.`);
+    }
 });
 
 // Command Logging //
