@@ -4,17 +4,23 @@
 
 - It's a rework on [**Jackson's**](https://www.youtube.com/@MrJAwesomeYT) slash command handler and follows the same base structure as it and is based on it. All I have done is made improvements to it!
 
+### Node version -
+
+- Built using both node versions `18.13.0` and `20.11.1`. To switch versions of node, you will need to install [Node Version Manager](https://www.freecodecamp.org/news/node-version-manager-nvm-install-guide/). If you follow this guide and install it, you can use `nvm install 18.13.0` to install version `18.13.0` and then `nvm use 18.13.0`.
+
 ### Setting up -
 
 - Setting up is **very** easy to do, all you need to do is edit `2` files!
 
-1. Go into the ``.example.env`` file and remove the ``.example`` part so it just reads **``.env``**
+1. Firstly run the command in your terminal `npm i` to install the necessary packages from the ``package.json`` file.
 
-2. Fill out **all** sections in the *new* ``.env`` file.
+2. Go into the ``.example.env`` file and remove the ``.example`` part so it just reads **``.env``**
 
-3. Head over to the **``config.js``** file found in the `src` folder.
+3. Fill out **all** sections in the *new* ``.env`` file.
 
-4. Edit the ``config.js`` file to your liking but make sure to keep the same naming conventions. Only change the parts in `" "`
+4. Head over to the **``config.js``** file found in the `src` folder.
+
+5. Edit the ``config.js`` file to your liking but make sure to keep the same naming conventions. Only change the parts in `" "`
 
 - Once you've done this, you should be ready to go, the bot *should be* fully functioning!
 
@@ -28,7 +34,7 @@
 ### Whats the trigger folder? -
 
 - The trigger folder is a new thing I've added. This is built for handling ```js message.content.includes``` aspects.
-  
+
 - For this, if you **@** the bot, it will return a message with the current **slash commands** in the ``commands`` folder.
 
 ### I'm getting errors - 
