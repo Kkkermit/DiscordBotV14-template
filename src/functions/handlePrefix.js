@@ -29,6 +29,8 @@ module.exports = (client) => {
             }
         }  
 
+        client.logs.info(`[FUNCTION] Started refreshing prefix (?) commands.`);
+
         const color = {
             red: '\x1b[31m',
             orange: '\x1b[38;5;202m',
@@ -53,7 +55,6 @@ module.exports = (client) => {
 
         (async () => {
             try {
-                client.logs.info(`[FUNCTION] Started refreshing prefix (?) commands.`);
                 client.logs.success(`[FUNCTION] Successfully reloaded prefix (?) commands.`);
             } catch (error) {
                 console.error(error);

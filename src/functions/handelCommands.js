@@ -20,12 +20,6 @@ module.exports = (client) => {
                 if (command.name) {
                     client.commands.set(command.name, command);
                     table.addRow(file, "Loaded");
-            
-                    if (command.aliases && Array.isArray(command.aliases)) {
-                        command.aliases.forEach((alias) => {
-                            client.aliases.set(alias, command.name);
-                        });
-                    }
                 } else {
                     table.addRow(file, "Loaded");
                     continue;
