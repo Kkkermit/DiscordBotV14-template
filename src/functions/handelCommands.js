@@ -65,6 +65,7 @@ module.exports = (client) => {
 
                 client.logs.success(`[FUNCTION] Successfully reloaded application (/) commands.`);
             } catch (error) {
+                console.error(error);
                 client.logs.error('[FUNCTION] Error loading slash commands.', error);
             }
         })();
