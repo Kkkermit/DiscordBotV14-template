@@ -2,7 +2,10 @@ const {
     Client, GatewayIntentBits, EmbedBuilder, PermissionsBitField, Permissions, MessageManager, Embed, Collection, Events, Partials, ActivityType, Activity, AuditLogEvent, ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ButtonStyle, ComponentType, AttachmentBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ChannelType
     } = require(`discord.js`);
 const fs = require('fs');
-const currentVersion = "discordbotv1.1";
+
+// Current Repo Version //
+
+const currentVersion = "v2.0";
 
 const client = new Client({ intents: [
     GatewayIntentBits.Guilds, 
