@@ -2,6 +2,7 @@ const {
     Client, GatewayIntentBits, EmbedBuilder, PermissionsBitField, Permissions, MessageManager, Embed, Collection, Events, Partials, ActivityType, Activity, AuditLogEvent, ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ButtonStyle, ComponentType, AttachmentBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ChannelType
     } = require(`discord.js`);
 const fs = require('fs');
+const currentVersion = "discordbotv1.1";
 
 const client = new Client({ intents: [
     GatewayIntentBits.Guilds, 
@@ -39,6 +40,8 @@ partials: [
 
 client.logs = require('./utils/logs');
 client.config = require('./config');
+
+const { checkVersion } = require('./lib/version')
 
 // Rotating Activity //
 
@@ -101,7 +104,11 @@ const commandFolders = fs.readdirSync("./src/commands");
     client.handleTriggers(triggerFiles, "./src/triggers")
     client.handleCommands(commandFolders, "./src/commands");
     client.prefixCommands(pcommandFolders, './src/prefix');
-    client.login(process.env.token)
+    client.login(process.env.token).then(() => {
+        checkVersion(currentVersion);
+    }).catch((error) => {
+        client.logs.error(`[LOGIN] Error while logging in. Check if your token is correct.`);
+    });
 })();
 
 // Logging Effects //
