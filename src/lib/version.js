@@ -36,7 +36,7 @@ async function getLatestVersion() {
 function checkVersion(currentVersion) {
     getLatestVersion().then((latestVersion) => {
         if (currentVersion < latestVersion) {
-            console.log(`${color.torquise}[${getTimestamp()}] [LATEST_VERSION] Attention, a new update is available, please install it - https://github.com/Kkkermit/DiscordBotV14-template`.red);
+            console.log(`${color.torquise}[${getTimestamp()}] [LATEST_VERSION] Attention, a new update is available, please install it - https://github.com/Kkkermit/DiscordBotV14-template`);
         } else {
             console.log(`${color.torquise}[${getTimestamp()}] [LATEST_VERSION] You have the latest version of the code.`);
         }
