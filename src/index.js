@@ -5,7 +5,7 @@ const fs = require('fs');
 
 // Current Repo Version //
 
-const currentVersion = "v2.0";
+const currentVersion = "v2.0.1";
 
 const client = new Client({ intents: [
     GatewayIntentBits.Guilds, 

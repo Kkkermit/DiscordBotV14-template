@@ -61,7 +61,9 @@ module.exports = (client) => {
                     Routes.applicationCommands(clientId), {
                         body: client.commandArray
                     },
-                );
+                ).catch((error) => {
+                    console.error(`${color.red}[${getTimestamp()}] [FUNCTION] Error while refreshing application (/) commands. \n${color.red}[${getTimestamp()}] [FUNCTION] Check if your clientID is correct and matches your bots token:`, error);
+                });
 
                 client.logs.success(`[FUNCTION] Successfully reloaded application (/) commands.`);
             } catch (error) {
