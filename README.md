@@ -24,6 +24,8 @@
 
 - Once you've done this, you should be ready to go, the bot *should be* fully functioning!
 
+- **NOTE**: *For this, you will need to install an older version of mongoDB, 6.0.12. To install this run `npm i mongoose@6.0.12`*
+
 ### Using commands -
 
 - Once you've set the bot up, there a few commands I've already added for you. You can see these commands by browsing through both the ``prefix`` and ``commands`` folders.
