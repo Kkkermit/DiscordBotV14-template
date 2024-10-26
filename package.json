@@ -5,13 +5,15 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "start:nodemon": "nodemon src/index.js"
+    "start:nodemon": "nodemon src/index.js",
+    "setup-env": "node src/scripts/setupEnvFile.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "ascii-table": "^0.0.9",
+    "axios": "^1.7.7",
     "discord.js": "^14.14.1",
     "dotenv": "^16.4.5",
     "fs": "^0.0.1-security",

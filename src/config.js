@@ -16,4 +16,7 @@ module.exports = {
     slashCommandLoggingChannel: "1129094438669520956",
     prefixCommandLoggingChannel: "1129094438669520956",
 
+    // Emojis //
+    arrowEmoji: "⤵",
+
 }

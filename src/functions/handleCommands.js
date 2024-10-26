@@ -2,9 +2,15 @@ const { REST } = require("@discordjs/rest");
 const { Routes } = require('discord-api-types/v9');
 const fs = require('fs');
 const ascii = require("ascii-table");
+const { color, getTimestamp } = require('../utils/logEffects.js');
+
 const table = new ascii().setHeading("File Name", "Status");
 
 const clientId = process.env.clientid; 
+if (!clientId) {
+    console.error(`${color.red}[${getTimestamp()}] [SLASH_COMMANDS] No client ID provided. Please provide a valid client ID in the .env file.`);
+    return;
+}
 const guildId = process.env.guildid; 
 
 module.exports = (client) => {
@@ -20,6 +26,12 @@ module.exports = (client) => {
                 if (command.name) {
                     client.commands.set(command.name, command);
                     table.addRow(file, "Loaded");
+            
+                    if (command.aliases && Array.isArray(command.aliases)) {
+                        command.aliases.forEach((alias) => {
+                            client.aliases.set(alias, command.name);
+                        });
+                    }
                 } else {
                     table.addRow(file, "Loaded");
                     continue;
@@ -27,27 +39,7 @@ module.exports = (client) => {
             }
         }
 
-        const color = {
-            red: '\x1b[31m',
-            orange: '\x1b[38;5;202m',
-            yellow: '\x1b[33m',
-            green: '\x1b[32m',
-            blue: '\x1b[34m',
-            reset: '\x1b[0m'
-        }
-
-        function getTimestamp() {
-            const date = new Date();
-            const year = date.getFullYear();
-            const month = date.getMonth() + 1;
-            const day = date.getDate();
-            const hours = date.getHours();
-            const minutes = date.getMinutes();
-            const seconds = date.getSeconds();
-            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-        }
-
-        console.log(`${color.blue}${table.toString()} \n[${getTimestamp()}] ${color.reset}[COMMANDS] Loaded ${client.commands.size} SlashCommands.`);
+        console.log(`${color.blue}${table.toString()} \n[${getTimestamp()}] ${color.reset}[COMMANDS] Found ${client.commands.size} SlashCommands.`);
 
         const rest = new REST({
             version: '9'
@@ -55,20 +47,19 @@ module.exports = (client) => {
 
         (async () => {
             try {
-                client.logs.info(`[FUNCTION] Started refreshing application (/) commands.`);
+                client.logs.info(`[SLASH_COMMANDS] Started refreshing application (/) commands.`);
 
                 await rest.put(
                     Routes.applicationCommands(clientId), {
                         body: client.commandArray
                     },
                 ).catch((error) => {
-                    console.error(`${color.red}[${getTimestamp()}] [FUNCTION] Error while refreshing application (/) commands. \n${color.red}[${getTimestamp()}] [FUNCTION] Check if your clientID is correct and matches your bots token:`, error);
+                    console.error(`${color.red}[${getTimestamp()}] [SLASH_COMMANDS] Error while refreshing application (/) commands. \n${color.red}[${getTimestamp()}] [SLASH_COMMANDS] Check if your clientID is correct and matches your bots token:`, error);
                 });
 
-                client.logs.success(`[FUNCTION] Successfully reloaded application (/) commands.`);
+                client.logs.success(`[SLASH_COMMANDS] Successfully reloaded application (/) commands.`);
             } catch (error) {
                 console.error(error);
-                client.logs.error('[FUNCTION] Error loading slash commands.', error);
             }
         })();
     };
