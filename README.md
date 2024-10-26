@@ -5,7 +5,7 @@
         ██████╔╝███████╗ ╚████╔╝     ██████╔╝   ██║       ██║  ██╗██║  ██╗███████╗██║  ██║██║ ╚═╝ ██║██║   ██║   
         ╚═════╝ ╚══════╝  ╚═══╝      ╚═════╝    ╚═╝       ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝   ╚═╝    -->
 
-<img align="center" alt="banner" src="https://i.postimg.cc/NfL0dHWw/discordbothandler.png">
+<img align="center" alt="banner" src="https://i.postimg.cc/Vv28NDm9/banner.png">
 
 <p align="center">
 <img align="center" alt="GitHub issues" src="https://img.shields.io/github/issues/Kkkermit/DiscordBotV14-template?style=for-the-badge"> 
