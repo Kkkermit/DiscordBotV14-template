@@ -124,3 +124,5 @@ Connect with us on [Discord](https://discord.gg/xcMVwAVjSD) for support / any re
 
 ## License
 Released under the terms of [MIT License](https://github.com/Kkkermit/DiscordBotV14-template/blob/main/LICENSE) license.
+
+**Thanks to [TheLegendDev](https://github.com/TheLegenDev) for the readme template from [Nub Bot](https://github.com/TheLegenDev/Nub-Bot)** 💛
