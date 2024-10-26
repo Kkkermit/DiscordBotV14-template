@@ -6,53 +6,64 @@
 // ██████╔╝███████╗ ╚████╔╝     ██████╔╝   ██║       ██║  ██╗██║  ██╗███████╗██║  ██║██║ ╚═╝ ██║██║   ██║   
 // ╚═════╝ ╚══════╝  ╚═══╝      ╚═════╝    ╚═╝       ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝   ╚═╝   
 
+// Developed by: Kkermit. All rights reserved. (2024)
+// MIT License
+
 const { 
     Client, GatewayIntentBits, EmbedBuilder, PermissionsBitField, Permissions, MessageManager, Embed, Collection, Events, Partials, ActivityType, Activity, AuditLogEvent, ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ButtonStyle, ComponentType, AttachmentBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ChannelType
     } = require(`discord.js`);
 const fs = require('fs');
+const config = require('./config');
+const { color, getTimestamp } = require('./utils/logEffects');
+const { checkVersion } = require('./lib/version')
 
 // Current Repo Version //
 
-const currentVersion = "v2.0.2";
+const currentVersion = `${config.botVersion}`;
 
-const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds, 
-        GatewayIntentBits.GuildMessages, 
-        GatewayIntentBits.MessageContent, 
-        GatewayIntentBits.GuildMembers, 
-        GatewayIntentBits.GuildPresences, 
-        GatewayIntentBits.GuildIntegrations, 
-        GatewayIntentBits.GuildWebhooks, 
-        GatewayIntentBits.GuildMessageReactions,
-        GatewayIntentBits.MessageContent, 
-        GatewayIntentBits.GuildEmojisAndStickers, 
-        GatewayIntentBits.DirectMessages, 
-        GatewayIntentBits.DirectMessageTyping, 
-        GatewayIntentBits.GuildModeration, 
-        GatewayIntentBits.GuildVoiceStates,
-        GatewayIntentBits.GuildWebhooks, 
-        GatewayIntentBits.AutoModerationConfiguration,
-        GatewayIntentBits.GuildScheduledEvents, 
-        GatewayIntentBits.GuildMessageTyping, 
-        GatewayIntentBits.AutoModerationExecution, 
-    ],  
+let client;
+try {
+    client = new Client({ 
+        intents: [
+            GatewayIntentBits.Guilds, 
+            GatewayIntentBits.GuildMessages, 
+            GatewayIntentBits.MessageContent, 
+            GatewayIntentBits.GuildMembers, 
+            GatewayIntentBits.GuildPresences, 
+            GatewayIntentBits.GuildIntegrations, 
+            GatewayIntentBits.GuildWebhooks, 
+            GatewayIntentBits.GuildMessageReactions,
+            GatewayIntentBits.MessageContent, 
+            GatewayIntentBits.GuildEmojisAndStickers, 
+            GatewayIntentBits.DirectMessages, 
+            GatewayIntentBits.DirectMessageTyping, 
+            GatewayIntentBits.GuildModeration, 
+            GatewayIntentBits.GuildVoiceStates,
+            GatewayIntentBits.GuildWebhooks, 
+            GatewayIntentBits.AutoModerationConfiguration,
+            GatewayIntentBits.GuildScheduledEvents, 
+            GatewayIntentBits.GuildMessageTyping, 
+            GatewayIntentBits.AutoModerationExecution, 
+        ],  
 
-    partials: [
-        Partials.GuildMember, 
-        Partials.Channel,
-        Partials.GuildScheduledEvent,
-        Partials.Message,
-        Partials.Reaction, 
-        Partials.ThreadMember, 
-        Partials.User
-    ]
-}); 
+        partials: [
+            Partials.GuildMember, 
+            Partials.Channel,
+            Partials.GuildScheduledEvent,
+            Partials.Message,
+            Partials.Reaction, 
+            Partials.ThreadMember, 
+            Partials.User
+        ],
+    }); 
+} catch (error) {
+    console.error(`${color.red}[${getTimestamp()}]${color.reset} [ERROR] Error while creating the client. \n${color.red}[${getTimestamp()}]${color.reset} [ERROR]`, error);
+};
 
 client.logs = require('./utils/logs');
 client.config = require('./config');
 
-const { checkVersion } = require('./lib/version')
+
 
 // Rotating Activity //
 
