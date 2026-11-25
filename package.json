@@ -1,23 +1,54 @@
 {
-  "name": "fix",
-  "version": "1.0.0",
-  "description": "",
-  "main": "src/index.js",
-  "scripts": {
-    "start": "node src/index.js",
-    "start:nodemon": "nodemon src/index.js",
-    "setup-env": "node src/scripts/setupEnvFile.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "ascii-table": "^0.0.9",
-    "axios": "^1.7.7",
-    "discord.js": "^14.14.1",
-    "dotenv": "^16.4.5",
-    "fs": "^0.0.1-security",
-    "mongoose": "^6.0.12",
-    "path": "^0.12.7"
-  }
+	"name": "discordbotv14-template",
+	"version": "4.0.0",
+	"private": true,
+	"description": "A beginner-friendly discord.js v14 bot template with slash commands, prefix commands, events and optional MongoDB support.",
+	"keywords": [
+		"discord",
+		"discord-bot",
+		"discord.js",
+		"discord-js-v14",
+		"slash-commands",
+		"bot-template",
+		"mongodb",
+		"mongoose"
+	],
+	"homepage": "https://github.com/Kkkermit/DiscordBotV14-template#readme",
+	"bugs": {
+		"url": "https://github.com/Kkkermit/DiscordBotV14-template/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Kkkermit/DiscordBotV14-template.git"
+	},
+	"license": "MIT",
+	"author": "Kkermit",
+	"type": "commonjs",
+	"main": "src/index.js",
+	"scripts": {
+		"start": "node src/index.js",
+		"dev": "node --watch src/index.js",
+		"deploy": "node scripts/deploy-commands.js",
+		"setup": "node scripts/setup-env.js",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"format": "prettier --write .",
+		"format:check": "prettier --check .",
+		"test": "node --test \"test/**/*.test.js\"",
+		"check": "npm run lint && npm run format:check && npm test"
+	},
+	"dependencies": {
+		"discord.js": "^14.28.1",
+		"mongoose": "^9.13.1"
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"eslint": "^10.15.0",
+		"eslint-config-prettier": "^10.1.8",
+		"globals": "^17.14.0",
+		"prettier": "^3.10.1"
+	},
+	"engines": {
+		"node": ">=22.12.0"
+	}
 }
