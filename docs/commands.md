@@ -232,17 +232,17 @@ module.exports = {
 
 ### Properties
 
-| Property        | Required | Description                                                                          |
-| --------------- | -------- | ------------------------------------------------------------------------------------ |
-| `name`          | Yes      | The word after the prefix. Case-insensitive, no spaces.                              |
-| `execute`       | Yes      | `async (message, client, args) => {}`. `args` are the words after the command name.  |
-| `description`   | No       | Shown in `?help`.                                                                    |
-| `aliases`       | No       | Other names for the command, e.g. `['p']`.                                           |
-| `usage`         | No       | Shown in `?help <command>` and when arguments are missing, e.g. `'<user> [reason]'`. |
-| `args`          | No       | `true` to require at least one argument. The usage is shown when none are given.     |
-| `permissions`   | No       | Permissions the member needs, e.g. `[PermissionFlagsBits.KickMembers]`.              |
-| `cooldown`      | No       | Seconds between uses, per user. Defaults to `commands.defaultCooldownSeconds`.       |
-| `developerOnly` | No       | `true` to only allow users in `DEVELOPER_IDS`.                                       |
+| Property        | Required | Description                                                                             |
+| --------------- | -------- | --------------------------------------------------------------------------------------- |
+| `name`          | Yes      | The word after the prefix, in lower case without spaces. Users can type it in any case. |
+| `execute`       | Yes      | `async (message, client, args) => {}`. `args` are the words after the command name.     |
+| `description`   | No       | Shown in `?help`.                                                                       |
+| `aliases`       | No       | Other names for the command, in lower case, e.g. `['p']`.                               |
+| `usage`         | No       | Shown in `?help <command>` and when arguments are missing, e.g. `'<user> [reason]'`.    |
+| `args`          | No       | `true` to require at least one argument. The usage is shown when none are given.        |
+| `permissions`   | No       | Permissions the member needs, e.g. `[PermissionFlagsBits.KickMembers]`.                 |
+| `cooldown`      | No       | Seconds between uses, per user. Defaults to `commands.defaultCooldownSeconds`.          |
+| `developerOnly` | No       | `true` to only allow users in `DEVELOPER_IDS`.                                          |
 
 Prefix commands only run in servers, not in DMs. If two commands use the same alias, the first one keeps it and a
 warning is logged; a command's name always wins over another command's alias.
