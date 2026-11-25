@@ -1,0 +1,111 @@
+'use strict';
+
+const path = require('node:path');
+const { LEVEL_NAMES } = require('./lib/logger');
+const { SNOWFLAKE_PATTERN } = require('./lib/constants');
+
+/** Absolute path of the `.env` file in the project root. */
+const ENV_FILE_PATH = path.resolve(__dirname, '..', '.env');
+
+/**
+ * Thrown when one or more environment variables are missing or invalid.
+ * `issues` holds one human-readable message per problem so they can all be shown at once.
+ */
+class EnvValidationError extends Error {
+	/** @param {string[]} issues */
+	constructor(issues) {
+		super(`Invalid environment configuration:\n${issues.map((issue) => `  - ${issue}`).join('\n')}`);
+		this.name = 'EnvValidationError';
+		this.issues = issues;
+	}
+}
+
+/**
+ * @typedef {object} Env
+ * @property {string} token Bot token used to log in to Discord.
+ * @property {string | null} guildId Development server ID. When set, slash commands are registered there instantly.
+ * @property {readonly string[]} developerIds User IDs allowed to run `developerOnly` commands.
+ * @property {string | null} mongoUri MongoDB connection string. The database is disabled when empty.
+ * @property {string} logLevel Minimum level printed by the logger.
+ */
+
+/**
+ * Loads variables from the `.env` file into `process.env`, if the file exists.
+ * Variables that are already set in the real environment take precedence over the file.
+ *
+ * @param {string} [filePath]
+ * @returns {boolean} `true` when a file was loaded.
+ */
+function loadEnvFile(filePath = ENV_FILE_PATH) {
+	try {
+		process.loadEnvFile(filePath);
+		return true;
+	} catch (error) {
+		if (error?.code === 'ENOENT') return false;
+		throw error;
+	}
+}
+
+/**
+ * Reads, validates and normalises the bot's environment variables.
+ *
+ * @param {NodeJS.ProcessEnv} [source]
+ * @returns {Readonly<Env>}
+ * @throws {EnvValidationError} When a variable is missing or malformed.
+ */
+function parseEnv(source = process.env) {
+	const issues = [];
+	const read = (name) => source[name]?.trim() || null;
+
+	const token = read('DISCORD_TOKEN');
+	if (!token) {
+		issues.push('DISCORD_TOKEN is required. Copy it from the "Bot" page of the Discord Developer Portal.');
+	}
+
+	const guildId = read('DISCORD_GUILD_ID');
+	if (guildId && !SNOWFLAKE_PATTERN.test(guildId)) {
+		issues.push(`DISCORD_GUILD_ID must be a server ID (17-20 digits), received "${guildId}".`);
+	}
+
+	const developerIds = (read('DEVELOPER_IDS') ?? '')
+		.split(',')
+		.map((id) => id.trim())
+		.filter(Boolean);
+	const invalidIds = developerIds.filter((id) => !SNOWFLAKE_PATTERN.test(id));
+	if (invalidIds.length > 0) {
+		issues.push(`DEVELOPER_IDS must be a comma-separated list of user IDs. Invalid: ${invalidIds.join(', ')}.`);
+	}
+
+	const mongoUri = read('MONGODB_URI');
+	if (mongoUri && !/^mongodb(\+srv)?:\/\//.test(mongoUri)) {
+		issues.push('MONGODB_URI must start with "mongodb://" or "mongodb+srv://".');
+	}
+
+	const logLevel = (read('LOG_LEVEL') ?? 'info').toLowerCase();
+	if (!LEVEL_NAMES.includes(logLevel)) {
+		issues.push(`LOG_LEVEL must be one of: ${LEVEL_NAMES.join(', ')}. Received "${logLevel}".`);
+	}
+
+	if (issues.length > 0) throw new EnvValidationError(issues);
+
+	return Object.freeze({
+		token,
+		guildId,
+		developerIds: Object.freeze([...new Set(developerIds)]),
+		mongoUri,
+		logLevel,
+	});
+}
+
+/**
+ * Loads the `.env` file (if present) and returns the validated environment.
+ *
+ * @returns {Readonly<Env>}
+ * @throws {EnvValidationError}
+ */
+function loadEnv() {
+	loadEnvFile();
+	return parseEnv(process.env);
+}
+
+module.exports = { ENV_FILE_PATH, EnvValidationError, loadEnvFile, parseEnv, loadEnv };

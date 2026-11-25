@@ -1,0 +1,53 @@
+'use strict';
+
+const { MessageFlags, SlashCommandBuilder } = require('discord.js');
+const { createSlashCommandEmbed, createSlashHelpEmbed, getVisibleSlashCommands } = require('../../../lib/help');
+
+/** Discord shows at most 25 autocomplete suggestions. */
+const MAX_SUGGESTIONS = 25;
+
+/** @type {import('../../../types').SlashCommand} */
+module.exports = {
+	data: new SlashCommandBuilder()
+		.setName('help')
+		.setDescription('List all commands, or get details about one.')
+		.addStringOption((option) =>
+			option
+				.setName('command')
+				.setDescription('The command to get details about.')
+				.setAutocomplete(true)
+				.setRequired(false),
+		),
+
+	// Suggests command names while the user types (because of `.setAutocomplete(true)` above).
+	async autocomplete(interaction, client) {
+		const query = interaction.options.getFocused().toLowerCase();
+		const suggestions = getVisibleSlashCommands(client, interaction.user.id)
+			.map((command) => command.data.name)
+			.filter((name) => name.includes(query))
+			.sort()
+			.slice(0, MAX_SUGGESTIONS)
+			.map((name) => ({ name, value: name }));
+
+		await interaction.respond(suggestions);
+	},
+
+	async execute(interaction, client) {
+		const name = interaction.options.getString('command')?.toLowerCase();
+		if (!name) {
+			await interaction.reply({ embeds: [createSlashHelpEmbed(client, interaction.user.id)] });
+			return;
+		}
+
+		const command = getVisibleSlashCommands(client, interaction.user.id).find(({ data }) => data.name === name);
+		if (!command) {
+			await interaction.reply({
+				content: `There is no command called \`${name}\`. Use \`/help\` to see every command.`,
+				flags: MessageFlags.Ephemeral,
+			});
+			return;
+		}
+
+		await interaction.reply({ embeds: [createSlashCommandEmbed(client, command)] });
+	},
+};
