@@ -16,16 +16,16 @@ const PREFIX_COMMANDS_DIR = path.join(__dirname, '..', 'commands', 'prefix');
  * @typedef {{ file: string, reason: string, error?: unknown }} LoadFailure
  */
 
-const isFunction = (value) => typeof value === 'function';
-const isSingleWord = (value) => typeof value === 'string' && /^\S+$/.test(value);
+const isLowerCaseWord = (value) => typeof value === 'string' && /^\S+$/.test(value) && value === value.toLowerCase();
 
 /**
- * Returns why the shared optional command properties are invalid, or `null` if they are fine.
+ * Checks the options both kinds of command support.
  *
- * @param {Record<string, unknown>} command
- * @returns {string | null}
+ * @param {any} command
+ * @returns {string | null} What is wrong, or `null` if nothing is.
  */
-function validateSharedOptions(command) {
+function validateCommonOptions(command) {
+	if (typeof command.execute !== 'function') return 'missing an "execute" function.';
 	if (command.cooldown !== undefined && !(Number.isFinite(command.cooldown) && command.cooldown >= 0)) {
 		return '"cooldown" must be a number of seconds (0 or more).';
 	}
@@ -36,35 +36,37 @@ function validateSharedOptions(command) {
 }
 
 /**
- * Checks that a module exports a valid slash (or context menu) command.
+ * Checks that a file exports a valid slash (or context menu) command.
  *
- * @param {unknown} command
- * @returns {string | null} The reason it is invalid, or `null` if it is valid.
+ * @param {any} command
+ * @returns {string | null} What is wrong, or `null` if nothing is.
  */
 function validateSlashCommand(command) {
-	if (!command || typeof command !== 'object') return 'the file does not export a command object.';
-	if (!command.data || typeof command.data.name !== 'string' || !isFunction(command.data.toJSON)) {
+	if (typeof command?.data?.toJSON !== 'function') {
 		return 'missing a "data" property built with SlashCommandBuilder or ContextMenuCommandBuilder.';
 	}
-	if (!isFunction(command.execute)) return 'missing an "execute" function.';
-	if (command.autocomplete !== undefined && !isFunction(command.autocomplete)) {
+	// Builders only check some of their options when they are converted to JSON, so do it now.
+	try {
+		command.data.toJSON();
+	} catch (error) {
+		return `invalid "data" (${error.message}). Check that the command and every option have a name and a description.`;
+	}
+	if (command.autocomplete !== undefined && typeof command.autocomplete !== 'function') {
 		return '"autocomplete" must be a function.';
 	}
-	return validateSharedOptions(command);
+	return validateCommonOptions(command);
 }
 
 /**
- * Checks that a module exports a valid prefix command.
+ * Checks that a file exports a valid prefix command.
  *
- * @param {unknown} command
- * @returns {string | null} The reason it is invalid, or `null` if it is valid.
+ * @param {any} command
+ * @returns {string | null} What is wrong, or `null` if nothing is.
  */
 function validatePrefixCommand(command) {
-	if (!command || typeof command !== 'object') return 'the file does not export a command object.';
-	if (!isSingleWord(command.name)) return 'missing a "name" (a single word without spaces).';
-	if (!isFunction(command.execute)) return 'missing an "execute" function.';
-	if (command.aliases !== undefined && !(Array.isArray(command.aliases) && command.aliases.every(isSingleWord))) {
-		return '"aliases" must be an array of single words.';
+	if (!isLowerCaseWord(command?.name)) return 'missing a "name": a single lower case word.';
+	if (command.aliases !== undefined && !(Array.isArray(command.aliases) && command.aliases.every(isLowerCaseWord))) {
+		return '"aliases" must be a list of single lower case words.';
 	}
 	if (command.args !== undefined && typeof command.args !== 'boolean') return '"args" must be true or false.';
 	if (command.permissions !== undefined) {
@@ -74,46 +76,46 @@ function validatePrefixCommand(command) {
 			return '"permissions" must be a list of permission flags, e.g. [PermissionFlagsBits.ManageMessages].';
 		}
 	}
-	return validateSharedOptions(command);
+	return validateCommonOptions(command);
 }
 
 /**
- * Loads every slash command from a directory. Invalid files are reported instead of crashing the bot.
+ * Loads every command file in a directory. Broken files are reported in `failures` instead of crashing the bot.
  *
- * @param {string} [directory]
- * @returns {{ commands: Collection<string, LoadedSlashCommand>, failures: LoadFailure[] }}
+ * @template T
+ * @param {string} directory
+ * @param {(command: any) => string | null} validate
+ * @param {(command: any) => string} getName
+ * @returns {{ commands: Collection<string, T & { category: string, filePath: string }>, failures: LoadFailure[] }}
  */
-function loadSlashCommands(directory = SLASH_COMMANDS_DIR) {
-	/** @type {Collection<string, LoadedSlashCommand>} */
+function loadCommandFiles(directory, validate, getName) {
 	const commands = new Collection();
-	/** @type {LoadFailure[]} */
 	const failures = [];
 
 	for (const file of findJsFiles(directory)) {
-		const relativePath = path.relative(directory, file);
+		const filePath = path.relative(directory, file);
 		try {
 			const command = require(file);
-			const problem = validateSlashCommand(command);
+			const problem = validate(command);
 			if (problem) {
-				failures.push({ file: relativePath, reason: problem });
+				failures.push({ file: filePath, reason: problem });
 				continue;
 			}
 
-			// Builders validate their options lazily, so serialise now to surface mistakes with the file name.
-			command.data.toJSON();
-
-			const { name } = command.data;
-			if (commands.has(name)) {
+			const name = getName(command);
+			const existing = commands.get(name);
+			if (existing) {
 				failures.push({
-					file: relativePath,
-					reason: `"${name}" is already defined in ${commands.get(name).filePath}.`,
+					file: filePath,
+					reason: `the name "${name}" is already used by ${existing.filePath}.`,
 				});
 				continue;
 			}
 
-			commands.set(name, { ...command, category: getCategory(directory, file), filePath: relativePath });
+			commands.set(name, { ...command, category: getCategory(directory, file), filePath });
 		} catch (error) {
-			failures.push({ file: relativePath, reason: error?.message ?? String(error), error });
+			// Syntax errors and other errors thrown while the file loads.
+			failures.push({ file: filePath, reason: error?.message ?? String(error), error });
 		}
 	}
 
@@ -121,57 +123,32 @@ function loadSlashCommands(directory = SLASH_COMMANDS_DIR) {
 }
 
 /**
- * Loads every prefix command from a directory and builds the alias lookup table.
- * Command names always win over aliases; conflicting aliases are skipped with a warning.
+ * Loads the slash commands in `src/commands/slash`.
+ *
+ * @param {string} [directory]
+ * @returns {{ commands: Collection<string, LoadedSlashCommand>, failures: LoadFailure[] }}
+ */
+function loadSlashCommands(directory = SLASH_COMMANDS_DIR) {
+	return loadCommandFiles(directory, validateSlashCommand, (command) => command.data.name);
+}
+
+/**
+ * Loads the prefix commands in `src/commands/prefix` and builds the alias lookup table.
+ * A command's name always wins over another command's alias; conflicting aliases are skipped with a warning.
  *
  * @param {string} [directory]
  * @returns {{ commands: Collection<string, LoadedPrefixCommand>, aliases: Collection<string, string>, failures: LoadFailure[], warnings: string[] }}
  */
 function loadPrefixCommands(directory = PREFIX_COMMANDS_DIR) {
-	/** @type {Collection<string, LoadedPrefixCommand>} */
-	const commands = new Collection();
-	/** @type {Collection<string, string>} */
+	const { commands, failures } = loadCommandFiles(directory, validatePrefixCommand, (command) => command.name);
 	const aliases = new Collection();
-	/** @type {LoadFailure[]} */
-	const failures = [];
-	/** @type {string[]} */
 	const warnings = [];
 
-	for (const file of findJsFiles(directory)) {
-		const relativePath = path.relative(directory, file);
-		try {
-			const command = require(file);
-			const problem = validatePrefixCommand(command);
-			if (problem) {
-				failures.push({ file: relativePath, reason: problem });
-				continue;
-			}
-
-			const name = command.name.toLowerCase();
-			if (commands.has(name)) {
-				failures.push({
-					file: relativePath,
-					reason: `"${name}" is already defined in ${commands.get(name).filePath}.`,
-				});
-				continue;
-			}
-
-			commands.set(name, { ...command, name, category: getCategory(directory, file), filePath: relativePath });
-		} catch (error) {
-			failures.push({ file: relativePath, reason: error?.message ?? String(error), error });
-		}
-	}
-
-	// Register aliases after every name is known so a name always takes priority over an alias.
 	for (const command of commands.values()) {
-		for (const rawAlias of command.aliases ?? []) {
-			const alias = rawAlias.toLowerCase();
-			if (commands.has(alias)) {
-				warnings.push(`Alias "${alias}" of "${command.name}" is skipped because a command has that name.`);
-			} else if (aliases.has(alias)) {
-				warnings.push(
-					`Alias "${alias}" of "${command.name}" is skipped because "${aliases.get(alias)}" uses it.`,
-				);
+		for (const alias of command.aliases ?? []) {
+			const owner = commands.has(alias) ? alias : aliases.get(alias);
+			if (owner) {
+				warnings.push(`Skipped alias "${alias}" of "${command.name}": "${owner}" already uses it.`);
 			} else {
 				aliases.set(alias, command.name);
 			}
@@ -182,7 +159,7 @@ function loadPrefixCommands(directory = PREFIX_COMMANDS_DIR) {
 }
 
 /**
- * Prints the load result of a command type.
+ * Logs what was loaded and why any file was skipped.
  *
  * @param {string} type
  * @param {Collection<string, { category: string }>} commands
@@ -190,19 +167,19 @@ function loadPrefixCommands(directory = PREFIX_COMMANDS_DIR) {
  */
 function reportLoadResult(type, commands, failures) {
 	for (const { file, reason, error } of failures) {
-		// Thrown errors (syntax errors, bad builder options...) are printed in full so the stack shows the line.
+		// Print thrown errors in full: their stack shows the line that broke.
 		if (error) log.error(`Skipped ${type} command ${file}:`, error);
 		else log.error(`Skipped ${type} command ${file}: ${reason}`);
 	}
 
-	const byCategory = Object.entries(Object.groupBy(commands.values(), ({ category }) => category))
+	const perCategory = Object.entries(Object.groupBy(commands.values(), (command) => command.category))
 		.map(([category, list]) => `${category}: ${list.length}`)
 		.join(', ');
-	log.success(`Loaded ${commands.size} ${type} command(s)${byCategory ? ` (${byCategory})` : ''}.`);
+	log.success(`Loaded ${commands.size} ${type} command(s)${perCategory ? ` (${perCategory})` : ''}.`);
 }
 
 /**
- * Loads slash and prefix commands onto the client.
+ * Loads all slash and prefix commands onto the client.
  *
  * @param {import('../client').BotClient} client
  */

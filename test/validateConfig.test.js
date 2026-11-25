@@ -46,6 +46,6 @@ describe('validateConfig', () => {
 
 	it('requires every message', () => {
 		const issues = validateConfig(withChanges({ messages: { ...config.messages, error: '' } }));
-		assert.deepEqual(issues, ['messages.error must be a non-empty string.']);
+		assert.deepEqual(issues, ['messages.error must not be empty.']);
 	});
 });

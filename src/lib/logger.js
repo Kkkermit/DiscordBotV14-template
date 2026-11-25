@@ -2,55 +2,52 @@
 
 const { formatWithOptions } = require('node:util');
 
-/** Numeric severity of each log level. Messages below the active level are dropped. */
-const LEVELS = Object.freeze({ debug: 10, info: 20, success: 20, warn: 30, error: 40 });
+/** Levels a user can choose with `LOG_LEVEL`, from most to least verbose. */
+const LEVEL_NAMES = ['debug', 'info', 'warn', 'error'];
 
-/** Levels a user can choose with `LOG_LEVEL`. `success` is an alias of `info` so it is not listed. */
-const LEVEL_NAMES = Object.freeze(['debug', 'info', 'warn', 'error']);
+/** `success` is printed at the same level as `info`. */
+const SEVERITY = { debug: 0, info: 1, success: 1, warn: 2, error: 3 };
 
-const ANSI = Object.freeze({
+const ANSI = {
 	reset: '\x1b[0m',
 	dim: '\x1b[2m',
 	red: '\x1b[31m',
 	green: '\x1b[32m',
-	yellow: '\x1b[33m',
 	blue: '\x1b[34m',
 	pink: '\x1b[38;5;213m',
 	turquoise: '\x1b[38;5;45m',
 	orange: '\x1b[38;5;202m',
-});
+};
 
-const LEVEL_STYLES = Object.freeze({
-	debug: { label: 'DEBUG', color: ANSI.blue },
-	info: { label: 'INFO', color: ANSI.turquoise },
-	success: { label: 'SUCCESS', color: ANSI.green },
-	warn: { label: 'WARN', color: ANSI.orange },
-	error: { label: 'ERROR', color: ANSI.red },
-});
+/** Width of the longest label, `SUCCESS`, so messages line up. */
+const LABEL_WIDTH = 7;
 
-const LABEL_WIDTH = Math.max(...Object.values(LEVEL_STYLES).map(({ label }) => label.length));
+const LEVEL_COLORS = {
+	debug: ANSI.blue,
+	info: ANSI.turquoise,
+	success: ANSI.green,
+	warn: ANSI.orange,
+	error: ANSI.red,
+};
 
 /**
- * Works out whether a stream can display ANSI colours, honouring the
- * {@link https://no-color.org NO_COLOR} and FORCE_COLOR conventions.
+ * Whether a stream can show colours. Follows the NO_COLOR (https://no-color.org) and FORCE_COLOR conventions.
  *
  * @param {NodeJS.WritableStream & { isTTY?: boolean, hasColors?: () => boolean }} stream
  * @param {NodeJS.ProcessEnv} [env]
- * @returns {boolean}
  */
 function supportsColor(stream, env = process.env) {
-	if (env.NO_COLOR !== undefined && env.NO_COLOR !== '') return false;
+	if (env.NO_COLOR) return false;
 	if (env.FORCE_COLOR !== undefined) return env.FORCE_COLOR !== '0' && env.FORCE_COLOR !== 'false';
-	return Boolean(stream?.isTTY && typeof stream.hasColors === 'function' && stream.hasColors());
+	return Boolean(stream.isTTY && stream.hasColors?.());
 }
 
 /**
  * Formats a date as `YYYY-MM-DD HH:mm:ss` in local time.
  *
- * @param {Date} [date]
- * @returns {string}
+ * @param {Date} date
  */
-function formatTimestamp(date = new Date()) {
+function formatTimestamp(date) {
 	const pad = (value) => String(value).padStart(2, '0');
 	const day = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 	const time = `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
@@ -58,134 +55,107 @@ function formatTimestamp(date = new Date()) {
 }
 
 /**
- * @typedef {object} LoggerOptions
- * @property {string} [level] Minimum level to print. One of {@link LEVEL_NAMES}. Defaults to `info`.
- * @property {string} [scope] Label printed before every message, e.g. `Commands`.
- * @property {NodeJS.WritableStream} [stream] Where messages are written. Defaults to stdout, so every
- *   level stays in order when Docker, PM2 or a hosting panel collects the output.
- * @property {boolean} [colors] Force colours on or off. Detected from the stream when omitted.
- * @property {() => Date} [now] Clock used for timestamps. Useful in tests.
+ * @typedef {object} ScopedLogger A logger that labels every message, created with `logger.child('Label')`.
+ * @property {(...args: unknown[]) => void} debug
+ * @property {(...args: unknown[]) => void} info
+ * @property {(...args: unknown[]) => void} success
+ * @property {(...args: unknown[]) => void} warn
+ * @property {(...args: unknown[]) => void} error
  */
 
 /**
- * @typedef {object} SharedState
- * @property {number} level
- * @property {NodeJS.WritableStream} stream
- * @property {boolean} colors
- * @property {() => Date} now
- */
-
-/**
- * A small, dependency-free console logger with levels, scopes and colours.
+ * A small console logger with levels, labels and colours.
  *
- * Child loggers created with {@link Logger#child} share their parent's level, so calling
- * {@link Logger#setLevel} on the root logger affects every scoped logger in the app.
+ * Everything is written to one stream (stdout by default) so messages stay in order
+ * when Docker, PM2 or a hosting panel collects the output.
  */
 class Logger {
-	/** @type {SharedState} */
-	#shared;
-
-	/** @type {string | undefined} */
-	#scope;
-
 	/**
-	 * @param {LoggerOptions} [options]
-	 * @param {SharedState} [shared] Internal: state shared with a parent logger.
+	 * @param {object} [options]
+	 * @param {string} [options.level] Minimum level to print, one of `LEVEL_NAMES`.
+	 * @param {NodeJS.WritableStream} [options.stream]
+	 * @param {boolean} [options.colors] Detected from the stream when omitted.
+	 * @param {() => Date} [options.now] Clock for timestamps, so tests can use a fixed time.
 	 */
-	constructor(options = {}, shared = undefined) {
-		this.#scope = options.scope;
-
-		if (shared) {
-			this.#shared = shared;
-			return;
-		}
-
-		const stream = options.stream ?? process.stdout;
-		this.#shared = {
-			level: LEVELS.info,
-			stream,
-			colors: options.colors ?? supportsColor(stream),
-			now: options.now ?? (() => new Date()),
-		};
-		this.setLevel(options.level ?? 'info');
+	constructor({
+		level = 'info',
+		stream = process.stdout,
+		colors = supportsColor(stream),
+		now = () => new Date(),
+	} = {}) {
+		this.stream = stream;
+		this.colors = colors;
+		this.now = now;
+		this.setLevel(level);
 	}
 
-	/** The name of the active minimum level. */
-	get level() {
-		return LEVEL_NAMES.find((name) => LEVELS[name] === this.#shared.level) ?? 'info';
-	}
-
-	/**
-	 * Changes the minimum level for this logger and every logger that shares its state.
-	 *
-	 * @param {string} level One of {@link LEVEL_NAMES}.
-	 */
+	/** @param {string} level One of `LEVEL_NAMES`. */
 	setLevel(level) {
-		const normalised = String(level).toLowerCase();
-		if (!LEVEL_NAMES.includes(normalised)) {
-			throw new RangeError(`Unknown log level "${level}". Expected one of: ${LEVEL_NAMES.join(', ')}.`);
+		const name = String(level).toLowerCase();
+		if (!LEVEL_NAMES.includes(name)) {
+			throw new RangeError(`Unknown log level "${level}". Use one of: ${LEVEL_NAMES.join(', ')}.`);
 		}
-		this.#shared.level = LEVELS[normalised];
+		this.level = name;
 	}
 
 	/**
-	 * Creates a logger that prefixes every message with `[scope]` and shares this logger's level.
+	 * Returns a logger that prefixes messages with `[label]`. It writes through this logger,
+	 * so changing this logger's level also changes what the child prints.
 	 *
-	 * @param {string} scope
-	 * @returns {Logger}
+	 * @param {string} label
+	 * @returns {ScopedLogger}
 	 */
-	child(scope) {
-		return new Logger({ scope }, this.#shared);
+	child(label) {
+		return {
+			debug: (...args) => this.write('debug', label, args),
+			info: (...args) => this.write('info', label, args),
+			success: (...args) => this.write('success', label, args),
+			warn: (...args) => this.write('warn', label, args),
+			error: (...args) => this.write('error', label, args),
+		};
 	}
 
-	/** @param {...unknown} args */
 	debug(...args) {
-		this.#write('debug', args);
+		this.write('debug', null, args);
 	}
 
-	/** @param {...unknown} args */
 	info(...args) {
-		this.#write('info', args);
+		this.write('info', null, args);
 	}
 
-	/** @param {...unknown} args */
 	success(...args) {
-		this.#write('success', args);
+		this.write('success', null, args);
 	}
 
-	/** @param {...unknown} args */
 	warn(...args) {
-		this.#write('warn', args);
+		this.write('warn', null, args);
 	}
 
-	/** @param {...unknown} args */
 	error(...args) {
-		this.#write('error', args);
+		this.write('error', null, args);
 	}
 
 	/**
-	 * @param {keyof typeof LEVEL_STYLES} level
-	 * @param {unknown[]} args
+	 * @param {keyof typeof SEVERITY} level
+	 * @param {string | null} label
+	 * @param {unknown[]} args Anything `console.log` accepts. Errors are printed with their stack.
 	 */
-	#write(level, args) {
-		if (LEVELS[level] < this.#shared.level) return;
+	write(level, label, args) {
+		if (SEVERITY[level] < SEVERITY[this.level]) return;
 
-		const { stream, colors } = this.#shared;
-		const paint = (color, text) => (colors ? `${color}${text}${ANSI.reset}` : text);
+		const paint = (color, text) => (this.colors ? `${color}${text}${ANSI.reset}` : text);
+		const parts = [
+			paint(ANSI.dim, formatTimestamp(this.now())),
+			paint(LEVEL_COLORS[level], level.toUpperCase().padEnd(LABEL_WIDTH)),
+		];
+		if (label) parts.push(paint(ANSI.pink, `[${label}]`));
+		parts.push(formatWithOptions({ colors: this.colors }, ...args));
 
-		const { label, color } = LEVEL_STYLES[level];
-		const parts = [paint(ANSI.dim, formatTimestamp(this.#shared.now())), paint(color, label.padEnd(LABEL_WIDTH))];
-		if (this.#scope) parts.push(paint(ANSI.pink, `[${this.#scope}]`));
-
-		const message = formatWithOptions({ colors }, ...args);
-		stream.write(`${parts.join(' ')} ${message}\n`);
+		this.stream.write(`${parts.join(' ')}\n`);
 	}
 }
 
-/**
- * The application-wide logger. Its level is set from `LOG_LEVEL` once the environment is loaded.
- * Use `logger.child('Scope')` to label messages coming from a module.
- */
+/** The bot's logger. `src/index.js` sets its level from `LOG_LEVEL`. */
 const logger = new Logger();
 
 module.exports = { logger, Logger, LEVEL_NAMES, ANSI, supportsColor, formatTimestamp };

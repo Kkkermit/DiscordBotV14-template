@@ -5,116 +5,81 @@ const { logger } = require('./logger');
 
 const log = logger.child('Updates');
 
-const VERSION_PATTERN = /^v?(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?(?:\+[0-9A-Za-z.-]+)?$/;
-
 /**
- * Parses a semantic version such as `4.0.0`, `v4.1.0` or `5.0.0-beta.1`.
+ * Turns a version such as `4.1.0` or `v4.1.0` into `[4, 1, 0]`.
+ * Anything after the patch number (e.g. `-beta.1`) is ignored.
  *
- * @param {string} value
- * @returns {{ major: number, minor: number, patch: number, prerelease: string[] } | null}
+ * @param {string} version
+ * @returns {number[] | null} `null` when the text isn't a version.
  */
-function parseVersion(value) {
-	const match = VERSION_PATTERN.exec(String(value).trim());
-	if (!match) return null;
-	const [, major, minor, patch, prerelease] = match;
-	return {
-		major: Number(major),
-		minor: Number(minor),
-		patch: Number(patch),
-		prerelease: prerelease?.split('.') ?? [],
-	};
+function parseVersion(version) {
+	const match = /^v?(\d+)\.(\d+)\.(\d+)/.exec(String(version).trim());
+	return match ? match.slice(1).map(Number) : null;
 }
 
 /**
- * Compares two prerelease identifier lists following the semver precedence rules.
- *
- * @param {string[]} a
- * @param {string[]} b
- * @returns {number}
- */
-function comparePrerelease(a, b) {
-	// A version without a prerelease (e.g. 1.0.0) is newer than any prerelease of it (1.0.0-beta).
-	if (a.length === 0 || b.length === 0) return b.length - a.length;
-
-	for (let i = 0; i < Math.max(a.length, b.length); i += 1) {
-		if (a[i] === undefined) return -1;
-		if (b[i] === undefined) return 1;
-		const aNumeric = /^\d+$/.test(a[i]);
-		const bNumeric = /^\d+$/.test(b[i]);
-		if (aNumeric && bNumeric && Number(a[i]) !== Number(b[i])) return Number(a[i]) - Number(b[i]);
-		if (aNumeric !== bNumeric) return aNumeric ? -1 : 1;
-		if (a[i] !== b[i]) return a[i] < b[i] ? -1 : 1;
-	}
-	return 0;
-}
-
-/**
- * Compares two semantic versions.
+ * Compares two versions number by number, so `3.0.10` is correctly newer than `3.0.9`.
  *
  * @param {string} a
  * @param {string} b
- * @returns {-1 | 0 | 1 | null} `-1` if a < b, `0` if equal, `1` if a > b, `null` if either is not a valid version.
+ * @returns {number | null} Negative if `a` is older, `0` if equal, positive if newer, `null` if not comparable.
  */
 function compareVersions(a, b) {
 	const left = parseVersion(a);
 	const right = parseVersion(b);
 	if (!left || !right) return null;
 
-	const difference =
-		left.major - right.major ||
-		left.minor - right.minor ||
-		left.patch - right.patch ||
-		comparePrerelease(left.prerelease, right.prerelease);
-	return /** @type {-1 | 0 | 1} */ (Math.sign(difference));
+	for (let i = 0; i < 3; i += 1) {
+		if (left[i] !== right[i]) return left[i] - right[i];
+	}
+	return 0;
 }
 
 /**
  * Fetches the tag of the latest GitHub release of a repository.
  *
  * @param {string} repository `owner/name`
- * @param {{ fetch?: typeof globalThis.fetch, timeoutMs?: number }} [options]
- * @returns {Promise<string | null>} The tag name, or `null` when the repository has no releases.
+ * @param {typeof globalThis.fetch} [fetch] Replaceable for tests.
+ * @returns {Promise<string | null>} The tag, or `null` when the repository has no releases.
  */
-async function fetchLatestReleaseTag(repository, { fetch = globalThis.fetch, timeoutMs = 5_000 } = {}) {
+async function fetchLatestReleaseTag(repository, fetch = globalThis.fetch) {
 	const response = await fetch(`https://api.github.com/repos/${repository}/releases/latest`, {
 		headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'discord-bot-template-update-check' },
-		signal: AbortSignal.timeout(timeoutMs),
+		signal: AbortSignal.timeout(5_000),
 	});
 	if (response.status === 404) return null;
-	if (!response.ok) throw new Error(`GitHub responded with ${response.status} ${response.statusText}`);
+	if (!response.ok) throw new Error(`GitHub responded with ${response.status}.`);
 
-	const { tag_name: tagName } = await response.json();
-	return typeof tagName === 'string' ? tagName : null;
+	const release = await response.json();
+	return typeof release.tag_name === 'string' ? release.tag_name : null;
 }
 
 /**
- * Logs whether a newer release of the template is available. Never throws.
+ * Logs whether a newer release is available. Never throws: an update check must not stop the bot.
  *
- * @param {{ repository: string, version?: string, fetch?: typeof globalThis.fetch }} options
+ * @param {object} options
+ * @param {string} options.repository `owner/name`
+ * @param {string} [options.version] Defaults to the version in `package.json`.
+ * @param {typeof globalThis.fetch} [options.fetch]
  * @returns {Promise<'outdated' | 'latest' | 'unknown'>}
  */
 async function checkForUpdates({ repository, version = currentVersion, fetch }) {
-	const displayVersion = `v${String(version).replace(/^v/, '')}`;
 	try {
-		const latest = await fetchLatestReleaseTag(repository, { fetch });
-		if (!latest) {
-			log.debug(`No releases found for ${repository}.`);
-			return 'unknown';
-		}
+		const latest = await fetchLatestReleaseTag(repository, fetch);
+		const comparison = latest ? compareVersions(version, latest) : null;
 
-		const comparison = compareVersions(version, latest);
 		if (comparison === null) {
-			log.debug(`Could not compare version "${version}" with the latest release "${latest}".`);
+			log.debug(`Could not compare v${version} with the latest release of ${repository} (${latest ?? 'none'}).`);
 			return 'unknown';
 		}
 		if (comparison < 0) {
 			log.warn(
-				`A new version is available: ${latest} (you have ${displayVersion}). https://github.com/${repository}/releases`,
+				`A new version is available: ${latest} (you have v${version}). https://github.com/${repository}/releases`,
 			);
 			return 'outdated';
 		}
 
-		log.info(`You are running the latest version (${displayVersion}).`);
+		log.info(`You are running the latest version (v${version}).`);
 		return 'latest';
 	} catch (error) {
 		log.debug('Could not check for updates:', error);

@@ -3,99 +3,87 @@
 const { ActivityType, resolveColor } = require('discord.js');
 const { SNOWFLAKE_PATTERN } = require('./constants');
 
-const PRESENCE_STATUSES = Object.freeze(['online', 'idle', 'dnd', 'invisible']);
-const ACTIVITY_TYPES = new Set(Object.values(ActivityType).filter((value) => typeof value === 'number'));
-const MIN_ROTATE_INTERVAL_SECONDS = 15;
-const REPOSITORY_PATTERN = /^[\w.-]+\/[\w.-]+$/;
+const PRESENCE_STATUSES = ['online', 'idle', 'dnd', 'invisible'];
+const ACTIVITY_TYPES = Object.values(ActivityType).filter((value) => typeof value === 'number');
+const MESSAGE_KEYS = ['error', 'noPermission', 'developerOnly', 'cooldown', 'missingArgs', 'unknownCommand'];
 
-const isPlainObject = (value) => typeof value === 'object' && value !== null && !Array.isArray(value);
-const isNonEmptyString = (value) => typeof value === 'string' && value.trim().length > 0;
+/** Discord rate-limits presence updates, so activities can't change faster than this. */
+const MIN_ROTATE_INTERVAL_SECONDS = 15;
+
+const isNonEmptyString = (value) => typeof value === 'string' && value.trim() !== '';
+const isBoolean = (value) => typeof value === 'boolean';
+
+function isColor(value) {
+	try {
+		resolveColor(value);
+		return true;
+	} catch {
+		return false;
+	}
+}
 
 /**
- * Checks `src/config.js` for mistakes and returns a list of human-readable problems.
- * An empty array means the config is valid.
+ * Checks `src/config.js` for mistakes.
  *
  * @param {typeof import('../config')} config
- * @returns {string[]}
+ * @returns {string[]} A message for every problem found. Empty when the config is valid.
  */
 function validateConfig(config) {
 	const issues = [];
-
-	if (!isNonEmptyString(config.prefix) || /\s/.test(config.prefix)) {
-		issues.push('prefix must be a non-empty string without spaces.');
-	}
-
-	try {
-		resolveColor(config.embedColor);
-	} catch {
-		issues.push(`embedColor "${config.embedColor}" is not a valid colour name or hex number.`);
-	}
-
-	if (!isNonEmptyString(config.developerName)) {
-		issues.push('developerName must be a non-empty string.');
-	}
+	const check = (isValid, message) => {
+		if (!isValid) issues.push(message);
+	};
 
 	const { presence, commands, logging, updateCheck, messages } = config;
 
-	if (!isPlainObject(presence)) {
-		issues.push('presence must be an object.');
-	} else {
-		if (!PRESENCE_STATUSES.includes(presence.status)) {
-			issues.push(`presence.status must be one of: ${PRESENCE_STATUSES.join(', ')}.`);
-		}
-		const interval = presence.rotateIntervalSeconds;
-		if (!Number.isFinite(interval) || (interval !== 0 && interval < MIN_ROTATE_INTERVAL_SECONDS)) {
-			issues.push(`presence.rotateIntervalSeconds must be 0 or at least ${MIN_ROTATE_INTERVAL_SECONDS}.`);
-		}
-		if (!Array.isArray(presence.activities)) {
-			issues.push('presence.activities must be an array.');
-		} else {
-			presence.activities.forEach((activity, index) => {
-				if (!ACTIVITY_TYPES.has(activity?.type)) {
-					issues.push(`presence.activities[${index}].type must be an ActivityType value.`);
-				}
-				if (!isNonEmptyString(activity?.name) && typeof activity?.name !== 'function') {
-					issues.push(`presence.activities[${index}].name must be a string or a function.`);
-				}
-			});
-		}
-	}
+	check(isNonEmptyString(config.prefix) && !/\s/.test(config.prefix), 'prefix must be text without spaces.');
+	check(isColor(config.embedColor), `embedColor "${config.embedColor}" is not a colour name or hex number.`);
+	check(isNonEmptyString(config.developerName), 'developerName must not be empty.');
+	check(isBoolean(config.showStartupBanner), 'showStartupBanner must be true or false.');
 
-	if (!isPlainObject(commands)) {
-		issues.push('commands must be an object.');
-	} else {
-		for (const key of ['registerOnStartup', 'mentionAsPrefix', 'replyToUnknownCommands']) {
-			if (typeof commands[key] !== 'boolean') issues.push(`commands.${key} must be true or false.`);
-		}
-		if (!Number.isFinite(commands.defaultCooldownSeconds) || commands.defaultCooldownSeconds < 0) {
-			issues.push('commands.defaultCooldownSeconds must be a number greater than or equal to 0.');
-		}
-	}
+	check(
+		PRESENCE_STATUSES.includes(presence?.status),
+		`presence.status must be one of: ${PRESENCE_STATUSES.join(', ')}.`,
+	);
+	const interval = presence?.rotateIntervalSeconds;
+	check(
+		interval === 0 || (Number.isFinite(interval) && interval >= MIN_ROTATE_INTERVAL_SECONDS),
+		`presence.rotateIntervalSeconds must be 0 or at least ${MIN_ROTATE_INTERVAL_SECONDS}.`,
+	);
+	check(Array.isArray(presence?.activities), 'presence.activities must be a list.');
+	(presence?.activities ?? []).forEach((activity, index) => {
+		check(ACTIVITY_TYPES.includes(activity?.type), `presence.activities[${index}].type must be an ActivityType.`);
+		check(
+			isNonEmptyString(activity?.name) || typeof activity?.name === 'function',
+			`presence.activities[${index}].name must be text or a function.`,
+		);
+	});
 
-	if (!isPlainObject(logging)) {
-		issues.push('logging must be an object.');
-	} else if (logging.commandLogChannelId && !SNOWFLAKE_PATTERN.test(logging.commandLogChannelId)) {
-		issues.push('logging.commandLogChannelId must be empty or a channel ID (17-20 digits).');
-	}
+	check(isBoolean(commands?.registerOnStartup), 'commands.registerOnStartup must be true or false.');
+	check(isBoolean(commands?.mentionAsPrefix), 'commands.mentionAsPrefix must be true or false.');
+	check(isBoolean(commands?.replyToUnknownCommands), 'commands.replyToUnknownCommands must be true or false.');
+	check(
+		Number.isFinite(commands?.defaultCooldownSeconds) && commands.defaultCooldownSeconds >= 0,
+		'commands.defaultCooldownSeconds must be a number, 0 or more.',
+	);
 
-	if (!isPlainObject(updateCheck)) {
-		issues.push('updateCheck must be an object.');
-	} else {
-		if (typeof updateCheck.enabled !== 'boolean') issues.push('updateCheck.enabled must be true or false.');
-		if (updateCheck.enabled && !REPOSITORY_PATTERN.test(updateCheck.repository ?? '')) {
-			issues.push('updateCheck.repository must look like "owner/name".');
-		}
-	}
+	const channelId = logging?.commandLogChannelId;
+	check(
+		channelId === '' || SNOWFLAKE_PATTERN.test(channelId ?? ''),
+		'logging.commandLogChannelId must be empty or a channel ID (17-20 digits).',
+	);
 
-	if (!isPlainObject(messages)) {
-		issues.push('messages must be an object.');
-	} else {
-		for (const key of ['error', 'noPermission', 'developerOnly', 'cooldown', 'missingArgs', 'unknownCommand']) {
-			if (!isNonEmptyString(messages[key])) issues.push(`messages.${key} must be a non-empty string.`);
-		}
+	check(isBoolean(updateCheck?.enabled), 'updateCheck.enabled must be true or false.');
+	check(
+		!updateCheck?.enabled || /^[\w.-]+\/[\w.-]+$/.test(updateCheck.repository ?? ''),
+		'updateCheck.repository must look like "owner/name".',
+	);
+
+	for (const key of MESSAGE_KEYS) {
+		check(isNonEmptyString(messages?.[key]), `messages.${key} must not be empty.`);
 	}
 
 	return issues;
 }
 
-module.exports = { validateConfig, PRESENCE_STATUSES, MIN_ROTATE_INTERVAL_SECONDS };
+module.exports = { validateConfig };

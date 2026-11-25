@@ -8,35 +8,28 @@ require('./helpers/fakes'); // Silences the logger.
 const jsonResponse = (status, body) => new Response(JSON.stringify(body), { status });
 
 describe('parseVersion', () => {
-	it('parses plain, v-prefixed and prerelease versions', () => {
-		assert.deepEqual(parseVersion('v4.1.2'), { major: 4, minor: 1, patch: 2, prerelease: [] });
-		assert.deepEqual(parseVersion('5.0.0-beta.1+build.7'), {
-			major: 5,
-			minor: 0,
-			patch: 0,
-			prerelease: ['beta', '1'],
-		});
+	it('parses plain and v-prefixed versions', () => {
+		assert.deepEqual(parseVersion('4.1.2'), [4, 1, 2]);
+		assert.deepEqual(parseVersion('v4.1.2'), [4, 1, 2]);
+		assert.deepEqual(parseVersion('v5.0.0-beta.1'), [5, 0, 0]);
+	});
+
+	it('returns null for text that is not a version', () => {
 		assert.equal(parseVersion('latest'), null);
+		assert.equal(parseVersion('4.1'), null);
 	});
 });
 
 describe('compareVersions', () => {
 	it('compares numerically instead of alphabetically', () => {
-		assert.equal(compareVersions('v3.0.9', 'v3.0.10'), -1);
-		assert.equal(compareVersions('10.0.0', '9.9.9'), 1);
+		assert.ok(compareVersions('v3.0.9', 'v3.0.10') < 0);
+		assert.ok(compareVersions('10.0.0', '9.9.9') > 0);
 		assert.equal(compareVersions('4.0.0', 'v4.0.0'), 0);
 	});
 
-	it('follows semver prerelease precedence', () => {
-		assert.equal(compareVersions('4.0.0-beta', '4.0.0'), -1);
-		assert.equal(compareVersions('4.0.0-alpha', '4.0.0-beta'), -1);
-		assert.equal(compareVersions('4.0.0-beta.2', '4.0.0-beta.11'), -1);
-		assert.equal(compareVersions('4.0.0-beta', '4.0.0-beta.1'), -1);
-		assert.equal(compareVersions('4.0.0-1', '4.0.0-alpha'), -1);
-	});
-
-	it('returns null for invalid versions', () => {
+	it('returns null when a version is missing or invalid', () => {
 		assert.equal(compareVersions('4.0.0', null), null);
+		assert.equal(compareVersions('nightly', '4.0.0'), null);
 	});
 });
 
@@ -46,34 +39,27 @@ describe('fetchLatestReleaseTag', () => {
 			assert.equal(url, 'https://api.github.com/repos/owner/repo/releases/latest');
 			return jsonResponse(200, { tag_name: 'v4.2.0' });
 		};
-		assert.equal(await fetchLatestReleaseTag('owner/repo', { fetch }), 'v4.2.0');
+		assert.equal(await fetchLatestReleaseTag('owner/repo', fetch), 'v4.2.0');
 	});
 
 	it('returns null when there are no releases', async () => {
-		assert.equal(await fetchLatestReleaseTag('owner/repo', { fetch: async () => jsonResponse(404, {}) }), null);
+		assert.equal(await fetchLatestReleaseTag('owner/repo', async () => jsonResponse(404, {})), null);
 	});
 
 	it('throws on other errors', async () => {
-		await assert.rejects(fetchLatestReleaseTag('owner/repo', { fetch: async () => jsonResponse(500, {}) }));
+		await assert.rejects(fetchLatestReleaseTag('owner/repo', async () => jsonResponse(500, {})));
 	});
 });
 
 describe('checkForUpdates', () => {
-	const fetchTag = (tag) => async () => jsonResponse(200, { tag_name: tag });
+	const releaseTag = (tag) => async () => jsonResponse(200, { tag_name: tag });
 
-	it('detects newer, equal and missing releases', async () => {
-		assert.equal(
-			await checkForUpdates({ repository: 'o/r', version: '4.0.0', fetch: fetchTag('v4.0.1') }),
-			'outdated',
-		);
-		assert.equal(
-			await checkForUpdates({ repository: 'o/r', version: '4.0.0', fetch: fetchTag('v4.0.0') }),
-			'latest',
-		);
-		assert.equal(
-			await checkForUpdates({ repository: 'o/r', version: '4.0.0', fetch: fetchTag('nightly') }),
-			'unknown',
-		);
+	it('detects newer, equal and unknown releases', async () => {
+		const check = (tag) => checkForUpdates({ repository: 'o/r', version: '4.0.0', fetch: releaseTag(tag) });
+		assert.equal(await check('v4.0.1'), 'outdated');
+		assert.equal(await check('v4.0.0'), 'latest');
+		assert.equal(await check('v3.9.9'), 'latest');
+		assert.equal(await check('nightly'), 'unknown');
 	});
 
 	it('never throws, even when the request fails', async () => {

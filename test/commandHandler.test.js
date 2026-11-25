@@ -65,8 +65,18 @@ describe('validateSlashCommand', () => {
 	});
 
 	it('explains what is wrong', () => {
-		assert.match(validateSlashCommand(null), /does not export/);
+		assert.match(validateSlashCommand(null), /"data"/);
 		assert.match(validateSlashCommand({ execute() {} }), /"data"/);
+		const broken = {
+			name: 'x',
+			toJSON: () => {
+				throw new Error('Expected a string primitive');
+			},
+		};
+		assert.match(
+			validateSlashCommand({ data: broken, execute() {} }),
+			/invalid "data" \(Expected a string primitive\)/,
+		);
 		assert.match(validateSlashCommand({ data }), /"execute"/);
 		assert.match(validateSlashCommand({ data, execute() {}, cooldown: -1 }), /"cooldown"/);
 		assert.match(validateSlashCommand({ data, execute() {}, autocomplete: true }), /"autocomplete"/);
@@ -81,6 +91,8 @@ describe('validatePrefixCommand', () => {
 
 	it('explains what is wrong', () => {
 		assert.match(validatePrefixCommand({ name: 'two words', execute() {} }), /"name"/);
+		assert.match(validatePrefixCommand({ name: 'Ping', execute() {} }), /lower case/);
+		assert.match(validatePrefixCommand({ name: 'ping', execute() {}, aliases: ['P'] }), /"aliases"/);
 		assert.match(validatePrefixCommand({ name: 'test', execute() {}, aliases: 'x' }), /"aliases"/);
 		assert.match(validatePrefixCommand({ name: 'test', execute() {}, args: 1 }), /"args"/);
 		assert.match(validatePrefixCommand({ name: 'test', execute() {}, permissions: ['NotAPerm'] }), /"permissions"/);
@@ -115,7 +127,7 @@ module.exports = { data: new SlashCommandBuilder().setName('Invalid Name').setDe
 		});
 		const { failures } = loadSlashCommands(directory);
 		assert.equal(failures.length, 1);
-		assert.match(failures[0].reason, /already defined in A[\\/]one\.js/);
+		assert.match(failures[0].reason, /already used by A[\\/]one\.js/);
 	});
 
 	it('returns nothing for a missing directory', () => {
@@ -126,7 +138,7 @@ module.exports = { data: new SlashCommandBuilder().setName('Invalid Name').setDe
 describe('loadPrefixCommands', () => {
 	it('lets names win over aliases and skips conflicting aliases', (t) => {
 		const directory = createFixture(t, {
-			'A/help.js': prefixCommandSource('Help', ['h', 'info', 'HELPME']),
+			'A/help.js': prefixCommandSource('help', ['h', 'info', 'helpme']),
 			'B/info.js': prefixCommandSource('info', ['h']),
 		});
 

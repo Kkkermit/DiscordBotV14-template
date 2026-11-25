@@ -4,26 +4,46 @@ const { ApplicationCommandType, PermissionsBitField, chatInputApplicationCommand
 const { createEmbed } = require('./embeds');
 const { truncate } = require('./format');
 
+// Discord embed limits.
 const MAX_FIELDS = 25;
 const MAX_FIELD_LENGTH = 1024;
 
 /**
- * Groups commands by category for display, sorted alphabetically.
+ * Builds one embed field per category, listing its commands with `formatLine`.
  *
  * @template {{ category: string }} T
- * @param {Iterable<T>} commands
- * @returns {[string, T[]][]}
+ * @param {T[]} commands
+ * @param {(command: T) => string} formatLine
  */
-function groupByCategory(commands) {
-	return Object.entries(Object.groupBy(commands, ({ category }) => category)).sort(([a], [b]) => a.localeCompare(b));
+function categoryFields(commands, formatLine) {
+	const fields = Object.entries(Object.groupBy(commands, (command) => command.category))
+		.sort(([a], [b]) => a.localeCompare(b))
+		.slice(0, MAX_FIELDS)
+		.map(([category, list]) => ({
+			name: category,
+			value: truncate(list.map(formatLine).join('\n'), MAX_FIELD_LENGTH),
+		}));
+
+	return fields.length > 0 ? fields : [{ name: 'No commands', value: 'There are no commands yet.' }];
+}
+
+/** Formats an optional description as ` - description`. */
+const withDescription = (text) => (text ? ` - ${text}` : '');
+
+/**
+ * @param {import('../client').BotClient} client
+ * @param {number | undefined} cooldown
+ */
+function formatCooldown(client, cooldown) {
+	const seconds = cooldown ?? client.config.commands.defaultCooldownSeconds;
+	return seconds > 0 ? `${seconds}s` : 'None';
 }
 
 /**
- * Formats a slash command for display. Uses a clickable mention when Discord has given the command an ID.
+ * Shows a slash command as a clickable mention when Discord has given it an ID, otherwise as `/name`.
  *
  * @param {import('../client').BotClient} client
  * @param {import('../handlers/commandHandler').LoadedSlashCommand} command
- * @returns {string}
  */
 function formatSlashCommandName(client, command) {
 	const { name, type } = command.data.toJSON();
@@ -35,18 +55,20 @@ function formatSlashCommandName(client, command) {
 }
 
 /**
+ * The slash commands a user may see: developer-only commands are hidden from everyone else.
+ *
  * @param {import('../client').BotClient} client
  * @param {string} userId
- * @returns {import('../handlers/commandHandler').LoadedSlashCommand[]} Commands the user is allowed to see.
  */
 function getVisibleSlashCommands(client, userId) {
 	return [...client.slashCommands.values()].filter((command) => !command.developerOnly || client.isDeveloper(userId));
 }
 
 /**
+ * The prefix commands a user may see: developer-only commands are hidden from everyone else.
+ *
  * @param {import('../client').BotClient} client
  * @param {string} userId
- * @returns {import('../handlers/commandHandler').LoadedPrefixCommand[]} Commands the user is allowed to see.
  */
 function getVisiblePrefixCommands(client, userId) {
 	return [...client.prefixCommands.values()].filter(
@@ -55,41 +77,25 @@ function getVisiblePrefixCommands(client, userId) {
 }
 
 /**
- * Lists every slash command the user can use, grouped by category.
- *
  * @param {import('../client').BotClient} client
  * @param {string} userId
  */
 function createSlashHelpEmbed(client, userId) {
-	const fields = groupByCategory(getVisibleSlashCommands(client, userId))
-		.slice(0, MAX_FIELDS)
-		.map(([category, commands]) => ({
-			name: category,
-			value: truncate(
-				commands
-					.map((command) => {
-						const description = command.data.description ? ` - ${command.data.description}` : '';
-						return `${formatSlashCommandName(client, command)}${description}`;
-					})
-					.join('\n'),
-				MAX_FIELD_LENGTH,
-			),
-		}));
+	const fields = categoryFields(
+		getVisibleSlashCommands(client, userId),
+		(command) => `${formatSlashCommandName(client, command)}${withDescription(command.data.description)}`,
+	);
 
 	return createEmbed(client)
 		.setTitle(`${client.user.username} commands`)
 		.setDescription(
-			[
-				'Use `/help command:<name>` to learn more about a command.',
+			'Use `/help command:<name>` to learn more about a command.\n' +
 				`Prefer typing? Use \`${client.config.prefix}help\` to see the prefix commands.`,
-			].join('\n'),
 		)
-		.addFields(fields.length > 0 ? fields : [{ name: 'No commands', value: 'There are no commands yet.' }]);
+		.addFields(fields);
 }
 
 /**
- * Shows the details of a single slash command.
- *
  * @param {import('../client').BotClient} client
  * @param {import('../handlers/commandHandler').LoadedSlashCommand} command
  */
@@ -98,7 +104,6 @@ function createSlashCommandEmbed(client, command) {
 	const options = (json.options ?? [])
 		.map((option) => `\`${option.name}\`${option.required ? ' (required)' : ''} - ${option.description}`)
 		.join('\n');
-	const cooldown = command.cooldown ?? client.config.commands.defaultCooldownSeconds;
 
 	return createEmbed(client)
 		.setTitle(`Command: ${json.name}`)
@@ -106,56 +111,39 @@ function createSlashCommandEmbed(client, command) {
 		.addFields(
 			{ name: 'Usage', value: formatSlashCommandName(client, command), inline: true },
 			{ name: 'Category', value: command.category, inline: true },
-			{ name: 'Cooldown', value: cooldown > 0 ? `${cooldown}s` : 'None', inline: true },
+			{ name: 'Cooldown', value: formatCooldown(client, command.cooldown), inline: true },
 			...(options ? [{ name: 'Options', value: truncate(options, MAX_FIELD_LENGTH) }] : []),
 		);
 }
 
 /**
- * Lists every prefix command the user can use, grouped by category.
- *
  * @param {import('../client').BotClient} client
  * @param {string} userId
  */
 function createPrefixHelpEmbed(client, userId) {
 	const { prefix } = client.config;
-	const fields = groupByCategory(getVisiblePrefixCommands(client, userId))
-		.slice(0, MAX_FIELDS)
-		.map(([category, commands]) => ({
-			name: category,
-			value: truncate(
-				commands
-					.map(
-						(command) =>
-							`\`${prefix}${command.name}\`${command.description ? ` - ${command.description}` : ''}`,
-					)
-					.join('\n'),
-				MAX_FIELD_LENGTH,
-			),
-		}));
+	const fields = categoryFields(
+		getVisiblePrefixCommands(client, userId),
+		(command) => `\`${prefix}${command.name}\`${withDescription(command.description)}`,
+	);
 
 	return createEmbed(client)
 		.setTitle(`${client.user.username} prefix commands`)
 		.setDescription(
-			[
-				`My prefix is \`${prefix}\`. Use \`${prefix}help <command>\` to learn more about a command.`,
+			`My prefix is \`${prefix}\`. Use \`${prefix}help <command>\` to learn more about a command.\n` +
 				'Slash commands are listed with `/help`.',
-			].join('\n'),
 		)
-		.addFields(fields.length > 0 ? fields : [{ name: 'No commands', value: 'There are no commands yet.' }]);
+		.addFields(fields);
 }
 
 /**
- * Shows the details of a single prefix command.
- *
  * @param {import('../client').BotClient} client
  * @param {import('../handlers/commandHandler').LoadedPrefixCommand} command
  */
 function createPrefixCommandEmbed(client, command) {
-	const { prefix } = client.config;
-	const cooldown = command.cooldown ?? client.config.commands.defaultCooldownSeconds;
-	const usage = `${prefix}${command.name}${command.usage ? ` ${command.usage}` : ''}`;
-	const permissions = command.permissions ? new PermissionsBitField(command.permissions).toArray() : [];
+	const usage = `${client.config.prefix}${command.name}${command.usage ? ` ${command.usage}` : ''}`;
+	const aliases = command.aliases?.map((alias) => `\`${alias}\``).join(', ');
+	const permissions = command.permissions ? new PermissionsBitField(command.permissions).toArray().join(', ') : '';
 
 	return createEmbed(client)
 		.setTitle(`Command: ${command.name}`)
@@ -163,12 +151,9 @@ function createPrefixCommandEmbed(client, command) {
 		.addFields(
 			{ name: 'Usage', value: `\`${usage}\``, inline: true },
 			{ name: 'Category', value: command.category, inline: true },
-			{ name: 'Cooldown', value: cooldown > 0 ? `${cooldown}s` : 'None', inline: true },
-			{
-				name: 'Aliases',
-				value: command.aliases?.length ? command.aliases.map((a) => `\`${a}\``).join(', ') : 'None',
-			},
-			...(permissions.length > 0 ? [{ name: 'Required permissions', value: permissions.join(', ') }] : []),
+			{ name: 'Cooldown', value: formatCooldown(client, command.cooldown), inline: true },
+			{ name: 'Aliases', value: aliases || 'None' },
+			...(permissions ? [{ name: 'Required permissions', value: permissions }] : []),
 		);
 }
 
