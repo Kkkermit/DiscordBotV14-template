@@ -1,0 +1,172 @@
+'use strict';
+
+const { EventEmitter } = require('node:events');
+const { PermissionsBitField } = require('discord.js');
+const { BotClient } = require('../../src/client');
+const { loadPrefixCommands, loadSlashCommands } = require('../../src/handlers/commandHandler');
+const { logger } = require('../../src/lib/logger');
+
+// Keep test output readable: only show errors the code under test logs.
+logger.setLevel('error');
+
+const BOT_ID = '100000000000000001';
+const USER_ID = '100000000000000002';
+const DEVELOPER_ID = '100000000000000003';
+const GUILD_ID = '100000000000000004';
+const AVATAR_URL = 'https://cdn.discordapp.com/embed/avatars/0.png';
+
+/**
+ * Creates a fake Discord user.
+ *
+ * @param {string} id
+ * @param {string} [username]
+ */
+function createUser(id, username = `user${id.slice(-2)}`) {
+	return {
+		id,
+		username,
+		tag: username,
+		displayName: username,
+		bot: false,
+		createdAt: new Date('2020-01-01T00:00:00Z'),
+		displayAvatarURL: () => AVATAR_URL,
+		toString: () => `<@${id}>`,
+	};
+}
+
+/**
+ * Creates a real BotClient that is never logged in, with the template's commands loaded
+ * and a fake bot user so embeds can be built.
+ *
+ * @param {Partial<import('../../src/env').Env>} [env]
+ */
+function createClient(env = {}) {
+	const client = new BotClient({
+		token: 'test-token',
+		guildId: null,
+		developerIds: [DEVELOPER_ID],
+		mongoUri: null,
+		logLevel: 'error',
+		...env,
+	});
+	client.user = /** @type {any} */ ({ ...createUser(BOT_ID, 'TemplateBot'), bot: true, setPresence() {} });
+	client.readyTimestamp = Date.now() - 90_000;
+
+	const slash = loadSlashCommands();
+	const prefix = loadPrefixCommands();
+	client.slashCommands = slash.commands;
+	client.prefixCommands = prefix.commands;
+	client.prefixAliases = prefix.aliases;
+	return client;
+}
+
+/** A fake message returned by `reply`, supporting collectors and edits. */
+function createSentMessage(payload) {
+	return {
+		payload,
+		edits: [],
+		createdTimestamp: Date.now(),
+		collector: null,
+		async edit(newPayload) {
+			this.edits.push(newPayload);
+			return this;
+		},
+		createMessageComponentCollector() {
+			this.collector = new EventEmitter();
+			return this.collector;
+		},
+	};
+}
+
+/**
+ * Creates a fake guild message.
+ *
+ * @param {string} content
+ * @param {{ authorId?: string, permissions?: bigint[] }} [options]
+ */
+function createMessage(content, { authorId = USER_ID, permissions = [] } = {}) {
+	return {
+		content,
+		author: createUser(authorId),
+		member: { permissions: new PermissionsBitField(permissions) },
+		guild: { id: GUILD_ID, name: 'Test Server' },
+		channelId: '100000000000000005',
+		webhookId: null,
+		system: false,
+		createdTimestamp: Date.now(),
+		inGuild: () => true,
+		replies: [],
+		async reply(payload) {
+			this.replies.push(payload);
+			return createSentMessage(payload);
+		},
+	};
+}
+
+/**
+ * Creates a fake chat input command interaction.
+ *
+ * @param {string} commandName
+ * @param {{ userId?: string, options?: Record<string, unknown>, focused?: string }} [settings]
+ */
+function createInteraction(commandName, { userId = USER_ID, options = {}, focused = '' } = {}) {
+	const interaction = {
+		commandName,
+		user: createUser(userId),
+		guild: { id: GUILD_ID, name: 'Test Server' },
+		guildId: GUILD_ID,
+		createdTimestamp: Date.now(),
+		replied: false,
+		deferred: false,
+		responded: false,
+		replies: [],
+		followUps: [],
+		edits: [],
+		responses: [],
+		sentMessage: null,
+		autocomplete: false,
+		isAutocomplete() {
+			return this.autocomplete;
+		},
+		isChatInputCommand() {
+			return !this.autocomplete;
+		},
+		isContextMenuCommand: () => false,
+		inCachedGuild: () => false,
+		toString: () => `/${commandName}`,
+		options: {
+			getString: (name) => options[name] ?? null,
+			getUser: (name) => options[name] ?? null,
+			getMember: () => null,
+			getFocused: () => focused,
+		},
+		async reply(payload) {
+			this.replied = true;
+			this.replies.push(payload);
+			this.sentMessage = createSentMessage(payload);
+			return { resource: { message: this.sentMessage } };
+		},
+		async editReply(payload) {
+			this.edits.push(payload);
+		},
+		async followUp(payload) {
+			this.followUps.push(payload);
+		},
+		async respond(choices) {
+			this.responded = true;
+			this.responses.push(choices);
+		},
+	};
+	return interaction;
+}
+
+module.exports = {
+	BOT_ID,
+	USER_ID,
+	DEVELOPER_ID,
+	GUILD_ID,
+	createUser,
+	createClient,
+	createMessage,
+	createInteraction,
+};
