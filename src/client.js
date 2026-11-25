@@ -57,6 +57,11 @@ class BotClient extends Client {
 		return this.prefixCommands.get(key) ?? this.prefixCommands.get(this.prefixAliases.get(key) ?? '');
 	}
 
+	/** The total number of members across every server the bot is in. */
+	countMembers() {
+		return this.guilds.cache.reduce((total, guild) => total + guild.memberCount, 0);
+	}
+
 	/**
 	 * Whether the user is listed in `DEVELOPER_IDS`.
 	 *
@@ -69,7 +74,7 @@ class BotClient extends Client {
 	/** Stops the bot's timers and closes the connection to Discord. */
 	async destroy() {
 		clearInterval(this.cooldownSweepTimer);
-		clearInterval(this.presenceTimer ?? undefined);
+		clearInterval(this.presenceTimer);
 		await super.destroy();
 	}
 }

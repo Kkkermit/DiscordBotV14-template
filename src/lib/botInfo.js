@@ -26,9 +26,7 @@ const REFRESH_TIMEOUT_MS = 60_000;
  * @param {import('../client').BotClient} client
  */
 function createBotInfoEmbed(client) {
-	const memberCount = client.guilds.cache.reduce((total, guild) => total + (guild.memberCount ?? 0), 0);
 	const ping = client.ws.ping >= 0 ? `${Math.round(client.ws.ping)}ms` : 'measuring...';
-	const onlineSince = new Date(Date.now() - (client.uptime ?? 0));
 
 	return createEmbed(client)
 		.setAuthor({ name: `${client.user.username} information`, iconURL: client.user.displayAvatarURL() })
@@ -36,22 +34,19 @@ function createBotInfoEmbed(client) {
 		.addFields(
 			{ name: 'Developer', value: `\`${client.config.developerName}\``, inline: true },
 			{ name: 'Servers', value: `\`${client.guilds.cache.size}\``, inline: true },
-			{ name: 'Members', value: `\`${memberCount}\``, inline: true },
+			{ name: 'Members', value: `\`${client.countMembers()}\``, inline: true },
 			{ name: 'Slash commands', value: `\`${client.slashCommands.size}\``, inline: true },
 			{ name: 'Prefix commands', value: `\`${client.prefixCommands.size}\``, inline: true },
 			{ name: 'Prefix', value: `\`${client.config.prefix}\``, inline: true },
 			{ name: 'Latency', value: `\`${ping}\``, inline: true },
-			{ name: 'Uptime', value: `\`${formatDuration(client.uptime ?? 0)}\``, inline: true },
-			{ name: 'Online since', value: time(onlineSince, TimestampStyles.RelativeTime), inline: true },
+			{ name: 'Uptime', value: `\`${formatDuration(client.uptime)}\``, inline: true },
+			{ name: 'Online since', value: time(client.readyAt, TimestampStyles.RelativeTime), inline: true },
 			{ name: 'Versions', value: `Node.js \`${process.version}\` • discord.js \`v${discordJsVersion}\`` },
 		)
 		.setTimestamp();
 }
 
-/**
- * @param {boolean} disabled Disable the button once it stops working.
- * @returns {ActionRowBuilder<ButtonBuilder>}
- */
+/** @param {boolean} disabled Disable the button once it stops working. */
 function createRefreshRow(disabled) {
 	const refreshButton = new ButtonBuilder()
 		.setCustomId(REFRESH_BUTTON_ID)
@@ -59,7 +54,7 @@ function createRefreshRow(disabled) {
 		.setEmoji('🔄')
 		.setStyle(ButtonStyle.Primary)
 		.setDisabled(disabled);
-	return /** @type {ActionRowBuilder<ButtonBuilder>} */ (new ActionRowBuilder().addComponents(refreshButton));
+	return new ActionRowBuilder().addComponents(refreshButton);
 }
 
 /**
@@ -79,7 +74,7 @@ function createBotInfoPayload(client) {
  * @param {import('discord.js').Message} options.message The message with the refresh button.
  * @param {string} options.userId Only this user may press the button.
  * @param {import('../client').BotClient} options.client
- * @param {(payload: { components: ActionRowBuilder<ButtonBuilder>[] }) => Promise<unknown>} options.edit Edits the message.
+ * @param {(payload: { components: ActionRowBuilder[] }) => Promise<unknown>} options.edit Edits the message.
  */
 function collectRefreshClicks({ message, userId, client, edit }) {
 	const collector = message.createMessageComponentCollector({

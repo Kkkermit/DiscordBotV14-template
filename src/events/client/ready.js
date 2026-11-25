@@ -27,8 +27,9 @@ async function syncSlashCommands(client) {
 		const body = client.slashCommands.map((command) => command.data.toJSON());
 		registered = await deployCommands({ ...options, body });
 		log.success(`Registered ${registered.length} slash command(s) in ${scope}.`);
-		if (!guildId)
+		if (!guildId) {
 			log.info('Global commands can take up to an hour to appear. Set DISCORD_GUILD_ID while developing.');
+		}
 	} else {
 		// Registering now would delete the broken commands from Discord, so keep the current list instead.
 		if (registerOnStartup) {
@@ -38,13 +39,8 @@ async function syncSlashCommands(client) {
 		log.info(`Found ${registered.length} registered slash command(s) in ${scope}.`);
 	}
 
-	client.commandIds = new Collection(
-		registered
-			.filter(
-				(command) => (command.type ?? ApplicationCommandType.ChatInput) === ApplicationCommandType.ChatInput,
-			)
-			.map((command) => [command.name, command.id]),
-	);
+	const chatCommands = registered.filter((command) => command.type === ApplicationCommandType.ChatInput);
+	client.commandIds = new Collection(chatCommands.map((command) => [command.name, command.id]));
 }
 
 /** @type {import('../../types').BotEvent} */

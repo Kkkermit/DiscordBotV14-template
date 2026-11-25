@@ -37,9 +37,7 @@ function startPresenceRotation(client) {
 	};
 
 	apply();
-	clearInterval(client.presenceTimer ?? undefined);
-	client.presenceTimer = null;
-
+	clearInterval(client.presenceTimer);
 	if (activities.length > 1 && rotateIntervalSeconds > 0) {
 		client.presenceTimer = setInterval(() => {
 			index += 1;
@@ -47,7 +45,7 @@ function startPresenceRotation(client) {
 		}, rotateIntervalSeconds * 1000).unref();
 	}
 
-	log.success(`Status set to "${status}" with ${activities.length} activit${activities.length === 1 ? 'y' : 'ies'}.`);
+	log.success(`Status set to "${status}".`);
 }
 
-module.exports = { resolveActivity, startPresenceRotation };
+module.exports = { startPresenceRotation };

@@ -11,14 +11,12 @@ module.exports = {
 	aliases: ['botuptime'],
 
 	async execute(message, client) {
-		const onlineSince = new Date(Date.now() - client.uptime);
-
 		const embed = createEmbed(client)
 			.setTitle('⏳ Uptime')
 			.setThumbnail(client.user.displayAvatarURL())
 			.addFields(
 				{ name: 'Uptime', value: `\`${formatDuration(client.uptime)}\``, inline: true },
-				{ name: 'Online since', value: time(onlineSince, TimestampStyles.FullDateShortTime), inline: true },
+				{ name: 'Online since', value: time(client.readyAt, TimestampStyles.FullDateShortTime), inline: true },
 			);
 
 		await message.reply({ embeds: [embed] });

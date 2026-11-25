@@ -47,8 +47,8 @@ function registerProcessHandlers(client) {
 		}
 	}
 
-	process.once('SIGINT', () => void shutdown('Received SIGINT'));
-	process.once('SIGTERM', () => void shutdown('Received SIGTERM'));
+	process.once('SIGINT', () => shutdown('Received SIGINT'));
+	process.once('SIGTERM', () => shutdown('Received SIGTERM'));
 
 	process.on('unhandledRejection', (reason) => {
 		log.error('Unhandled promise rejection:', reason);
@@ -56,7 +56,7 @@ function registerProcessHandlers(client) {
 
 	process.on('uncaughtException', (error) => {
 		log.error('Uncaught exception:', error);
-		void shutdown('Uncaught exception', 1);
+		shutdown('Uncaught exception', 1);
 	});
 
 	return { shutdown };

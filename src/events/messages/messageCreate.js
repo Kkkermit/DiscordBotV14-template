@@ -1,7 +1,8 @@
 'use strict';
 
-const { Events, PermissionsBitField, time, TimestampStyles } = require('discord.js');
+const { Events, PermissionsBitField } = require('discord.js');
 const { logCommandUsage } = require('../../lib/commandLogger');
+const { checkCooldown } = require('../../lib/cooldowns');
 const { createNoticeEmbed } = require('../../lib/embeds');
 const { formatMessage } = require('../../lib/format');
 const { logger } = require('../../lib/logger');
@@ -64,6 +65,7 @@ module.exports = {
 
 		if (command.permissions) {
 			// permissionsIn() includes the channel's permission overwrites, not just the member's roles.
+			// If the member isn't available, treat every permission as missing.
 			const missing =
 				message.member?.permissionsIn(message.channel).missing(command.permissions) ??
 				new PermissionsBitField(command.permissions).toArray();
@@ -83,23 +85,14 @@ module.exports = {
 			return;
 		}
 
-		const cooldownSeconds = command.cooldown ?? config.commands.defaultCooldownSeconds;
-		const remainingMs = client.cooldowns.consume(
-			`prefix:${command.name}`,
-			message.author.id,
-			cooldownSeconds * 1000,
-		);
-		if (remainingMs > 0) {
-			const availableAt = new Date(Date.now() + remainingMs);
-			await sendNotice(
-				message,
-				client,
-				formatMessage(messages.cooldown, { time: time(availableAt, TimestampStyles.RelativeTime) }),
-			);
+		const cooldownMessage = checkCooldown(client, `prefix:${command.name}`, message.author.id, command.cooldown);
+		if (cooldownMessage) {
+			await sendNotice(message, client, cooldownMessage);
 			return;
 		}
 
-		void logCommandUsage(client, {
+		// Not awaited, so logging never slows the command down.
+		logCommandUsage(client, {
 			type: 'prefix',
 			command: message.content,
 			user: message.author,

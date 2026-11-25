@@ -268,3 +268,4 @@ start with `_` (e.g. `src/commands/slash/Fun/_jokes.js`) so they aren't loaded a
 | `logger.child('MyFeature')`            | `src/lib/logger.js`  | Log with a label: `log.info('Something happened')`. |
 | `client.isDeveloper(userId)`           | `src/client.js`      | Check if a user is in `DEVELOPER_IDS`.              |
 | `client.getPrefixCommand(nameOrAlias)` | `src/client.js`      | Look up a prefix command.                           |
+| `client.countMembers()`                | `src/client.js`      | Count members in all servers.                       |

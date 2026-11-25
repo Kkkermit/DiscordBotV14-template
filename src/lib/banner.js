@@ -21,7 +21,6 @@ const ART = [
 function printBanner(client, stream = process.stdout) {
 	const colors = supportsColor(stream);
 	const paint = (text) => (colors ? `${ANSI.pink}${text}${ANSI.reset}` : text);
-	const memberCount = client.guilds.cache.reduce((total, guild) => total + (guild.memberCount ?? 0), 0);
 	const divider = '='.repeat(ART[0].length);
 
 	const lines = [
@@ -29,7 +28,7 @@ function printBanner(client, stream = process.stdout) {
 		...ART,
 		divider,
 		`${client.user.tag} is online! (template v${version})`,
-		`Serving ${client.guilds.cache.size} server(s) and ${memberCount} member(s).`,
+		`Serving ${client.guilds.cache.size} server(s) and ${client.countMembers()} member(s).`,
 		`${client.slashCommands.size} slash command(s) and ${client.prefixCommands.size} prefix command(s) loaded.`,
 		`Prefix: ${client.config.prefix}`,
 		divider,

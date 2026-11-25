@@ -1,9 +1,9 @@
 'use strict';
 
-const { Events, time, TimestampStyles } = require('discord.js');
+const { Events } = require('discord.js');
 const { logCommandUsage } = require('../../lib/commandLogger');
+const { checkCooldown } = require('../../lib/cooldowns');
 const { createNoticeEmbed } = require('../../lib/embeds');
-const { formatMessage } = require('../../lib/format');
 const { logger } = require('../../lib/logger');
 const { replyEphemeral } = require('../../lib/replies');
 
@@ -70,22 +70,14 @@ async function handleCommand(interaction, client) {
 		return;
 	}
 
-	const cooldownSeconds = command.cooldown ?? client.config.commands.defaultCooldownSeconds;
-	const remainingMs = client.cooldowns.consume(
-		`slash:${command.data.name}`,
-		interaction.user.id,
-		cooldownSeconds * 1000,
-	);
-	if (remainingMs > 0) {
-		const availableAt = new Date(Date.now() + remainingMs);
-		await sendNotice(
-			interaction,
-			formatMessage(messages.cooldown, { time: time(availableAt, TimestampStyles.RelativeTime) }),
-		);
+	const cooldownMessage = checkCooldown(client, `slash:${command.data.name}`, interaction.user.id, command.cooldown);
+	if (cooldownMessage) {
+		await sendNotice(interaction, cooldownMessage);
 		return;
 	}
 
-	void logCommandUsage(client, {
+	// Not awaited, so logging never slows the command down.
+	logCommandUsage(client, {
 		type: 'slash',
 		command: interaction.isChatInputCommand() ? interaction.toString() : interaction.commandName,
 		user: interaction.user,
