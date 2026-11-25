@@ -37,6 +37,8 @@ class BotClient extends Client {
 		this.prefixAliases = new Collection();
 		/** @type {Collection<string, string>} Slash command name → ID, used for clickable mentions in `/help`. */
 		this.commandIds = new Collection();
+		/** @type {string[]} Slash command files that failed to load. Commands aren't registered while this has entries. */
+		this.failedSlashCommandFiles = [];
 
 		this.cooldowns = new CooldownManager();
 		// Forget expired cooldowns every minute. `unref()` lets the process exit without waiting for it.

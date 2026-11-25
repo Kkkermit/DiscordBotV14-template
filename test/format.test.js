@@ -2,7 +2,7 @@
 
 const assert = require('node:assert/strict');
 const { describe, it } = require('node:test');
-const { escapeCodeBlock, formatDuration, formatMessage, truncate } = require('../src/lib/format');
+const { escapeCodeBlock, formatDuration, formatMessage, joinLines, truncate } = require('../src/lib/format');
 
 describe('formatDuration', () => {
 	it('drops leading zero units but keeps the ones after the first non-zero unit', () => {
@@ -42,8 +42,31 @@ describe('formatMessage', () => {
 	});
 });
 
+describe('joinLines', () => {
+	it('keeps every line when they fit', () => {
+		assert.equal(joinLines(['a', 'b', 'c'], 100), 'a\nb\nc');
+	});
+
+	it('drops whole lines and says how many were left out', () => {
+		const lines = Array.from({ length: 50 }, (_, index) => `line number ${index}`);
+		const result = joinLines(lines, 100);
+		assert.ok(result.length <= 100);
+		assert.match(result, /^line number 0\n/);
+		assert.match(result, /\n…and \d+ more$/);
+		assert.ok(
+			result
+				.split('\n')
+				.slice(0, -1)
+				.every((line) => lines.includes(line)),
+			'a line was cut in half',
+		);
+	});
+});
+
 describe('escapeCodeBlock', () => {
-	it('stops user input from closing a code block', () => {
-		assert.ok(!escapeCodeBlock('a ``` b').includes('```'));
+	it('stops user input from closing a code block, whatever the number of backticks', () => {
+		for (const input of ['a ``` b', '````', '``````````', '`` ` ``']) {
+			assert.ok(!escapeCodeBlock(input).includes('``'), `${input} still contains backticks in a row`);
+		}
 	});
 });

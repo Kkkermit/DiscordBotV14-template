@@ -84,6 +84,26 @@ describe('interactionCreate (slash commands)', () => {
 		assert.equal(noticeOf(interaction.followUps[0]), client.config.messages.error);
 	});
 
+	it('gives no suggestions for developer-only commands to other users', async (t) => {
+		const client = createClient();
+		t.after(() => client.destroy());
+		let suggested = false;
+		addCommand(client, 'secret', {
+			developerOnly: true,
+			execute: async () => {},
+			autocomplete: async (interaction) => {
+				suggested = true;
+				await interaction.respond([{ name: 'private', value: 'private' }]);
+			},
+		});
+
+		const interaction = createInteraction('secret');
+		interaction.autocomplete = true;
+		await interactionCreate.execute(interaction, client);
+		assert.equal(suggested, false);
+		assert.deepEqual(interaction.responses, [[]]);
+	});
+
 	it('routes autocomplete and recovers from autocomplete errors', async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());

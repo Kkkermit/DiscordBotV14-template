@@ -3,7 +3,15 @@
 const assert = require('node:assert/strict');
 const { describe, it } = require('node:test');
 const { ComponentType } = require('discord.js');
-const { USER_ID, createClient, createInteraction, createMessage, createUser } = require('./helpers/fakes');
+const {
+	DEVELOPER_ID,
+	GUILD_ID,
+	USER_ID,
+	createClient,
+	createInteraction,
+	createMessage,
+	createUser,
+} = require('./helpers/fakes');
 
 /**
  * Runs the real command files against fake Discord objects. Building the embeds also runs
@@ -52,18 +60,48 @@ describe('slash commands', () => {
 		assert.match(missing.replies[0].content, /no command called `nope`/);
 	});
 
-	it('/help hides developer-only commands and suggests names while typing', async (t) => {
+	it('/help suggests matching names and hides developer-only commands from other users', async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());
-		client.slashCommands.set('secret', { ...client.slashCommands.get('ping'), developerOnly: true });
+		const { SlashCommandBuilder } = require('discord.js');
+		client.slashCommands.set('secret', {
+			data: new SlashCommandBuilder().setName('secret').setDescription('Developers only.'),
+			developerOnly: true,
+			execute: async () => {},
+			category: 'Admin',
+			filePath: 'Admin/secret.js',
+		});
+		const help = client.slashCommands.get('help');
+		const suggestionsFor = async (userId) => {
+			const interaction = createInteraction('help', { userId, focused: 'e' });
+			await help.autocomplete(interaction, client);
+			return interaction.responses[0].map(({ name }) => name);
+		};
 
-		const interaction = createInteraction('help', { focused: 'e' });
-		await client.slashCommands.get('help').autocomplete(interaction, client);
-		const names = interaction.responses[0].map(({ name }) => name);
-		assert.deepEqual(
-			names,
-			['bot-info', 'help', 'ping', 'uptime', 'user-info'].filter((name) => name.includes('e')),
-		);
+		assert.deepEqual(await suggestionsFor(USER_ID), ['help', 'uptime', 'user-info']);
+		assert.deepEqual(await suggestionsFor(DEVELOPER_ID), ['help', 'secret', 'uptime', 'user-info']);
+	});
+
+	it('/help stays within Discord embed limits with many commands', async (t) => {
+		const client = createClient();
+		t.after(() => client.destroy());
+		const { SlashCommandBuilder, embedLength } = require('discord.js');
+		for (let i = 0; i < 200; i += 1) {
+			const name = `command-${i}`;
+			client.slashCommands.set(name, {
+				data: new SlashCommandBuilder().setName(name).setDescription('A'.repeat(100)),
+				execute: async () => {},
+				category: `Category ${i % 12}`,
+				filePath: `${name}.js`,
+			});
+		}
+
+		const interaction = createInteraction('help');
+		await client.slashCommands.get('help').execute(interaction, client);
+		const embed = embedOf(interaction.replies[0]);
+		assert.ok(embedLength(embed) <= 6000, `embed is ${embedLength(embed)} characters`);
+		assert.ok(embed.fields.every((field) => field.value.length <= 1024));
+		assert.ok(embed.fields.some((field) => /…and \d+ more$/.test(field.value)));
 	});
 
 	it('/help finds context menu commands regardless of case', async (t) => {
@@ -116,6 +154,34 @@ describe('slash commands', () => {
 		const [row] = interaction.edits[0].components;
 		assert.equal(row.components[0].data.type, ComponentType.Button);
 		assert.equal(row.components[0].data.disabled, true);
+	});
+
+	it('/user-info shows server details for members', async (t) => {
+		const client = createClient();
+		t.after(() => client.destroy());
+		const { Collection } = require('discord.js');
+		const role = (id, position) => ({ id, position, toString: () => `<@&${id}>` });
+		const roles = new Collection([[GUILD_ID, role(GUILD_ID, 0)]]); // The @everyone role has the server's ID.
+		for (let i = 1; i <= 20; i += 1) roles.set(`role-${i}`, role(`role-${i}`, i));
+
+		const interaction = createInteraction('user-info');
+		interaction.inCachedGuild = () => true;
+		interaction.member = {
+			id: interaction.user.id,
+			displayColor: 0,
+			nickname: 'Nick',
+			joinedAt: new Date('2024-01-01T00:00:00Z'),
+			roles: { cache: roles },
+		};
+
+		await client.slashCommands.get('user-info').execute(interaction, client);
+		const fields = Object.fromEntries(
+			embedOf(interaction.replies[0]).fields.map(({ name, value }) => [name, value]),
+		);
+		assert.equal(fields.Nickname, 'Nick');
+		assert.match(fields['Roles (20)'], /^<@&role-20> <@&role-19>/);
+		assert.match(fields['Roles (20)'], /and 5 more$/);
+		assert.ok(!fields['Roles (20)'].includes(GUILD_ID), '@everyone should not be listed');
 	});
 
 	it('/user-info describes the requested user', async (t) => {

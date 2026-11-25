@@ -138,7 +138,9 @@ async function main() {
 			}
 		}
 
-		fs.writeFileSync(ENV_FILE_PATH, buildEnvFile(values), { mode: 0o600 });
+		fs.writeFileSync(ENV_FILE_PATH, buildEnvFile(values));
+		// Only your user may read the file. (Has no effect on Windows, which uses its own permissions.)
+		fs.chmodSync(ENV_FILE_PATH, 0o600);
 		log.success(`Saved ${relativePath}. Start the bot with "npm start".`);
 	} finally {
 		rl.close();

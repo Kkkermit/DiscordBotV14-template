@@ -16,7 +16,7 @@ module.exports = {
 			.setThumbnail(client.user.displayAvatarURL())
 			.addFields(
 				{ name: 'Uptime', value: `\`${formatDuration(client.uptime)}\``, inline: true },
-				{ name: 'Online since', value: time(onlineSince, TimestampStyles.LongDateTime), inline: true },
+				{ name: 'Online since', value: time(onlineSince, TimestampStyles.FullDateShortTime), inline: true },
 			);
 
 		await interaction.reply({ embeds: [embed] });

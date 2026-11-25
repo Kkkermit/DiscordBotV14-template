@@ -191,7 +191,7 @@ Context menu commands appear when right-clicking a user or a message. Put them i
 ```js
 const { ApplicationCommandType, ContextMenuCommandBuilder, MessageFlags } = require('discord.js');
 
-/** @type {import('../../../types').SlashCommand} */
+/** @type {import('../../../types').ContextMenuCommand} */
 module.exports = {
   data: new ContextMenuCommandBuilder().setName('Avatar').setType(ApplicationCommandType.User),
 

@@ -19,18 +19,23 @@ async function syncSlashCommands(client) {
 	const scope = guildId ? `server ${guildId}` : 'all servers (global)';
 	const options = { rest: client.rest, applicationId: client.application.id, guildId };
 
+	const { registerOnStartup } = client.config.commands;
+	const hasBrokenFiles = client.failedSlashCommandFiles.length > 0;
+
 	let registered;
-	if (client.config.commands.registerOnStartup) {
+	if (registerOnStartup && !hasBrokenFiles) {
 		const body = client.slashCommands.map((command) => command.data.toJSON());
 		registered = await deployCommands({ ...options, body });
 		log.success(`Registered ${registered.length} slash command(s) in ${scope}.`);
 		if (!guildId)
 			log.info('Global commands can take up to an hour to appear. Set DISCORD_GUILD_ID while developing.');
 	} else {
+		// Registering now would delete the broken commands from Discord, so keep the current list instead.
+		if (registerOnStartup) {
+			log.warn('Slash commands were not registered because a command file failed to load. Fix it and restart.');
+		}
 		registered = await fetchRegisteredCommands(options);
-		log.info(
-			`Found ${registered.length} registered slash command(s) in ${scope}. Run "npm run deploy" after changes.`,
-		);
+		log.info(`Found ${registered.length} registered slash command(s) in ${scope}.`);
 	}
 
 	client.commandIds = new Collection(

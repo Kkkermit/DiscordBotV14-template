@@ -85,12 +85,15 @@ function createSentMessage(payload) {
  * @param {{ authorId?: string, permissions?: bigint[] }} [options]
  */
 function createMessage(content, { authorId = USER_ID, permissions = [] } = {}) {
+	const channel = { id: '100000000000000005' };
 	return {
 		content,
 		author: createUser(authorId),
-		member: { permissions: new PermissionsBitField(permissions) },
+		// The permissions the member has in this message's channel.
+		member: { permissionsIn: (target) => (target === channel ? new PermissionsBitField(permissions) : null) },
 		guild: { id: GUILD_ID, name: 'Test Server' },
-		channelId: '100000000000000005',
+		channel,
+		channelId: channel.id,
 		webhookId: null,
 		system: false,
 		createdTimestamp: Date.now(),

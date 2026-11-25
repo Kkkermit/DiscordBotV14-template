@@ -18,9 +18,11 @@ module.exports = {
 
 		const command = client.getPrefixCommand(name);
 		if (!command || (command.developerOnly && !client.isDeveloper(message.author.id))) {
-			await message.reply(
-				`There is no command called \`${name}\`. Use \`${client.config.prefix}help\` to see every command.`,
-			);
+			await message.reply({
+				// The name is typed by the user: remove backticks so it can't break out of the code style.
+				content: `There is no command called \`${name.replaceAll('`', '')}\`. Use \`${client.config.prefix}help\` to see every command.`,
+				allowedMentions: { parse: [] },
+			});
 			return;
 		}
 

@@ -67,6 +67,30 @@ describe('messageCreate (prefix commands)', () => {
 		assert.equal(quiet.replies.length, 0);
 	});
 
+	it('does not answer chat that merely starts with the prefix', async (t) => {
+		const client = createClient();
+		t.after(() => client.destroy());
+
+		const messages = ['??', '?! really', '?? what', '?...'].map((content) => createMessage(content));
+		for (const message of messages) await messageCreate.execute(message, client);
+		assert.deepEqual(
+			messages.flatMap((message) => message.replies),
+			[],
+		);
+	});
+
+	it('sends at most one notice per user every few seconds', async (t) => {
+		const client = createClient();
+		t.after(() => client.destroy());
+
+		const first = createMessage('?nope');
+		const second = createMessage('?nope');
+		await messageCreate.execute(first, client);
+		await messageCreate.execute(second, client);
+		assert.equal(first.replies.length, 1);
+		assert.equal(second.replies.length, 0);
+	});
+
 	it('blocks developer-only commands for everyone else', async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());

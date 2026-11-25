@@ -45,8 +45,9 @@ module.exports = {
 		);
 		if (!command) {
 			await interaction.reply({
-				content: `There is no command called \`${name}\`. Use \`/help\` to see every command.`,
+				content: `There is no command called \`${name.replaceAll('`', '')}\`. Use \`/help\` to see every command.`,
 				flags: MessageFlags.Ephemeral,
+				allowedMentions: { parse: [] },
 			});
 			return;
 		}

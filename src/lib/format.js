@@ -41,6 +41,31 @@ function truncate(text, maxLength) {
 }
 
 /**
+ * Joins lines with line breaks, leaving out whole lines (never half of one) to stay within `maxLength`.
+ * When lines are left out, the last line says how many.
+ *
+ * @param {string[]} lines
+ * @param {number} maxLength
+ * @returns {string}
+ */
+function joinLines(lines, maxLength) {
+	const kept = [];
+	let length = 0;
+	for (const [index, line] of lines.entries()) {
+		const more = `…and ${lines.length - index} more`;
+		const isLast = index === lines.length - 1;
+		// Keep room for the "…and N more" line unless this is the last line.
+		if (length + line.length + (isLast ? 0 : more.length + 1) > maxLength) {
+			kept.push(more);
+			break;
+		}
+		kept.push(line);
+		length += line.length + 1;
+	}
+	return kept.join('\n');
+}
+
+/**
  * Replaces `{placeholders}` in a template with values. Unknown placeholders are left untouched.
  *
  * @example formatMessage('Hello {name}!', { name: 'world' }) // 'Hello world!'
@@ -53,14 +78,14 @@ function formatMessage(template, values = {}) {
 }
 
 /**
- * Makes user-provided text safe to place inside a Markdown code block by
- * stopping it from closing the block early.
+ * Makes user-provided text safe to put inside a Markdown code block: a zero-width space after every
+ * backtick means no run of three can close the block early.
  *
  * @param {string} text
  * @returns {string}
  */
 function escapeCodeBlock(text) {
-	return String(text).replaceAll('```', '`​``');
+	return String(text).replaceAll('`', '`\u200b');
 }
 
-module.exports = { formatDuration, truncate, formatMessage, escapeCodeBlock };
+module.exports = { formatDuration, truncate, joinLines, formatMessage, escapeCodeBlock };

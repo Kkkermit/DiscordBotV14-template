@@ -34,6 +34,11 @@ async function sendNotice(interaction, message) {
 async function handleAutocomplete(interaction, client) {
 	const command = client.slashCommands.get(interaction.commandName);
 	if (!command?.autocomplete) return;
+	// Suggestions can reveal data, so they follow the same rule as running the command.
+	if (command.developerOnly && !client.isDeveloper(interaction.user.id)) {
+		await interaction.respond([]);
+		return;
+	}
 
 	try {
 		await command.autocomplete(interaction, client);

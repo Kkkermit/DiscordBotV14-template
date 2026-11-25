@@ -13,17 +13,28 @@
  */
 
 /**
- * A slash command (or context menu command) in `src/commands/slash/<Category>/<name>.js`.
+ * A slash command in `src/commands/slash/<Category>/<name>.js`.
  *
  * @typedef {object} SlashCommand
  * @property {{ name: string, description?: string, toJSON(): import('discord.js').RESTPostAPIApplicationCommandsJSONBody }} data
- *   The command definition, built with `SlashCommandBuilder` or `ContextMenuCommandBuilder`.
+ *   The command definition, built with `SlashCommandBuilder`.
  * @property {(interaction: import('discord.js').ChatInputCommandInteraction, client: BotClient) => Promise<unknown>} execute
  *   Runs when someone uses the command.
  * @property {(interaction: import('discord.js').AutocompleteInteraction, client: BotClient) => Promise<unknown>} [autocomplete]
  *   Runs while someone types an option that has `.setAutocomplete(true)`.
  * @property {number} [cooldown] Seconds a user must wait between uses. Defaults to `config.commands.defaultCooldownSeconds`.
  * @property {boolean} [developerOnly] Only users listed in `DEVELOPER_IDS` may use the command.
+ */
+
+/**
+ * A context menu command (right-click on a user or message) in `src/commands/slash/<Category>/<name>.js`,
+ * built with `ContextMenuCommandBuilder`. It supports the same `cooldown` and `developerOnly` options.
+ *
+ * @typedef {object} ContextMenuCommand
+ * @property {{ name: string, toJSON(): import('discord.js').RESTPostAPIApplicationCommandsJSONBody }} data
+ * @property {(interaction: import('discord.js').ContextMenuCommandInteraction, client: BotClient) => Promise<unknown>} execute
+ * @property {number} [cooldown]
+ * @property {boolean} [developerOnly]
  */
 
 /**

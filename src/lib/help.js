@@ -2,11 +2,13 @@
 
 const { ApplicationCommandType, PermissionsBitField, chatInputApplicationCommandMention } = require('discord.js');
 const { createEmbed } = require('./embeds');
-const { truncate } = require('./format');
+const { joinLines, truncate } = require('./format');
 
-// Discord embed limits.
+// Discord limits an embed to 25 fields of 1024 characters, and 6000 characters in total.
 const MAX_FIELDS = 25;
 const MAX_FIELD_LENGTH = 1024;
+/** Characters shared by all category lists, leaving room for the title, description and footer. */
+const COMMAND_LIST_BUDGET = 4500;
 
 /**
  * Builds one embed field per category, listing its commands with `formatLine`.
@@ -16,15 +18,17 @@ const MAX_FIELD_LENGTH = 1024;
  * @param {(command: T) => string} formatLine
  */
 function categoryFields(commands, formatLine) {
-	const fields = Object.entries(Object.groupBy(commands, (command) => command.category))
+	const categories = Object.entries(Object.groupBy(commands, (command) => command.category))
 		.sort(([a], [b]) => a.localeCompare(b))
-		.slice(0, MAX_FIELDS)
-		.map(([category, list]) => ({
-			name: category,
-			value: truncate(list.map(formatLine).join('\n'), MAX_FIELD_LENGTH),
-		}));
+		.slice(0, MAX_FIELDS);
+	if (categories.length === 0) return [{ name: 'No commands', value: 'There are no commands yet.' }];
 
-	return fields.length > 0 ? fields : [{ name: 'No commands', value: 'There are no commands yet.' }];
+	// Each category gets an equal share, so the whole embed stays under Discord's limit.
+	const maxLength = Math.min(MAX_FIELD_LENGTH, Math.floor(COMMAND_LIST_BUDGET / categories.length));
+	return categories.map(([category, list]) => ({
+		name: category,
+		value: joinLines(list.map(formatLine), maxLength),
+	}));
 }
 
 /** Formats an optional description as ` - description`. */

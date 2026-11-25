@@ -186,6 +186,7 @@ function reportLoadResult(type, commands, failures) {
 function loadCommands(client) {
 	const slash = loadSlashCommands();
 	client.slashCommands = slash.commands;
+	client.failedSlashCommandFiles = slash.failures.map((failure) => failure.file);
 	reportLoadResult('slash', slash.commands, slash.failures);
 
 	const prefix = loadPrefixCommands();

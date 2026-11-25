@@ -9,13 +9,18 @@ const { getPrefixes, parsePrefixCommand } = require('../../lib/prefix');
 
 const log = logger.child('PrefixCommands');
 
+/** Each user gets at most one notice (unknown command, cooldown...) in this time, so spamming can't make the bot spam. */
+const NOTICE_COOLDOWN_MS = 5_000;
+
 /**
- * Replies with a notice, logging (instead of throwing) if the message can't be sent.
+ * Replies with a notice, unless the user just got one. Logs (instead of throwing) if the reply fails.
  *
  * @param {import('discord.js').Message} message
+ * @param {import('../../client').BotClient} client
  * @param {string} text
  */
-async function sendNotice(message, text) {
+async function sendNotice(message, client, text) {
+	if (client.cooldowns.consume('prefix-notice', message.author.id, NOTICE_COOLDOWN_MS) > 0) return;
 	try {
 		await message.reply({ embeds: [createNoticeEmbed(text)] });
 	} catch (error) {
@@ -43,31 +48,38 @@ module.exports = {
 		const command = client.getPrefixCommand(parsed.name);
 
 		if (!command) {
-			// Only hint for the text prefix: people often mention the bot just to talk to it.
-			if (config.commands.replyToUnknownCommands && parsed.prefix === config.prefix) {
-				await sendNotice(message, formatMessage(messages.unknownCommand, { prefix: config.prefix }));
+			// Only hint when it looks like a real attempt: the text prefix followed by a word. People often
+			// mention the bot just to talk to it, and "??" or "?!" in chat shouldn't get a reply.
+			const looksLikeCommand = parsed.prefix === config.prefix && /^[\p{L}\p{N}_-]+$/u.test(parsed.name);
+			if (config.commands.replyToUnknownCommands && looksLikeCommand) {
+				await sendNotice(message, client, formatMessage(messages.unknownCommand, { prefix: config.prefix }));
 			}
 			return;
 		}
 
 		if (command.developerOnly && !client.isDeveloper(message.author.id)) {
-			await sendNotice(message, messages.developerOnly);
+			await sendNotice(message, client, messages.developerOnly);
 			return;
 		}
 
 		if (command.permissions) {
+			// permissionsIn() includes the channel's permission overwrites, not just the member's roles.
 			const missing =
-				message.member?.permissions.missing(command.permissions) ??
+				message.member?.permissionsIn(message.channel).missing(command.permissions) ??
 				new PermissionsBitField(command.permissions).toArray();
 			if (missing.length > 0) {
-				await sendNotice(message, formatMessage(messages.noPermission, { permissions: missing.join(', ') }));
+				await sendNotice(
+					message,
+					client,
+					formatMessage(messages.noPermission, { permissions: missing.join(', ') }),
+				);
 				return;
 			}
 		}
 
 		if (command.args && parsed.args.length === 0) {
 			const usage = `${config.prefix}${command.name}${command.usage ? ` ${command.usage}` : ''}`;
-			await sendNotice(message, formatMessage(messages.missingArgs, { usage }));
+			await sendNotice(message, client, formatMessage(messages.missingArgs, { usage }));
 			return;
 		}
 
@@ -81,6 +93,7 @@ module.exports = {
 			const availableAt = new Date(Date.now() + remainingMs);
 			await sendNotice(
 				message,
+				client,
 				formatMessage(messages.cooldown, { time: time(availableAt, TimestampStyles.RelativeTime) }),
 			);
 			return;
@@ -97,7 +110,7 @@ module.exports = {
 			await command.execute(message, client, parsed.args);
 		} catch (error) {
 			log.error(`Error while running ${config.prefix}${command.name} (${command.filePath}):`, error);
-			await sendNotice(message, messages.error);
+			await sendNotice(message, client, messages.error);
 		}
 	},
 };
