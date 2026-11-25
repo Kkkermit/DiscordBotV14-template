@@ -24,8 +24,9 @@ module.exports = {
 		const query = interaction.options.getFocused().toLowerCase();
 		const suggestions = getVisibleSlashCommands(client, interaction.user.id)
 			.map((command) => command.data.name)
-			.filter((name) => name.includes(query))
-			.sort()
+			// Context menu commands can have capital letters, so compare in lower case.
+			.filter((name) => name.toLowerCase().includes(query))
+			.sort((a, b) => a.localeCompare(b))
 			.slice(0, MAX_SUGGESTIONS)
 			.map((name) => ({ name, value: name }));
 
@@ -39,7 +40,9 @@ module.exports = {
 			return;
 		}
 
-		const command = getVisibleSlashCommands(client, interaction.user.id).find(({ data }) => data.name === name);
+		const command = getVisibleSlashCommands(client, interaction.user.id).find(
+			({ data }) => data.name.toLowerCase() === name,
+		);
 		if (!command) {
 			await interaction.reply({
 				content: `There is no command called \`${name}\`. Use \`/help\` to see every command.`,

@@ -66,6 +66,28 @@ describe('slash commands', () => {
 		);
 	});
 
+	it('/help finds context menu commands regardless of case', async (t) => {
+		const client = createClient();
+		t.after(() => client.destroy());
+		const { ApplicationCommandType, ContextMenuCommandBuilder } = require('discord.js');
+		client.slashCommands.set('Avatar', {
+			data: new ContextMenuCommandBuilder().setName('Avatar').setType(ApplicationCommandType.User),
+			execute: async () => {},
+			category: 'Info',
+			filePath: 'Info/avatar.js',
+		});
+		const help = client.slashCommands.get('help');
+
+		const typing = createInteraction('help', { focused: 'av' });
+		await help.autocomplete(typing, client);
+		assert.deepEqual(typing.responses[0], [{ name: 'Avatar', value: 'Avatar' }]);
+
+		const detail = createInteraction('help', { options: { command: 'Avatar' } });
+		await help.execute(detail, client);
+		assert.equal(embedOf(detail.replies[0]).title, 'Command: Avatar');
+		assert.match(embedOf(detail.replies[0]).fields[0].value, /right-click menu/);
+	});
+
 	it('/bot-info can only be refreshed by the user who ran it', async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());
