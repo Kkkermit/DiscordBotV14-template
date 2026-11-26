@@ -11,11 +11,6 @@ const {
 	createUser,
 } = require('../helpers/fakes');
 
-/**
- * Runs the real command files against fake Discord objects. Building the embeds also runs
- * discord.js's own validation (field lengths, empty values...), so broken output fails here.
- */
-
 const embedOf = (payload) => payload.embeds[0].data;
 
 describe('slash commands', () => {

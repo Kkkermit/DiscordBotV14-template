@@ -13,12 +13,6 @@ const DEVELOPER_ID = '100000000000000003';
 const GUILD_ID = '100000000000000004';
 const AVATAR_URL = 'https://cdn.discordapp.com/embed/avatars/0.png';
 
-/**
- * Creates a fake Discord user.
- *
- * @param {string} id
- * @param {string} [username]
- */
 function createUser(id, username = `user${id.slice(-2)}`) {
 	return {
 		id,
@@ -32,12 +26,6 @@ function createUser(id, username = `user${id.slice(-2)}`) {
 	};
 }
 
-/**
- * Creates a real BotClient that is never logged in, with the template's commands loaded
- * and a fake bot user so embeds can be built.
- *
- * @param {Partial<import('../../src/env').Env>} [env]
- */
 function createClient(env = {}) {
 	const client = new BotClient({
 		token: 'test-token',
@@ -46,7 +34,7 @@ function createClient(env = {}) {
 		logLevel: 'error',
 		...env,
 	});
-	client.user = /** @type {any} */ ({ ...createUser(BOT_ID, 'TemplateBot'), bot: true, setPresence() {} });
+	client.user = { ...createUser(BOT_ID, 'TemplateBot'), bot: true, setPresence() {} };
 	client.readyTimestamp = Date.now() - 90_000;
 
 	const slash = loadSlashCommands();
@@ -57,7 +45,6 @@ function createClient(env = {}) {
 	return client;
 }
 
-/** A fake message returned by `reply`, supporting collectors and edits. */
 function createSentMessage(payload) {
 	return {
 		payload,
@@ -75,12 +62,6 @@ function createSentMessage(payload) {
 	};
 }
 
-/**
- * Creates a fake guild message.
- *
- * @param {string} content
- * @param {{ authorId?: string, permissions?: bigint[] }} [options]
- */
 function createMessage(content, { authorId = USER_ID, permissions = [] } = {}) {
 	const channel = { id: '100000000000000005' };
 	return {
@@ -103,12 +84,6 @@ function createMessage(content, { authorId = USER_ID, permissions = [] } = {}) {
 	};
 }
 
-/**
- * Creates a fake chat input command interaction.
- *
- * @param {string} commandName
- * @param {{ userId?: string, options?: Record<string, unknown>, focused?: string }} [settings]
- */
 function createInteraction(commandName, { userId = USER_ID, options = {}, focused = '' } = {}) {
 	const interaction = {
 		commandName,

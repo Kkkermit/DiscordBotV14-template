@@ -1,10 +1,8 @@
 const { SlashCommandBuilder, time, TimestampStyles } = require('discord.js');
 const { createEmbed } = require('../../../lib/embeds');
 
-/** Roles shown before the list is cut off, to stay within Discord's embed limits. */
 const MAX_ROLES_SHOWN = 15;
 
-/** @param {string[]} roles Role mentions, highest first. */
 function formatRoles(roles) {
 	if (roles.length === 0) return 'None';
 	const shown = roles.slice(0, MAX_ROLES_SHOWN).join(' ');

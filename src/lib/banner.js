@@ -2,25 +2,12 @@ const figlet = require('figlet');
 const { version } = require('../../package.json');
 const { colorize, supportsColor } = require('./logger');
 
-/**
- * Draws text as ASCII art. Falls back to the plain text if the font has none of its characters
- * (figlet fonts only cover basic Latin letters, so a name made of emoji or other scripts would be empty).
- *
- * @param {string} text
- * @param {string} font A figlet font name, e.g. `'ANSI Shadow'`.
- * @param {number} width Wrap the art at this many columns.
- */
+// figlet fonts only have basic Latin letters, so names in other scripts fall back to plain text.
 function renderAsciiArt(text, font, width) {
 	const art = figlet.textSync(text, { font, width, whitespaceBreak: true }).trimEnd();
 	return art.trim() ? art : text;
 }
 
-/**
- * Prints the bot's name as ASCII art, followed by a short summary.
- *
- * @param {import('../client').BotClient} client
- * @param {NodeJS.WritableStream & { columns?: number }} [stream]
- */
 function printBanner(client, stream = process.stdout) {
 	const colors = supportsColor(stream);
 	const art = renderAsciiArt(client.user.username, client.config.banner.font, stream.columns ?? 100);

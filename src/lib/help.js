@@ -5,16 +5,8 @@ const { joinLines, truncate } = require('./format');
 // Discord limits an embed to 25 fields of 1024 characters, and 6000 characters in total.
 const MAX_FIELDS = 25;
 const MAX_FIELD_LENGTH = 1024;
-/** Characters shared by all category lists, leaving room for the title, description and footer. */
 const COMMAND_LIST_BUDGET = 4500;
 
-/**
- * Builds one embed field per category, listing its commands with `formatLine`.
- *
- * @template {{ category: string }} T
- * @param {T[]} commands
- * @param {(command: T) => string} formatLine
- */
 function categoryFields(commands, formatLine) {
 	const categories = Object.entries(Object.groupBy(commands, (command) => command.category))
 		.sort(([a], [b]) => a.localeCompare(b))
@@ -31,21 +23,11 @@ function categoryFields(commands, formatLine) {
 
 const withDescription = (text) => (text ? ` - ${text}` : '');
 
-/**
- * @param {import('../client').BotClient} client
- * @param {number | undefined} cooldown
- */
 function formatCooldown(client, cooldown) {
 	const seconds = cooldown ?? client.config.commands.defaultCooldownSeconds;
 	return seconds > 0 ? `${seconds}s` : 'None';
 }
 
-/**
- * Shows a slash command as a clickable mention when Discord has given it an ID, otherwise as `/name`.
- *
- * @param {import('../client').BotClient} client
- * @param {import('../handlers/commandHandler').LoadedSlashCommand} command
- */
 function formatSlashCommandName(client, command) {
 	const { name, type } = command.data.toJSON();
 	if (type === ApplicationCommandType.User || type === ApplicationCommandType.Message) {
@@ -58,22 +40,10 @@ function formatSlashCommandName(client, command) {
 	return registered ? chatInputApplicationCommandMention(name, registered.id) : `\`/${name}\``;
 }
 
-/**
- * Hides developer-only commands from everyone who isn't a developer.
- *
- * @template {{ developerOnly?: boolean }} T
- * @param {import('../client').BotClient} client
- * @param {string} userId
- * @param {import('discord.js').Collection<string, T>} commands
- */
 function getVisibleCommands(client, userId, commands) {
 	return [...commands.values()].filter((command) => !command.developerOnly || client.isDeveloper(userId));
 }
 
-/**
- * @param {import('../client').BotClient} client
- * @param {string} userId
- */
 function createSlashHelpEmbed(client, userId) {
 	const fields = categoryFields(
 		getVisibleCommands(client, userId, client.slashCommands),
@@ -89,10 +59,6 @@ function createSlashHelpEmbed(client, userId) {
 		.addFields(fields);
 }
 
-/**
- * @param {import('../client').BotClient} client
- * @param {import('../handlers/commandHandler').LoadedSlashCommand} command
- */
 function createSlashCommandEmbed(client, command) {
 	const json = command.data.toJSON();
 	const options = (json.options ?? [])
@@ -110,10 +76,6 @@ function createSlashCommandEmbed(client, command) {
 		);
 }
 
-/**
- * @param {import('../client').BotClient} client
- * @param {string} userId
- */
 function createPrefixHelpEmbed(client, userId) {
 	const { prefix } = client.config;
 	const fields = categoryFields(
@@ -130,10 +92,6 @@ function createPrefixHelpEmbed(client, userId) {
 		.addFields(fields);
 }
 
-/**
- * @param {import('../client').BotClient} client
- * @param {import('../handlers/commandHandler').LoadedPrefixCommand} command
- */
 function createPrefixCommandEmbed(client, command) {
 	const usage = `${client.config.prefix}${command.name}${command.usage ? ` ${command.usage}` : ''}`;
 	const aliases = command.aliases?.map((alias) => `\`${alias}\``).join(', ');

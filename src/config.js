@@ -1,43 +1,30 @@
 const { ActivityType } = require('discord.js');
 
-/**
- * Bot settings. Everything here is safe to commit.
- * Secrets such as your bot token belong in the `.env` file instead (see `.env.example`).
- *
- * Invalid values are reported when the bot starts, so you'll know straight away if something is wrong.
- */
+// Your bot's settings. Secrets like the bot token go in the .env file instead.
+// If a value here is wrong, the bot tells you when it starts.
 module.exports = {
-	/** Prefix for message ("prefix") commands, e.g. `?ping`. */
+	// Prefix for message commands, e.g. ?ping
 	prefix: '?',
 
-	/** Default embed colour. Any discord.js colour name (e.g. `'Blurple'`, `'Green'`) or a hex number like `0x5865f2`. */
+	// A discord.js colour name like 'Blurple' or 'Green', or a hex number like 0x5865f2.
 	embedColor: 'Blurple',
 
-	/** Your name, shown in `bot-info` and embed footers. */
+	// Shown in bot-info and in embed footers.
 	developerName: 'Kkermit',
 
 	banner: {
-		/** Print the bot's name as ASCII art, and a short summary, once it is online. */
+		// Print the bot's name in big letters when it starts.
 		enabled: true,
-
-		/** A figlet font, such as 'ANSI Shadow', 'Standard', 'Slant' or 'Big'. Preview them at https://patorjk.com/software/taag */
+		// Try other fonts at https://patorjk.com/software/taag
 		font: 'ANSI Shadow',
 	},
 
 	presence: {
-		/** One of `'online'`, `'idle'`, `'dnd'` or `'invisible'`. */
+		// 'online', 'idle', 'dnd' or 'invisible'.
 		status: 'online',
-
-		/**
-		 * Seconds between activity changes. Must be at least 15 to stay within Discord's rate limits.
-		 * Set to `0` to always show the first activity.
-		 */
+		// Seconds between activity changes: 0 (don't change) or at least 15.
 		rotateIntervalSeconds: 30,
-
-		/**
-		 * Activities the bot cycles through. `name` can be a string or a function receiving the client,
-		 * which is called every time the activity is shown so the numbers stay up to date.
-		 */
+		// The name can be text, or a function that gets the client so numbers stay up to date.
 		activities: [
 			{ type: ActivityType.Watching, name: (client) => `${client.guilds.cache.size} servers` },
 			{ type: ActivityType.Listening, name: '/help' },
@@ -46,37 +33,26 @@ module.exports = {
 	},
 
 	commands: {
-		/** Cooldown (in seconds) used when a command doesn't set its own `cooldown`. `0` disables it. */
+		// Used when a command doesn't set its own cooldown. 0 turns it off.
 		defaultCooldownSeconds: 3,
-
-		/** Let users run prefix commands by mentioning the bot, e.g. `@Bot ping`. */
+		// Allow "@YourBot ping" as well as "?ping".
 		mentionAsPrefix: true,
-
-		/** Reply with a hint when someone types the prefix followed by a command that doesn't exist. */
+		// Reply with a hint when someone uses a prefix command that doesn't exist.
 		replyToUnknownCommands: true,
 	},
 
 	logging: {
-		/**
-		 * Channel ID where every command use is logged as an embed. Leave empty to disable.
-		 * The bot needs permission to view and send messages in that channel.
-		 */
+		// A channel ID to post every command use in. Leave empty to turn it off.
 		commandLogChannelId: '',
 	},
 
 	updateCheck: {
-		/** Check GitHub for a newer release of this template on startup. */
+		// Check GitHub for a newer version of this template when the bot starts.
 		enabled: true,
-
-		/** The `owner/name` of the GitHub repository whose releases are checked. */
 		repository: 'Kkkermit/DiscordBotV14-template',
 	},
 
-	/**
-	 * Replies shown to users. `{placeholders}` are replaced automatically:
-	 * `{time}` a relative timestamp, `{usage}` the command usage, `{prefix}` the prefix,
-	 * `{permissions}` the missing permissions.
-	 */
+	// Replies users see. Words in {braces} are filled in automatically.
 	messages: {
 		error: 'Something went wrong while running this command. Please try again later.',
 		noPermission: 'You **do not** have permission to use this command. Missing: {permissions}.',

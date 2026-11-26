@@ -8,16 +8,8 @@ const { getPrefixes, parsePrefixCommand } = require('../../lib/prefix');
 
 const log = logger.child('PrefixCommands');
 
-/** Each user gets at most one notice (unknown command, cooldown...) in this time, so spamming can't make the bot spam. */
 const NOTICE_COOLDOWN_MS = 5_000;
 
-/**
- * Replies with a notice, unless the user just got one. Logs (instead of throwing) if the reply fails.
- *
- * @param {import('discord.js').Message} message
- * @param {import('../../client').BotClient} client
- * @param {string} text
- */
 async function sendNotice(message, client, text) {
 	if (client.cooldowns.consume('prefix-notice', message.author.id, NOTICE_COOLDOWN_MS) > 0) return;
 	try {
@@ -27,15 +19,8 @@ async function sendNotice(message, client, text) {
 	}
 }
 
-/** @type {import('../../types').BotEvent} */
 module.exports = {
 	name: Events.MessageCreate,
-	/**
-	 * Parses prefix commands and runs them after checking developer-only, permissions, arguments and cooldowns.
-	 *
-	 * @param {import('discord.js').Message} message
-	 * @param {import('../../client').BotClient} client
-	 */
 	async execute(message, client) {
 		if (message.author.bot || message.webhookId || message.system || !message.inGuild()) return;
 
@@ -47,8 +32,7 @@ module.exports = {
 		const command = client.getPrefixCommand(parsed.name);
 
 		if (!command) {
-			// Only hint when it looks like a real attempt: the text prefix followed by a word. People often
-			// mention the bot just to talk to it, and "??" or "?!" in chat shouldn't get a reply.
+			// Don't answer normal chat like "??" or "@Bot thanks", only things that look like a command.
 			const looksLikeCommand = parsed.prefix === config.prefix && /^[\p{L}\p{N}_-]+$/u.test(parsed.name);
 			if (config.commands.replyToUnknownCommands && looksLikeCommand) {
 				await sendNotice(message, client, formatMessage(messages.unknownCommand, { prefix: config.prefix }));
@@ -62,8 +46,7 @@ module.exports = {
 		}
 
 		if (command.permissions) {
-			// permissionsIn() includes the channel's permission overwrites, not just the member's roles.
-			// If the member isn't available, treat every permission as missing.
+			// permissionsIn() also counts the channel's own permission settings.
 			const missing =
 				message.member?.permissionsIn(message.channel).missing(command.permissions) ??
 				new PermissionsBitField(command.permissions).toArray();

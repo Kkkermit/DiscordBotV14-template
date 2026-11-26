@@ -8,17 +8,9 @@ const log = logger.child('Commands');
 const SLASH_COMMANDS_DIR = path.join(__dirname, '..', 'commands', 'slash');
 const PREFIX_COMMANDS_DIR = path.join(__dirname, '..', 'commands', 'prefix');
 
-/**
- * @typedef {import('../types').SlashCommand & { category: string, filePath: string }} LoadedSlashCommand
- * @typedef {import('../types').PrefixCommand & { category: string, filePath: string }} LoadedPrefixCommand
- * @typedef {{ file: string, reason: string, error?: unknown }} LoadFailure
- */
-
 const isLowerCaseWord = (value) => typeof value === 'string' && /^\S+$/.test(value) && value === value.toLowerCase();
 
 // Each validator returns what is wrong with a command file's export, or `null` if it's valid.
-
-/** @param {any} command */
 function validateCommonOptions(command) {
 	if (typeof command.execute !== 'function') return 'missing an "execute" function.';
 	if (command.cooldown !== undefined && !(Number.isFinite(command.cooldown) && command.cooldown >= 0)) {
@@ -30,7 +22,6 @@ function validateCommonOptions(command) {
 	return null;
 }
 
-/** @param {any} command A slash or context menu command. */
 function validateSlashCommand(command) {
 	if (typeof command?.data?.toJSON !== 'function') {
 		return 'missing a "data" property built with SlashCommandBuilder or ContextMenuCommandBuilder.';
@@ -47,7 +38,6 @@ function validateSlashCommand(command) {
 	return validateCommonOptions(command);
 }
 
-/** @param {any} command */
 function validatePrefixCommand(command) {
 	if (!isLowerCaseWord(command?.name)) return 'missing a "name": a single lower case word.';
 	if (command.aliases !== undefined && !(Array.isArray(command.aliases) && command.aliases.every(isLowerCaseWord))) {
@@ -64,15 +54,6 @@ function validatePrefixCommand(command) {
 	return validateCommonOptions(command);
 }
 
-/**
- * Loads every command file in a directory. Broken files are reported in `failures` instead of crashing the bot.
- *
- * @template T
- * @param {string} directory
- * @param {(command: any) => string | null} validate
- * @param {(command: any) => string} getName
- * @returns {{ commands: Collection<string, T & { category: string, filePath: string }>, failures: LoadFailure[] }}
- */
 function loadCommandFiles(directory, validate, getName) {
 	const commands = new Collection();
 	const failures = [];
@@ -99,7 +80,6 @@ function loadCommandFiles(directory, validate, getName) {
 
 			commands.set(name, { ...command, category: getCategory(directory, file), filePath });
 		} catch (error) {
-			// Syntax errors and other errors thrown while the file loads.
 			failures.push({ file: filePath, reason: error?.message ?? String(error), error });
 		}
 	}
@@ -107,23 +87,10 @@ function loadCommandFiles(directory, validate, getName) {
 	return { commands, failures };
 }
 
-/**
- * Loads the slash commands in `src/commands/slash`.
- *
- * @param {string} [directory]
- * @returns {{ commands: Collection<string, LoadedSlashCommand>, failures: LoadFailure[] }}
- */
 function loadSlashCommands(directory = SLASH_COMMANDS_DIR) {
 	return loadCommandFiles(directory, validateSlashCommand, (command) => command.data.name);
 }
 
-/**
- * Loads the prefix commands in `src/commands/prefix` and builds the alias lookup table.
- * A command's name always wins over another command's alias; conflicting aliases are skipped with a warning.
- *
- * @param {string} [directory]
- * @returns {{ commands: Collection<string, LoadedPrefixCommand>, aliases: Collection<string, string>, failures: LoadFailure[], warnings: string[] }}
- */
 function loadPrefixCommands(directory = PREFIX_COMMANDS_DIR) {
 	const { commands, failures } = loadCommandFiles(directory, validatePrefixCommand, (command) => command.name);
 	const aliases = new Collection();
@@ -143,13 +110,6 @@ function loadPrefixCommands(directory = PREFIX_COMMANDS_DIR) {
 	return { commands, aliases, failures, warnings };
 }
 
-/**
- * Logs how many commands were loaded and why any file was skipped.
- *
- * @param {'slash' | 'prefix'} type
- * @param {Collection<string, { category: string }>} commands
- * @param {LoadFailure[]} failures
- */
 function reportLoadResult(type, commands, failures) {
 	for (const { file, reason, error } of failures) {
 		// Print thrown errors in full: their stack shows the line that broke.
@@ -163,7 +123,6 @@ function reportLoadResult(type, commands, failures) {
 	log.success(`Loaded ${commands.size} ${type} command(s)${perCategory ? ` (${perCategory})` : ''}.`);
 }
 
-/** @param {import('../client').BotClient} client */
 function loadCommands(client) {
 	const slash = loadSlashCommands();
 	client.slashCommands = slash.commands;

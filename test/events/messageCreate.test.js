@@ -4,7 +4,6 @@ const { PermissionFlagsBits } = require('discord.js');
 const messageCreate = require('../../src/events/messages/messageCreate');
 const { DEVELOPER_ID, createClient, createMessage } = require('../helpers/fakes');
 
-/** Adds a temporary prefix command to the client. */
 function addCommand(client, command) {
 	client.prefixCommands.set(command.name, { category: 'Test', filePath: 'Test/test.js', ...command });
 }

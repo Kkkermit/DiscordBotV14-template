@@ -8,10 +8,6 @@ const log = logger.child('Events');
 const EVENTS_DIR = path.join(__dirname, '..', 'events');
 const KNOWN_EVENTS = new Set(Object.values(Events));
 
-/**
- * @param {any} event
- * @returns {string | null} What is wrong with an event file's export, or `null` if it's valid.
- */
 function validateEvent(event) {
 	if (!event || typeof event !== 'object') return 'the file does not export an event object.';
 	if (typeof event.name !== 'string' || event.name.length === 0) {
@@ -22,16 +18,6 @@ function validateEvent(event) {
 	return null;
 }
 
-/**
- * Registers every event in `src/events` on the client.
- *
- * Each listener is wrapped so an error thrown by one event is logged with its file name
- * instead of becoming an unhandled promise rejection.
- *
- * @param {import('../client').BotClient} client
- * @param {string} [directory]
- * @returns {number} How many events were registered.
- */
 function loadEvents(client, directory = EVENTS_DIR) {
 	let registered = 0;
 
@@ -54,6 +40,7 @@ function loadEvents(client, directory = EVENTS_DIR) {
 			log.warn(`Event ${relativePath} listens to "${event.name}", which is not a discord.js client event.`);
 		}
 
+		// Catch errors here so one broken event can't crash the bot.
 		const listener = async (...args) => {
 			try {
 				await event.execute(...args, client);

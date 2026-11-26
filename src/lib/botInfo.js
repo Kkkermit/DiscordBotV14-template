@@ -15,14 +15,8 @@ const { logger } = require('./logger');
 const log = logger.child('BotInfo');
 
 const REFRESH_BUTTON_ID = 'bot-info:refresh';
-/** How long the refresh button keeps working after the command is used. */
 const REFRESH_TIMEOUT_MS = 60_000;
 
-/**
- * Builds the bot information embed shared by the `bot-info` slash and prefix commands.
- *
- * @param {import('../client').BotClient} client
- */
 function createBotInfoEmbed(client) {
 	const ping = client.ws.ping >= 0 ? `${Math.round(client.ws.ping)}ms` : 'measuring...';
 
@@ -44,7 +38,6 @@ function createBotInfoEmbed(client) {
 		.setTimestamp();
 }
 
-/** @param {boolean} disabled Disable the button once it stops working. */
 function createRefreshRow(disabled) {
 	const refreshButton = new ButtonBuilder()
 		.setCustomId(REFRESH_BUTTON_ID)
@@ -55,25 +48,11 @@ function createRefreshRow(disabled) {
 	return new ActionRowBuilder().addComponents(refreshButton);
 }
 
-/**
- * Creates the message payload (embed and refresh button) for the bot information message.
- *
- * @param {import('../client').BotClient} client
- */
 function createBotInfoPayload(client) {
 	return { embeds: [createBotInfoEmbed(client)], components: [createRefreshRow(false)] };
 }
 
-/**
- * Lets the user who ran the command refresh the stats for a minute, then disables the button.
- * This is the recommended pattern for buttons that belong to a single command: a collector on the message.
- *
- * @param {object} options
- * @param {import('discord.js').Message} options.message The message with the refresh button.
- * @param {string} options.userId Only this user may press the button.
- * @param {import('../client').BotClient} options.client
- * @param {(payload: { components: ActionRowBuilder[] }) => Promise<unknown>} options.edit Edits the message.
- */
+// Only the person who ran the command can press Refresh, and only for a minute.
 function collectRefreshClicks({ message, userId, client, edit }) {
 	const collector = message.createMessageComponentCollector({
 		componentType: ComponentType.Button,

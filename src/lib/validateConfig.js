@@ -7,7 +7,7 @@ const ACTIVITY_TYPES = Object.values(ActivityType).filter((value) => typeof valu
 const FONTS = figlet.fontsSync();
 const MESSAGE_KEYS = ['error', 'noPermission', 'developerOnly', 'cooldown', 'missingArgs', 'unknownCommand'];
 
-/** Discord rate-limits presence updates, so activities can't change faster than this. */
+// Discord limits how often the bot's activity can change.
 const MIN_ROTATE_INTERVAL_SECONDS = 15;
 
 const isNonEmptyString = (value) => typeof value === 'string' && value.trim() !== '';
@@ -22,12 +22,6 @@ function isColor(value) {
 	}
 }
 
-/**
- * Checks `src/config.js` for mistakes.
- *
- * @param {typeof import('../config')} config
- * @returns {string[]} A message for every problem found. Empty when the config is valid.
- */
 function validateConfig(config) {
 	const issues = [];
 	const check = (isValid, message) => {

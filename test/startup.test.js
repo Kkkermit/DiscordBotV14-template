@@ -7,10 +7,6 @@ const { promisify } = require('node:util');
 const run = promisify(execFile);
 const ROOT = path.join(__dirname, '..');
 
-/**
- * Starts the bot with the given environment variables and returns its output and exit code.
- * Variables set to an empty string also stop a developer's own `.env` file from filling them in.
- */
 async function startBot(env) {
 	const options = { cwd: ROOT, env: { PATH: process.env.PATH, NO_COLOR: '1', ...env }, timeout: 20_000 };
 	try {

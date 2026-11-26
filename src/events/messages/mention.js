@@ -1,19 +1,12 @@
 const { Events } = require('discord.js');
 const { createEmbed } = require('../../lib/embeds');
 
-/** @type {import('../../types').BotEvent} */
 module.exports = {
 	name: Events.MessageCreate,
-	/**
-	 * Introduces the bot when a message contains nothing but a mention of it.
-	 * This is a second `messageCreate` listener, showing that several events can share a name.
-	 *
-	 * @param {import('discord.js').Message} message
-	 * @param {import('../../client').BotClient} client
-	 */
 	async execute(message, client) {
 		if (message.author.bot || !message.inGuild()) return;
 
+		// Only reply when the whole message is a mention of the bot.
 		const mention = new RegExp(`^<@!?${client.user.id}>$`);
 		if (!mention.test(message.content.trim())) return;
 

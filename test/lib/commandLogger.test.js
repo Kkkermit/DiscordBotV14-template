@@ -9,7 +9,6 @@ function loadCommandLogger() {
 	return require('../../src/lib/commandLogger');
 }
 
-/** A client whose log channel records what is sent to it. */
 function createLoggingClient(t, channel) {
 	const client = createClient();
 	t.after(() => client.destroy());

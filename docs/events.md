@@ -12,7 +12,6 @@ const { logger } = require('../../lib/logger');
 
 const log = logger.child('Channels');
 
-/** @type {import('../../types').BotEvent} */
 module.exports = {
   name: Events.ChannelCreate,
 
@@ -67,7 +66,6 @@ const { Events } = require('discord.js');
 
 const WELCOME_CHANNEL_ID = '123456789012345678';
 
-/** @type {import('../../types').BotEvent} */
 module.exports = {
   name: Events.GuildMemberAdd,
 

@@ -1,7 +1,6 @@
 const { MessageFlags, SlashCommandBuilder } = require('discord.js');
 const { createSlashCommandEmbed, createSlashHelpEmbed, getVisibleCommands } = require('../../../lib/help');
 
-/** Discord shows at most 25 autocomplete suggestions. */
 const MAX_SUGGESTIONS = 25;
 
 /** @type {import('../../../types').SlashCommand} */

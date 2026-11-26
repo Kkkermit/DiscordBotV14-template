@@ -5,7 +5,6 @@ require('../helpers/fakes'); // Silences the logger.
 
 const EVENTS = ['SIGINT', 'SIGTERM', 'unhandledRejection', 'uncaughtException'];
 
-/** Registers the handlers with process.exit mocked, and removes them again after the test. */
 function setUp(t, client) {
 	const before = Object.fromEntries(EVENTS.map((event) => [event, process.listeners(event)]));
 	const exit = t.mock.method(process, 'exit', () => {});

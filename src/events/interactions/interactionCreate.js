@@ -7,16 +7,6 @@ const { replyEphemeral } = require('../../lib/replies');
 
 const log = logger.child('Interactions');
 
-/**
- * @typedef {import('discord.js').ChatInputCommandInteraction | import('discord.js').ContextMenuCommandInteraction} CommandInteraction
- */
-
-/**
- * Replies with a notice, logging (instead of throwing) if the interaction can no longer be answered.
- *
- * @param {CommandInteraction} interaction
- * @param {string} message
- */
 async function sendNotice(interaction, message) {
 	try {
 		await replyEphemeral(interaction, { embeds: [createNoticeEmbed(message)] });
@@ -25,10 +15,6 @@ async function sendNotice(interaction, message) {
 	}
 }
 
-/**
- * @param {import('discord.js').AutocompleteInteraction} interaction
- * @param {import('../../client').BotClient} client
- */
 async function handleAutocomplete(interaction, client) {
 	const command = client.slashCommands.get(interaction.commandName);
 	if (!command?.autocomplete) return;
@@ -47,12 +33,6 @@ async function handleAutocomplete(interaction, client) {
 	}
 }
 
-/**
- * Runs slash and context menu commands, applying the developer-only and cooldown checks.
- *
- * @param {CommandInteraction} interaction
- * @param {import('../../client').BotClient} client
- */
 async function handleCommand(interaction, client) {
 	const { messages } = client.config;
 	const command = client.slashCommands.get(interaction.commandName);
@@ -90,13 +70,8 @@ async function handleCommand(interaction, client) {
 	}
 }
 
-/** @type {import('../../types').BotEvent} */
 module.exports = {
 	name: Events.InteractionCreate,
-	/**
-	 * @param {import('discord.js').Interaction} interaction
-	 * @param {import('../../client').BotClient} client
-	 */
 	async execute(interaction, client) {
 		if (interaction.isAutocomplete()) return handleAutocomplete(interaction, client);
 		if (interaction.isChatInputCommand() || interaction.isContextMenuCommand()) {

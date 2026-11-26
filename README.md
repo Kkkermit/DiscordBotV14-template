@@ -58,7 +58,7 @@
 - **Production ready**: graceful shutdown, minimal gateway intents, safe mention defaults, Docker and Compose.
 - **Modern, simple tooling**: Node.js 22+, ESLint, Prettier on every commit, tests with the built-in Node.js
   test runner, GitHub Actions for CI, releases and CodeQL, and Dependabot. No build step and no TypeScript needed,
-  yet your editor still autocompletes everything through JSDoc types.
+  and VS Code still autocompletes your commands thanks to a one-line type hint.
 
 ## Quick start
 

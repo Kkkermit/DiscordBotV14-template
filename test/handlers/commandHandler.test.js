@@ -11,12 +11,6 @@ const {
 	validateSlashCommand,
 } = require('../../src/handlers/commandHandler');
 
-/**
- * Writes files into a temporary directory and returns its path.
- *
- * @param {import('node:test').TestContext} t
- * @param {Record<string, string>} files Relative path → file contents.
- */
 function createFixture(t, files) {
 	const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'commands-'));
 	t.after(() => fs.rmSync(directory, { recursive: true, force: true }));

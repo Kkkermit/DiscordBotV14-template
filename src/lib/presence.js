@@ -2,24 +2,11 @@ const { logger } = require('./logger');
 
 const log = logger.child('Presence');
 
-/**
- * Turns a configured activity into the shape discord.js expects, evaluating `name` when it's a function.
- *
- * @param {{ type: import('discord.js').ActivityType, name: string | ((client: import('../client').BotClient) => string) }} activity
- * @param {import('../client').BotClient} client
- * @returns {import('discord.js').ActivitiesOptions}
- */
 function resolveActivity(activity, client) {
 	const name = typeof activity.name === 'function' ? activity.name(client) : activity.name;
 	return { type: activity.type, name: String(name) };
 }
 
-/**
- * Sets the bot's status and starts rotating through `config.presence.activities`.
- * The timer is stored on `client.presenceTimer` and cleared when the client is destroyed.
- *
- * @param {import('../client').BotClient} client
- */
 function startPresenceRotation(client) {
 	const { status, activities, rotateIntervalSeconds } = client.config.presence;
 	let index = 0;

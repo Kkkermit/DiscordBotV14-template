@@ -12,12 +12,6 @@ const { validateConfig } = require('./lib/validateConfig');
 
 const log = logger.child('Startup');
 
-/**
- * Turns common login failures into actionable hints.
- *
- * @param {unknown} error
- * @returns {string}
- */
 function describeLoginError(error) {
 	const message = String(error?.message ?? error);
 	if (error?.code === 'TokenInvalid' || /invalid token|authentication failed/i.test(message)) {

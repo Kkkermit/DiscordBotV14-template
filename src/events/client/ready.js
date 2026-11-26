@@ -6,11 +6,6 @@ const { checkForUpdates } = require('../../lib/updateChecker');
 
 const log = logger.child('Ready');
 
-/**
- * Registers every slash command globally, replacing the list Discord had before.
- *
- * @param {import('../../client').BotClient} client
- */
 async function registerSlashCommands(client) {
 	// Registering replaces the whole list, so it would delete a command whose file failed to load.
 	if (client.failedSlashCommandFiles.length > 0) {
@@ -22,11 +17,9 @@ async function registerSlashCommands(client) {
 	log.success(`Registered ${registered.size} slash command(s).`);
 }
 
-/** @type {import('../../types').BotEvent} */
 module.exports = {
 	name: Events.ClientReady,
 	once: true,
-	/** @param {import('../../client').BotClient} client The ready client. */
 	async execute(client) {
 		log.success(`Logged in as ${client.user.tag} (${client.user.id}).`);
 

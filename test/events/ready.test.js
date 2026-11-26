@@ -4,21 +4,20 @@ const { Collection } = require('discord.js');
 const ready = require('../../src/events/client/ready');
 const { createClient } = require('../helpers/fakes');
 
-/** A client whose command registrations are recorded instead of sent to Discord. */
 function createReadyClient(t) {
 	const client = createClient();
 	t.after(() => client.destroy());
 	client.config = { ...client.config, banner: { enabled: false }, updateCheck: { enabled: false } };
 
 	const registrations = [];
-	client.application = /** @type {any} */ ({
+	client.application = {
 		commands: {
 			set: async (commands) => {
 				registrations.push(commands);
 				return new Collection(commands.map((command, index) => [`id-${index}`, command]));
 			},
 		},
-	});
+	};
 	return { client, registrations };
 }
 

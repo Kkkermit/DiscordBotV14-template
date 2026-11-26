@@ -4,7 +4,6 @@ const { MessageFlags } = require('discord.js');
 const interactionCreate = require('../../src/events/interactions/interactionCreate');
 const { DEVELOPER_ID, createClient, createInteraction } = require('../helpers/fakes');
 
-/** Adds a temporary slash command to the client. */
 function addCommand(client, name, command) {
 	client.slashCommands.set(name, {
 		data: { name, toJSON: () => ({ name }) },

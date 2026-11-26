@@ -4,15 +4,9 @@ const { logger } = require('./logger');
 
 const log = logger.child('Commands');
 
-/** Channels Discord refused, so a misconfigured channel only produces one warning. */
+// Channels Discord refused. They're skipped until the bot restarts, so you only get one warning.
 const failedChannels = new Set();
 
-/**
- * Stops logging to a channel until the bot restarts.
- *
- * @param {string} channelId
- * @param {string} reason
- */
 function disableChannel(channelId, reason) {
 	failedChannels.add(channelId);
 	log.warn(
@@ -21,21 +15,6 @@ function disableChannel(channelId, reason) {
 	);
 }
 
-/**
- * @typedef {object} CommandUsage
- * @property {'slash' | 'prefix'} type
- * @property {string} command What the user ran, e.g. `/ping` or `?help ping`.
- * @property {import('discord.js').User} user
- * @property {import('discord.js').Guild | null} guild
- */
-
-/**
- * Logs a command use to the console and, if `config.logging.commandLogChannelId` is set, to that channel.
- * Never throws; failures are logged instead so they can't break the command itself.
- *
- * @param {import('../client').BotClient} client
- * @param {CommandUsage} usage
- */
 async function logCommandUsage(client, { type, command, user, guild }) {
 	const location = guild ? `${guild.name} (${guild.id})` : 'Direct Messages';
 	log.info(`${user.tag} (${user.id}) used ${type} command "${truncate(command, 200)}" in ${location}.`);

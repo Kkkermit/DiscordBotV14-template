@@ -11,16 +11,16 @@ matching section here in the same change.
 A beginner-friendly **discord.js v14** bot template. People fork it to start their own bot, so the code must stay
 simple, readable and well documented above all else.
 
-| Topic           | Details                                                                                    |
-| --------------- | ------------------------------------------------------------------------------------------ |
-| Runtime         | Node.js **22.12+** (`engines` in `package.json`, enforced by `engine-strict` in `.npmrc`)  |
-| Language        | JavaScript, **CommonJS** (`require` / `module.exports`). No build step, no TypeScript.     |
-| Types           | JSDoc annotations for editor IntelliSense. `jsconfig.json` has `checkJs: false`.           |
-| Dependencies    | `discord.js` 14, `mongoose` 9 (optional database), `figlet` (startup banner)               |
-| Dev tooling     | ESLint 10 (flat config), Prettier 3, Husky + lint-staged (pre-commit), Node's test runner  |
-| Entry point     | `src/index.js` (`npm start`)                                                               |
-| Configuration   | Secrets in `.env` (validated by `src/env.js`), settings in `src/config.js` (validated too) |
-| Package version | `package.json` `version` is the template version, used by the banner and update checker    |
+| Topic           | Details                                                                                     |
+| --------------- | ------------------------------------------------------------------------------------------- |
+| Runtime         | Node.js **22.12+** (`engines` in `package.json`, enforced by `engine-strict` in `.npmrc`)   |
+| Language        | JavaScript, **CommonJS** (`require` / `module.exports`). No build step, no TypeScript.      |
+| Types           | Only a one-line `@type` hint on command exports, backed by `src/types.js`. No JSDoc blocks. |
+| Dependencies    | `discord.js` 14, `mongoose` 9 (optional database), `figlet` (startup banner)                |
+| Dev tooling     | ESLint 10 (flat config), Prettier 3, Husky + lint-staged (pre-commit), Node's test runner   |
+| Entry point     | `src/index.js` (`npm start`)                                                                |
+| Configuration   | Secrets in `.env` (validated by `src/env.js`), settings in `src/config.js` (validated too)  |
+| Package version | `package.json` `version` is the template version, used by the banner and update checker     |
 
 ## Commands
 
@@ -144,7 +144,7 @@ User guides: `getting-started.md`, `commands.md`, `events.md`, `configuration.md
 | `client.js` | `BotClient extends Client`. Intents: `Guilds`, `GuildMessages`, `MessageContent`. `allowedMentions: { parse: ['users'], repliedUser: true }`. Properties: `env`, `config`, `slashCommands`, `prefixCommands`, `prefixAliases`, `failedSlashCommandFiles`, `cooldowns`, `cooldownSweepTimer` (60 s, unref'd), `presenceTimer`. Methods: `getPrefixCommand(nameOrAlias)`, `countMembers()`, `isDeveloper(userId)`, `destroy()` (clears timers). |
 | `config.js` | User settings: `prefix`, `embedColor`, `developerName`, `banner { enabled, font }`, `presence { status, rotateIntervalSeconds, activities }`, `commands { defaultCooldownSeconds, mentionAsPrefix, replyToUnknownCommands }`, `logging { commandLogChannelId }`, `updateCheck { enabled, repository }`, `messages { error, noPermission, developerOnly, cooldown, missingArgs, unknownCommand }` with `{placeholders}`.                       |
 | `env.js`    | `ENV_FILE_PATH`, `EnvValidationError` (`issues: string[]`), `loadEnvFile()`, `parseEnv(source)` → frozen `{ token, developerIds, mongoUri, logLevel }`, `loadEnv()`. Variables: `DISCORD_TOKEN` (required), `DEVELOPER_IDS`, `MONGODB_URI`, `LOG_LEVEL`.                                                                                                                                                                                      |
-| `types.js`  | JSDoc typedefs only (`SlashCommand`, `ContextMenuCommand`, `PrefixCommand`, `BotEvent`, `BotClient`). No runtime code.                                                                                                                                                                                                                                                                                                                        |
+| `types.js`  | The `SlashCommand`, `ContextMenuCommand` and `PrefixCommand` types used by the `@type` hint in command files. No runtime code.                                                                                                                                                                                                                                                                                                                |
 
 ### `src/commands/`
 
@@ -166,7 +166,7 @@ skipped, so shared helpers can live next to commands.
 
 ### `src/events/`
 
-Loaded recursively. Every file exports a `BotEvent`; `execute` receives the event's arguments **followed by the
+Loaded recursively. Every file exports `{ name, once?, execute }`; `execute` receives the event's arguments **followed by the
 client**.
 
 | File                                | Event               | Purpose                                                                                                                  |
@@ -284,7 +284,6 @@ module.exports = {
 ### Event (`src/events/<category>/<name>.js`)
 
 ```js
-/** @type {import('../../types').BotEvent} */
 module.exports = {
   name: Events.GuildMemberAdd, // use the discord.js Events enum
   once: false, // optional
@@ -302,8 +301,10 @@ module.exports = {
 - **CommonJS without `'use strict'`.** Use `require` / `module.exports`; Node built-ins with the `node:` prefix.
 - **Readability first.** This is a template for beginners: prefer plain, explicit code over clever abstractions.
   Small named helpers beat nested ternaries. Use descriptive names.
-- **Comments explain why, not what.** Don't add comments that restate the code. Keep JSDoc for exported functions,
-  types that power IntelliSense (`@type`, `@param` with types) and behaviour that isn't obvious.
+- **Few, short comments.** No JSDoc blocks and no `@param` / `@returns` tags: they confuse beginners. Add a one- or
+  two-line `//` comment only when the code needs a reason (why something is done, a Discord limit, a gotcha). The
+  only JSDoc allowed is the one-line `/** @type {import('../../../types').SlashCommand} */` hint above a command's
+  `module.exports`, which gives autocompletion. `src/config.js` keeps a short `//` comment per setting.
 - **Naming:** folders lower case; command files kebab-case named after the command (`bot-info.js`); event files
   named after the event (`messageCreate.js`); library files camelCase (`commandLogger.js`); Mongoose models
   PascalCase (`GuildSettings.js`); scripts kebab-case.
