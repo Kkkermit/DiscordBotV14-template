@@ -1,6 +1,6 @@
 {
 	"name": "discordbotv14-template",
-	"version": "4.0.1",
+	"version": "4.1.0",
 	"private": true,
 	"description": "A beginner-friendly discord.js v14 bot template with slash commands, prefix commands, events and optional MongoDB support.",
 	"keywords": [
