@@ -45,7 +45,7 @@ jobs:
     if: github.base_ref == 'main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Check the version has not been released yet
         run: |
           version="$(node -p "require('./package.json').version")"
