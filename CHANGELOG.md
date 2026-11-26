@@ -6,6 +6,8 @@ All notable changes to this project are documented in this file. The format is b
 
 ## Unreleased
 
+## 4.1.0 - 2026-11-26
+
 ### Added
 
 - A [documentation site](https://kkkermit.github.io/DiscordBotV14-template/) that walks through the whole setup, from
