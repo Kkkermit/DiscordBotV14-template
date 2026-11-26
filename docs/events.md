@@ -15,7 +15,7 @@ const log = logger.child('Channels');
 module.exports = {
   name: Events.ChannelCreate,
 
-  async execute(channel, client) {
+  async execute(channel) {
     log.info(`#${channel.name} was created in ${channel.guild.name}.`);
   },
 };
@@ -36,27 +36,40 @@ commands and another replies when the bot is mentioned.
 > [!NOTE]
 > The arguments depend on the event. For example `Events.MessageCreate` gives `(message, client)`,
 > `Events.GuildMemberUpdate` gives `(oldMember, newMember, client)`. The
-> [discord.js documentation](https://discord.js.org/docs/packages/discord.js/main/Client:Class) lists each event's
+> [discord.js documentation](https://discord.js.org/docs/packages/discord.js/14.28.1/Client:Class) lists each event's
 > arguments.
 
 ## Gateway intents
 
 Discord only sends the events your bot asks for with **intents**. The template asks for `Guilds`, `GuildMessages`
-and `MessageContent`. If your event never fires, it most likely needs another intent: add it in
-[`src/client.js`](../src/client.js).
+and `MessageContent`. If your event never fires, it most likely needs another intent.
 
-| To receive...                        | Add the intent                             |
-| ------------------------------------ | ------------------------------------------ |
-| Members joining, leaving or updating | `GuildMembers` (privileged)                |
-| Reactions on messages                | `GuildMessageReactions`                    |
-| Voice channel joins and leaves       | `GuildVoiceStates`                         |
-| Bans and audit log entries           | `GuildModeration`                          |
-| Direct messages                      | `DirectMessages` (plus `Partials.Channel`) |
-| Online status and activities         | `GuildPresences` (privileged)              |
+| To receive...                        | Add the intent          | Also turn on in the Developer Portal (Bot page) |
+| ------------------------------------ | ----------------------- | ----------------------------------------------- |
+| Members joining, leaving or updating | `GuildMembers`          | **Server Members Intent**                       |
+| Online status and activities         | `GuildPresences`        | **Presence Intent**                             |
+| Reactions on messages                | `GuildMessageReactions` |                                                 |
+| Voice channel joins and leaves       | `GuildVoiceStates`      |                                                 |
+| Bans and audit log entries           | `GuildModeration`       |                                                 |
+| Direct messages                      | `DirectMessages`        |                                                 |
 
-Privileged intents must also be enabled on the **Bot** page of the Developer Portal. Only add what you need: every
-intent means more events for your bot to process, and bots in 100 or more servers must be approved by Discord for
-privileged intents.
+Add the intent to the list in [`src/client.js`](../src/client.js):
+
+```js
+intents: [
+  GatewayIntentBits.Guilds,
+  GatewayIntentBits.GuildMessages,
+  GatewayIntentBits.MessageContent,
+  GatewayIntentBits.GuildMembers, // Added for member join events.
+],
+```
+
+If the last column says so, also turn the switch on in the Developer Portal. Otherwise the bot can't log in and shows
+"Used disallowed intents". Only add what you need: every intent means more events to process, and bots in 100 or more
+servers need Discord's approval for these.
+
+For direct messages, also add `partials: [Partials.Channel]` next to `intents` in `src/client.js` (DM channels aren't
+cached until a message arrives). The bundled prefix commands and mention reply only answer in servers.
 
 ## Example: welcome messages
 
@@ -69,7 +82,7 @@ const WELCOME_CHANNEL_ID = '123456789012345678';
 module.exports = {
   name: Events.GuildMemberAdd,
 
-  async execute(member, client) {
+  async execute(member) {
     const channel = member.guild.channels.cache.get(WELCOME_CHANNEL_ID);
     if (!channel?.isSendable()) return;
     await channel.send(`Welcome to **${member.guild.name}**, ${member}!`);

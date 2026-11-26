@@ -27,7 +27,7 @@
 	"main": "src/index.js",
 	"scripts": {
 		"start": "node src/index.js",
-		"dev": "node --watch src/index.js",
+		"dev": "node --watch-path=src src/index.js",
 		"setup": "node scripts/setup-env.js",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",

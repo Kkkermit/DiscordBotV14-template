@@ -7,7 +7,10 @@ works: a VPS, a Raspberry Pi, or a hosting platform.
 
 - Keep `.env` out of git. Set the variables in your host's dashboard or in a `.env` file on the server.
 - Slash commands are registered every time the bot starts, so deploying new commands is just a restart.
-- Use `npm ci --omit=dev` to install exactly the locked versions without development tools.
+- Use `npm ci --omit=dev` to install exactly the locked versions without development tools. It may print
+  `husky: not found`: that's harmless, Husky is only used while developing.
+- Run **one** copy of the bot per token. Two copies (say, one on your computer and one on a server) both answer every
+  command.
 
 ## Docker
 
@@ -17,7 +20,7 @@ The repository includes a [`Dockerfile`](../Dockerfile) and a [`compose.yaml`](.
 # Build and start in the background (reads your .env file)
 docker compose up -d --build
 
-# Also start a local MongoDB (set MONGODB_URI=mongodb://mongo:27017/discord-bot in .env)
+# Start the bot and a local MongoDB (set MONGODB_URI=mongodb://mongo:27017/discord-bot in .env)
 docker compose --profile database up -d --build
 
 # Follow the logs / stop the bot

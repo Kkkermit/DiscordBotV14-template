@@ -28,7 +28,7 @@ module.exports = {
 
   cooldown: 5,
 
-  async execute(interaction, client) {
+  async execute(interaction) {
     const sides = interaction.options.getInteger('sides') ?? 6;
     const result = Math.floor(Math.random() * sides) + 1;
     await interaction.reply(`🎲 You rolled a **${result}** (1-${sides}).`);
@@ -56,7 +56,7 @@ If a command file has an error, the bot skips registering until you fix it. Othe
 removed from Discord.
 
 > [!TIP]
-> Don't see a new or changed command? Press `Ctrl+R` in the Discord app to refresh it.
+> Don't see a new or changed command? Press `Ctrl+R` (`Cmd+R` on macOS) in the Discord app to refresh it.
 
 ### Replies
 
@@ -113,7 +113,7 @@ new SlashCommandBuilder()
 
 `developerOnly: true` hides the command from `/help` and blocks everyone not in `DEVELOPER_IDS`, but Discord still
 shows it in the command picker. For private admin tools, also use `.setDefaultMemberPermissions(0)` so only server
-administrators see it, and register it in your own server only.
+administrators see it.
 
 ### Autocomplete
 
@@ -121,6 +121,9 @@ Add `.setAutocomplete(true)` to a string, integer or number option and export an
 bundled [`/help`](../src/commands/slash/utility/help.js) command is a complete example.
 
 ```js
+// src/commands/slash/fun/fruit.js
+const { SlashCommandBuilder } = require('discord.js');
+
 const FRUITS = ['apple', 'banana', 'cherry'];
 
 module.exports = {
@@ -149,24 +152,43 @@ For components that belong to one command, create a collector on the reply. The 
 [`bot-info`](../src/lib/botInfo.js) refresh button shows the full pattern, including disabling the button afterwards.
 
 ```js
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
+// src/commands/slash/fun/confirm.js
+const {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ComponentType,
+  MessageFlags,
+  SlashCommandBuilder,
+} = require('discord.js');
 
-async execute(interaction) {
-	const row = new ActionRowBuilder().addComponents(
-		new ButtonBuilder().setCustomId('confirm').setLabel('Confirm').setStyle(ButtonStyle.Success),
-	);
-	const response = await interaction.reply({ content: 'Are you sure?', components: [row], withResponse: true });
+module.exports = {
+  data: new SlashCommandBuilder().setName('confirm').setDescription('Ask for a confirmation.'),
 
-	const collector = response.resource.message.createMessageComponentCollector({
-		componentType: ComponentType.Button,
-		filter: (button) => button.user.id === interaction.user.id,
-		time: 30_000,
-	});
+  async execute(interaction) {
+    const button = new ButtonBuilder().setCustomId('confirm').setLabel('Confirm').setStyle(ButtonStyle.Success);
+    const response = await interaction.reply({
+      content: 'Are you sure?',
+      components: [new ActionRowBuilder().addComponents(button)],
+      withResponse: true,
+    });
 
-	collector.on('collect', async (button) => {
-		await button.update({ content: 'Confirmed!', components: [] });
-	});
-}
+    // Listen for clicks on this message's buttons for 30 seconds.
+    const collector = response.resource.message.createMessageComponentCollector({
+      componentType: ComponentType.Button,
+      time: 30_000,
+    });
+
+    collector.on('collect', async (click) => {
+      // Every click must be answered, otherwise Discord shows "This interaction failed".
+      if (click.user.id !== interaction.user.id) {
+        await click.reply({ content: 'This button is not for you.', flags: MessageFlags.Ephemeral });
+        return;
+      }
+      await click.update({ content: 'Confirmed!', components: [] });
+    });
+  },
+};
 ```
 
 ### Context menu commands
@@ -175,6 +197,7 @@ Context menu commands appear when right-clicking a user or a message. Put them i
 `ContextMenuCommandBuilder`:
 
 ```js
+// src/commands/slash/info/avatar.js
 const { ApplicationCommandType, ContextMenuCommandBuilder, MessageFlags } = require('discord.js');
 
 module.exports = {

@@ -52,8 +52,8 @@ npm run check   # ESLint, Prettier check and the tests. CI runs the same checks.
 ## Code style
 
 - CommonJS modules (`require` / `module.exports`), formatted by Prettier (tabs, single quotes, 120 columns).
-- Prefer clear names and small functions over comments. When you do comment, explain why rather than what.
-- Keep comments short and only add one when the code needs a reason. Don't add JSDoc blocks or `@param` tags.
+- Prefer clear names and small functions over comments. Add a short comment only when the code needs a reason (why,
+  not what), and don't use JSDoc.
 - Use the scoped logger (`logger.child('Feature')`) instead of `console.log`.
 - Use the discord.js `Events`, `PermissionFlagsBits` and `MessageFlags` enums instead of strings and numbers.
 - User-facing errors should be friendly and never include stack traces or internal details.

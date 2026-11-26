@@ -30,19 +30,16 @@ npm install
 
 You can also click **Use this template** or **Fork** on GitHub to get your own copy of the repository first.
 
-Now create your `.env` file. The easiest way is the interactive setup, which checks each answer for you:
+Now create your `.env` file. The setup asks for your bot token, and optionally your Discord user ID (which lets you
+use commands marked `developerOnly`). To copy your user ID, enable **Developer Mode** in Discord (**User Settings →
+Advanced**), then right-click your name and choose **Copy User ID**.
 
 ```bash
 npm run setup
 ```
 
-Or copy `.env.example` to `.env` and fill it in yourself. Only `DISCORD_TOKEN` is required.
-
-### Optional: your user ID
-
-Put your Discord user ID in `DEVELOPER_IDS` to use commands marked `developerOnly`. To copy an ID, enable
-**Developer Mode** in Discord (**User Settings → Advanced**), then right-click your name and choose **Copy User ID**.
-The same works for servers and channels.
+The setup checks each answer for you. You can also copy `.env.example` to `.env` and fill it in yourself. Only
+`DISCORD_TOKEN` is required.
 
 ## 3. Invite the bot to your server
 
@@ -68,15 +65,19 @@ npm start
 You should see the commands and events load, followed by `Logged in as YourBot#0000` and the startup banner. Try
 `/help` and `?help` in your server.
 
-While developing, use `npm run dev` instead. It restarts the bot every time you save a file.
+While developing, use `npm run dev` instead. It restarts the bot whenever you change or add a file in `src/`.
 
 If something goes wrong, the console tells you what to fix. The [troubleshooting guide](troubleshooting.md) covers the
 most common problems.
 
 ## 5. Make it yours
 
-- Change the prefix, colours, status and messages in [`src/config.js`](../src/config.js).
+- In [`src/config.js`](../src/config.js), set `developerName` to your name (it's shown in every embed footer), and
+  change the prefix, colours, status and messages.
 - Pick another [figlet font](https://patorjk.com/software/taag) for the startup banner with `banner.font`, or set
   `banner.enabled: false`.
-- If you keep the update check enabled, point `updateCheck.repository` to your own repository, or disable it.
+- In `package.json`, change `name`, `description` and `author` to your bot's. `version` is your bot's version from now
+  on; the startup banner shows it.
+- The update check tells you when a new version of this template is released. Once you change `version` or release
+  your own bot, set `updateCheck.enabled: false` in `config.js`.
 - Write your first command: see [Writing commands](commands.md).

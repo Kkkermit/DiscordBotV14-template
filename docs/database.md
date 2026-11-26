@@ -14,8 +14,14 @@ when `MONGODB_URI` is empty the bot runs without a database.
 4. Click **Connect → Drivers** and copy the connection string. Replace `<password>` with your user's password and add
    a database name after the host, e.g. `...mongodb.net/discord-bot?retryWrites=true&w=majority`.
 
-**Locally with Docker:** `docker compose --profile database up -d` starts MongoDB next to the bot. Use
-`MONGODB_URI=mongodb://mongo:27017/discord-bot`. See [Deployment](deployment.md#docker).
+**On your computer with Docker:**
+
+- If you start the bot with `npm start` or `npm run dev`, run only the database with
+  `docker compose --profile database up -d mongo` and use `MONGODB_URI=mongodb://localhost:27017/discord-bot`.
+- If the bot runs in Docker too, start both with `docker compose --profile database up -d --build` and use
+  `MONGODB_URI=mongodb://mongo:27017/discord-bot`.
+
+Don't run both at once with the same token, or two copies of the bot will answer every command.
 
 Put the string in your `.env` file as `MONGODB_URI`. On startup the bot connects before logging in to Discord. If it
 can't connect, it explains why and stops, so you never end up with a bot that silently has no database.
@@ -72,25 +78,40 @@ module.exports = {
     }
 
     const channel = interaction.options.getChannel('channel', true);
-    await GuildSettings.findOneAndUpdate(
-      { guildId: interaction.guildId },
-      { $set: { welcomeChannelId: channel.id } },
-      { upsert: true, returnDocument: 'after' },
-    );
+    // upsert: create the settings for this server if they don't exist yet.
+    await GuildSettings.updateOne({ guildId: interaction.guildId }, { welcomeChannelId: channel.id }, { upsert: true });
 
     await interaction.reply(`Welcome messages will be sent in ${channel}.`);
   },
 };
 ```
 
-Reading it back in an event:
+## Using a model in an event
+
+This event reads the saved channel back and welcomes new members there. It needs the `GuildMembers` intent (see
+[Events](events.md#gateway-intents)).
 
 ```js
-const settings = await GuildSettings.findOne({ guildId: member.guild.id }).lean();
-if (!settings?.welcomeChannelId) return;
-```
+// src/events/guilds/guildMemberAdd.js
+const { Events } = require('discord.js');
+const { isDatabaseConnected } = require('../../database/connection');
+const GuildSettings = require('../../database/models/GuildSettings');
 
-`.lean()` returns a plain object, which is faster when you only need to read the data.
+module.exports = {
+  name: Events.GuildMemberAdd,
+
+  async execute(member) {
+    if (!isDatabaseConnected()) return;
+
+    // .lean() returns a plain object, which is faster when you only need to read the data.
+    const settings = await GuildSettings.findOne({ guildId: member.guild.id }).lean();
+    const channel = member.guild.channels.cache.get(settings?.welcomeChannelId);
+    if (!channel?.isSendable()) return;
+
+    await channel.send(`Welcome to **${member.guild.name}**, ${member}!`);
+  },
+};
+```
 
 ## Tips
 

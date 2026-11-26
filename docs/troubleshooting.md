@@ -27,20 +27,20 @@ and enable **Message Content Intent** (and any other privileged intent you added
   [Getting started](getting-started.md#3-invite-the-bot-to-your-server).
 - Check the console for `Skipped slash command ...` errors. While a command file is broken, the bot doesn't register
   any commands, so the broken one isn't removed from Discord.
-- Press `Ctrl+R` in the Discord desktop app to refresh its command cache.
+- Press `Ctrl+R` (`Cmd+R` on macOS) in the Discord desktop app to refresh its command cache.
 
 ### Prefix commands don't respond
 
 - Enable **Message Content Intent** in the Developer Portal. Without it, the bot can't read messages.
 - Check that you use the prefix from `src/config.js` (`?` by default). Mentioning the bot also works:
   `@YourBot ping`.
-- The bot needs **View Channel**, **Send Messages** and **Read Message History** in that channel.
+- The bot needs **View Channel**, **Send Messages**, **Embed Links** and **Read Message History** in that channel.
 - Prefix commands don't run in DMs.
 
 ### "This command is no longer available"
 
 Discord still lists a command that the bot no longer has, usually because you deleted or renamed the file. Restart
-the bot to update Discord's list, then press `Ctrl+R` in Discord.
+the bot to update Discord's list, then press `Ctrl+R` (`Cmd+R` on macOS) in Discord.
 
 ### "Could not connect to MongoDB"
 

@@ -1,3 +1,4 @@
+// An example model: settings saved per server. docs/database.md shows how to use it.
 const { Schema, model } = require('mongoose');
 
 const guildSettingsSchema = new Schema(

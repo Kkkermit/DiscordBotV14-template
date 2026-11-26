@@ -17,8 +17,9 @@ A short tour of how the template works, for when you want to change how it behav
 5. **Load commands and events** ([`src/handlers/`](../src/handlers)). Each file is validated; broken files are logged
    and skipped.
 6. **Connect to MongoDB** if `MONGODB_URI` is set.
-7. **Log in to Discord.** When the connection is ready, the [`ready` event](../src/events/client/ready.js) sets the
-   presence, registers slash commands, prints the banner and checks for updates.
+7. **Log in to Discord.** When the connection is ready, the [`shardReady` event](../src/events/client/shardReady.js)
+   sets the bot's status, and the [`ready` event](../src/events/client/ready.js) registers the slash commands, prints
+   the banner and checks for updates.
 
 ## A slash command, step by step
 
@@ -68,8 +69,8 @@ promise rejections are logged and the bot keeps running.
 
 Tests use the built-in [Node.js test runner](https://nodejs.org/api/test.html), so there's nothing extra to install.
 A test lives at the same path as the code it tests: `src/lib/format.js` is tested by `test/lib/format.test.js`.
-[`test/startup.test.js`](../test/startup.test.js) starts the real bot and deploy script to check how they react to bad
-settings.
+[`test/startup.test.js`](../test/startup.test.js) starts the real bot with bad settings to check its error
+messages.
 
 ```bash
 npm test                # Run every test
@@ -81,11 +82,11 @@ node --test test/lib/format.test.js   # Run a single file
 and interactions that record every reply. That makes it possible to test commands without a Discord connection:
 
 ```js
+// test/commands/roll.test.js
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 const { createClient, createInteraction } = require('../helpers/fakes');
 
-// test/commands/roll.test.js
 describe('/roll', () => {
   it('replies with a number', async (t) => {
     const client = createClient();

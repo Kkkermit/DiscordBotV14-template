@@ -59,8 +59,8 @@
 - **Optional MongoDB** with Mongoose. Leave the connection string empty and the bot runs without a database.
 - **Production ready**: graceful shutdown, minimal gateway intents, safe mention defaults, Docker and Compose.
 - **Modern, simple tooling**: Node.js 24+, ESLint, Prettier on every commit, tests with the built-in Node.js
-  test runner, GitHub Actions for CI, releases and CodeQL, and Dependabot. No build step and no TypeScript needed,
-  and nothing to compile: it's plain JavaScript.
+  test runner, GitHub Actions for CI, releases and CodeQL, and Dependabot. It's plain JavaScript:
+  no TypeScript and no build step.
 
 ## Quick start
 
@@ -78,16 +78,15 @@ npm install
 
 # 3. Create your .env file. It asks for your token and checks every answer.
 npm run setup
-
-# 4. Start the bot
-npm start
 ```
 
-Then, in the Developer Portal, turn on **Message Content Intent** under **Bot → Privileged Gateway Intents**,
-[invite the bot](docs/getting-started.md#3-invite-the-bot-to-your-server) to your server and try `/help` or `?help`.
+4. In the Developer Portal, turn on **Message Content Intent** under **Bot → Privileged Gateway Intents**.
+   Without it the bot can't log in.
+5. [Invite the bot](docs/getting-started.md#3-invite-the-bot-to-your-server) to your server.
+6. Run `npm start` and try `/help` or `?help` in your server.
 
 > [!TIP]
-> Don't see a new slash command yet? Press `Ctrl+R` in Discord to refresh it.
+> Don't see a new slash command yet? Press `Ctrl+R` (`Cmd+R` on macOS) in Discord to refresh it.
 
 ## What you get
 
@@ -99,13 +98,13 @@ When the bot starts, it checks your settings, loads every command and event, and
 
 These commands are included, ready to change or delete:
 
-| Slash command | Prefix command                | What it does                                       |
-| ------------- | ----------------------------- | -------------------------------------------------- |
-| `/help`       | `?help [command]` (`h`)       | Lists the commands, or shows details about one.    |
-| `/ping`       | `?ping` (`latency`)           | Shows the round trip and WebSocket latency.        |
-| `/uptime`     | `?uptime` (`botuptime`)       | Shows how long the bot has been online.            |
-| `/bot-info`   | `?bot-info` (`bi`, `botinfo`) | Bot statistics, with a refresh button.             |
-| `/user-info`  |                               | Information about a user and their server profile. |
+| Slash command | Prefix command                      | What it does                                       |
+| ------------- | ----------------------------------- | -------------------------------------------------- |
+| `/help`       | `?help [command]` (`h`, `commands`) | Lists the commands, or shows details about one.    |
+| `/ping`       | `?ping` (`latency`)                 | Shows the round trip and WebSocket latency.        |
+| `/uptime`     | `?uptime` (`botuptime`)             | Shows how long the bot has been online.            |
+| `/bot-info`   | `?bot-info` (`bi`, `botinfo`)       | Bot statistics, with a refresh button.             |
+| `/user-info`  |                                     | Information about a user and their server profile. |
 
 The bot also introduces itself when a message only mentions it, and `@YourBot ping` works as a prefix too.
 
@@ -114,6 +113,7 @@ The bot also introduces itself when a message only mentions it, and `@YourBot pi
 Create a file in a category folder, for example `src/commands/slash/fun/hello.js`:
 
 ```js
+// src/commands/slash/fun/hello.js
 const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
@@ -161,16 +161,16 @@ more.
 
 ## Scripts
 
-| Command                 | What it does                                                       |
-| ----------------------- | ------------------------------------------------------------------ |
-| `npm start`             | Starts the bot.                                                    |
-| `npm run dev`           | Starts the bot and restarts it every time you save a file.         |
-| `npm run setup`         | Creates your `.env` file step by step.                             |
-| `npm test`              | Runs the tests.                                                    |
-| `npm run test:coverage` | Runs the tests and checks how much of the code they cover.         |
-| `npm run lint`          | Checks the code with ESLint. `npm run lint:fix` fixes what it can. |
-| `npm run format`        | Formats every file with Prettier.                                  |
-| `npm run check`         | Runs the linter, the format check and the tests, like CI does.     |
+| Command                 | What it does                                                            |
+| ----------------------- | ----------------------------------------------------------------------- |
+| `npm start`             | Starts the bot.                                                         |
+| `npm run dev`           | Starts the bot and restarts it when you change or add a file in `src/`. |
+| `npm run setup`         | Creates your `.env` file step by step.                                  |
+| `npm test`              | Runs the tests.                                                         |
+| `npm run test:coverage` | Runs the tests and checks how much of the code they cover.              |
+| `npm run lint`          | Checks the code with ESLint. `npm run lint:fix` fixes what it can.      |
+| `npm run format`        | Formats every file with Prettier.                                       |
+| `npm run check`         | Runs the linter, the format check and the tests, like CI does.          |
 
 ## Configuration
 

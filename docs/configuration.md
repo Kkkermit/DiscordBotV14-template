@@ -74,8 +74,9 @@ stops trying until the next restart.
 | `enabled`    | `true`                              | Check GitHub on startup for a newer release of the template. |
 | `repository` | `'Kkkermit/DiscordBotV14-template'` | The `owner/name` whose releases are checked.                 |
 
-The check compares the `version` in `package.json` with the repository's latest release. It makes one anonymous
-request to the GitHub API, never blocks startup and fails silently.
+The check compares the `version` in `package.json` with the template's latest release. It makes one anonymous
+request to the GitHub API, never blocks startup and fails silently. Once `version` is your own bot's version, turn
+it off.
 
 ### messages
 
@@ -92,14 +93,5 @@ The replies users see. `{placeholders}` are filled in automatically.
 
 ## Gateway intents
 
-Intents control which events Discord sends to the bot. The template only asks for what it uses, in
-[`src/client.js`](../src/client.js):
-
-- `Guilds`: servers, channels and roles, needed by almost everything.
-- `GuildMessages`: messages in servers, for prefix commands.
-- `MessageContent` (privileged): the text of messages, for prefix commands.
-
-When a feature needs more, add the intent there. For example `GatewayIntentBits.GuildMembers` for member join events.
-Privileged intents (`GuildMembers`, `GuildPresences`, `MessageContent`) must also be enabled on the **Bot** page of
-the Developer Portal, otherwise the bot can't log in. If you don't use prefix commands at all, you can remove
-`GuildMessages` and `MessageContent`.
+Intents decide which events Discord sends to the bot. They are set in [`src/client.js`](../src/client.js), not in
+`config.js`. See [Events → Gateway intents](events.md#gateway-intents) for which intent you need and how to add it.
