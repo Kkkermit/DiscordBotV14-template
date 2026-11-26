@@ -60,7 +60,7 @@ module.exports = {
 			if (client.env.guildId) log.error('Make sure the bot is in the server set as DISCORD_GUILD_ID.');
 		}
 
-		if (client.config.showStartupBanner) printBanner(client);
+		if (client.config.banner.enabled) printBanner(client);
 
 		if (client.config.updateCheck.enabled) {
 			await checkForUpdates({ repository: client.config.updateCheck.repository });

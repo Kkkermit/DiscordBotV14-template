@@ -2,7 +2,8 @@
 
 const assert = require('node:assert/strict');
 const { describe, it } = require('node:test');
-const { ANSI, Logger, formatTimestamp, supportsColor } = require('../src/lib/logger');
+const { styleText } = require('node:util');
+const { Logger, formatTimestamp, supportsColor } = require('../src/lib/logger');
 
 function createStream() {
 	const output = { text: '' };
@@ -31,7 +32,7 @@ describe('Logger', () => {
 	it('adds colours when enabled', () => {
 		const { output, stream } = createStream();
 		new Logger({ stream, colors: true }).error('broken');
-		assert.ok(output.text.includes(`${ANSI.red}ERROR`));
+		assert.ok(output.text.includes(styleText('red', 'ERROR'.padEnd(7), { validateStream: false })));
 	});
 
 	it('includes the stack of errors passed as extra arguments', () => {

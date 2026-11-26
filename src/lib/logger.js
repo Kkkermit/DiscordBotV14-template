@@ -1,34 +1,14 @@
 'use strict';
 
-const { formatWithOptions } = require('node:util');
+const { formatWithOptions, styleText } = require('node:util');
 
 /** Levels a user can choose with `LOG_LEVEL`, from most to least verbose. */
 const LEVEL_NAMES = ['debug', 'info', 'warn', 'error'];
 
-/** `success` is printed at the same level as `info`. */
+// `success` is printed at the same level as `info`.
 const SEVERITY = { debug: 0, info: 1, success: 1, warn: 2, error: 3 };
-
-const ANSI = {
-	reset: '\x1b[0m',
-	dim: '\x1b[2m',
-	red: '\x1b[31m',
-	green: '\x1b[32m',
-	blue: '\x1b[34m',
-	pink: '\x1b[38;5;213m',
-	turquoise: '\x1b[38;5;45m',
-	orange: '\x1b[38;5;202m',
-};
-
-/** Width of the longest label, `SUCCESS`, so messages line up. */
-const LABEL_WIDTH = 7;
-
-const LEVEL_COLORS = {
-	debug: ANSI.blue,
-	info: ANSI.turquoise,
-	success: ANSI.green,
-	warn: ANSI.orange,
-	error: ANSI.red,
-};
+const LEVEL_COLORS = { debug: 'blue', info: 'cyan', success: 'green', warn: 'yellow', error: 'red' };
+const LABEL_WIDTH = 'SUCCESS'.length;
 
 /**
  * Whether a stream can show colours. Follows the NO_COLOR (https://no-color.org) and FORCE_COLOR conventions.
@@ -43,10 +23,18 @@ function supportsColor(stream, env = process.env) {
 }
 
 /**
- * Formats a date as `YYYY-MM-DD HH:mm:ss` in local time.
+ * Colours text with `util.styleText` when `enabled`, otherwise returns it unchanged.
  *
- * @param {Date} date
+ * @param {Parameters<typeof styleText>[0]} style A colour or modifier such as `'red'`, `'bold'` or `['bold', 'red']`.
+ * @param {string} text
+ * @param {boolean} enabled
  */
+function colorize(style, text, enabled) {
+	// We decide ourselves whether colours are supported, so styleText shouldn't check the stream again.
+	return enabled ? styleText(style, text, { validateStream: false }) : text;
+}
+
+/** Formats a date as `YYYY-MM-DD HH:mm:ss` in local time. */
 function formatTimestamp(date) {
 	const pad = (value) => String(value).padStart(2, '0');
 	const day = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
@@ -66,7 +54,7 @@ function formatTimestamp(date) {
 /**
  * A small console logger with levels, labels and colours.
  *
- * Everything is written to one stream (stdout by default) so messages stay in order
+ * Everything goes to one stream (stdout by default) so messages stay in order
  * when Docker, PM2 or a hosting panel collects the output.
  */
 class Logger {
@@ -99,8 +87,8 @@ class Logger {
 	}
 
 	/**
-	 * Returns a logger that prefixes messages with `[label]`. It writes through this logger,
-	 * so changing this logger's level also changes what the child prints.
+	 * Returns a logger that starts every message with `[label]`. It writes through this logger,
+	 * so changing this logger's level changes what the child prints too.
 	 *
 	 * @param {string} label
 	 * @returns {ScopedLogger}
@@ -143,12 +131,11 @@ class Logger {
 	write(level, label, args) {
 		if (SEVERITY[level] < SEVERITY[this.level]) return;
 
-		const paint = (color, text) => (this.colors ? `${color}${text}${ANSI.reset}` : text);
 		const parts = [
-			paint(ANSI.dim, formatTimestamp(this.now())),
-			paint(LEVEL_COLORS[level], level.toUpperCase().padEnd(LABEL_WIDTH)),
+			colorize('dim', formatTimestamp(this.now()), this.colors),
+			colorize(LEVEL_COLORS[level], level.toUpperCase().padEnd(LABEL_WIDTH), this.colors),
 		];
-		if (label) parts.push(paint(ANSI.pink, `[${label}]`));
+		if (label) parts.push(colorize('magenta', `[${label}]`, this.colors));
 		parts.push(formatWithOptions({ colors: this.colors }, ...args));
 
 		this.stream.write(`${parts.join(' ')}\n`);
@@ -158,4 +145,4 @@ class Logger {
 /** The bot's logger. `src/index.js` sets its level from `LOG_LEVEL`. */
 const logger = new Logger();
 
-module.exports = { logger, Logger, LEVEL_NAMES, ANSI, supportsColor, formatTimestamp };
+module.exports = { logger, Logger, LEVEL_NAMES, supportsColor, colorize, formatTimestamp };

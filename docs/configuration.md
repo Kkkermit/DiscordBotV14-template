@@ -28,12 +28,13 @@ in your environment (for example by Docker or your hosting panel) take priority 
 
 ### General
 
-| Setting             | Default     | Description                                                                                          |
-| ------------------- | ----------- | ---------------------------------------------------------------------------------------------------- |
-| `prefix`            | `'?'`       | Prefix for message commands. Must not contain spaces.                                                |
-| `embedColor`        | `'Blurple'` | Default embed colour: a discord.js colour name (`'Green'`, `'Red'`...) or a hex number (`0x5865f2`). |
-| `developerName`     | `'Kkermit'` | Shown in `bot-info` and in embed footers.                                                            |
-| `showStartupBanner` | `true`      | Print the ASCII art banner and a summary once the bot is online.                                     |
+| Setting          | Default         | Description                                                                                          |
+| ---------------- | --------------- | ---------------------------------------------------------------------------------------------------- |
+| `prefix`         | `'?'`           | Prefix for message commands. Must not contain spaces.                                                |
+| `embedColor`     | `'Blurple'`     | Default embed colour: a discord.js colour name (`'Green'`, `'Red'`...) or a hex number (`0x5865f2`). |
+| `developerName`  | `'Kkermit'`     | Shown in `bot-info` and in embed footers.                                                            |
+| `banner.enabled` | `true`          | Print the bot's name as ASCII art, and a short summary, once it is online.                           |
+| `banner.font`    | `'ANSI Shadow'` | The [figlet font](https://patorjk.com/software/taag) used for the name.                              |
 
 ### presence
 

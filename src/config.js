@@ -18,8 +18,13 @@ module.exports = {
 	/** Your name, shown in `bot-info` and embed footers. */
 	developerName: 'Kkermit',
 
-	/** Print the ASCII art banner and a summary to the console once the bot is online. */
-	showStartupBanner: true,
+	banner: {
+		/** Print the bot's name as ASCII art, and a short summary, once it is online. */
+		enabled: true,
+
+		/** Any figlet font, such as 'ANSI Shadow', 'Standard', 'Slant' or 'Big'. Preview them at https://patorjk.com/software/taag */
+		font: 'ANSI Shadow',
+	},
 
 	presence: {
 		/** One of `'online'`, `'idle'`, `'dnd'` or `'invisible'`. */

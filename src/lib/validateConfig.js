@@ -1,10 +1,12 @@
 'use strict';
 
 const { ActivityType, resolveColor } = require('discord.js');
+const figlet = require('figlet');
 const { SNOWFLAKE_PATTERN } = require('./constants');
 
 const PRESENCE_STATUSES = ['online', 'idle', 'dnd', 'invisible'];
 const ACTIVITY_TYPES = Object.values(ActivityType).filter((value) => typeof value === 'number');
+const FONTS = figlet.fontsSync();
 const MESSAGE_KEYS = ['error', 'noPermission', 'developerOnly', 'cooldown', 'missingArgs', 'unknownCommand'];
 
 /** Discord rate-limits presence updates, so activities can't change faster than this. */
@@ -39,7 +41,8 @@ function validateConfig(config) {
 	check(isNonEmptyString(config.prefix) && !/\s/.test(config.prefix), 'prefix must be text without spaces.');
 	check(isColor(config.embedColor), `embedColor "${config.embedColor}" is not a colour name or hex number.`);
 	check(isNonEmptyString(config.developerName), 'developerName must not be empty.');
-	check(isBoolean(config.showStartupBanner), 'showStartupBanner must be true or false.');
+	check(isBoolean(config.banner?.enabled), 'banner.enabled must be true or false.');
+	check(FONTS.includes(config.banner?.font), `banner.font "${config.banner?.font}" is not a figlet font.`);
 
 	check(
 		PRESENCE_STATUSES.includes(presence?.status),

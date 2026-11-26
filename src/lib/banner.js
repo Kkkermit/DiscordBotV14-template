@@ -1,40 +1,39 @@
 'use strict';
 
+const figlet = require('figlet');
 const { version } = require('../../package.json');
-const { ANSI, supportsColor } = require('./logger');
-
-const ART = [
-	'██████╗ ███████╗██╗   ██╗    ██████╗ ██╗   ██╗    ██╗  ██╗██╗  ██╗███████╗██████╗ ███╗   ███╗██╗████████╗',
-	'██╔══██╗██╔════╝██║   ██║    ██╔══██╗╚██╗ ██╔╝    ██║ ██╔╝██║ ██╔╝██╔════╝██╔══██╗████╗ ████║██║╚══██╔══╝',
-	'██║  ██║█████╗  ██║   ██║    ██████╔╝ ╚████╔╝     █████╔╝ █████╔╝ █████╗  ██████╔╝██╔████╔██║██║   ██║   ',
-	'██║  ██║██╔══╝  ╚██╗ ██╔╝    ██╔══██╗  ╚██╔╝      ██╔═██╗ ██╔═██╗ ██╔══╝  ██╔══██╗██║╚██╔╝██║██║   ██║   ',
-	'██████╔╝███████╗ ╚████╔╝     ██████╔╝   ██║       ██║  ██╗██║  ██╗███████╗██║  ██║██║ ╚═╝ ██║██║   ██║   ',
-	'╚═════╝ ╚══════╝  ╚═══╝      ╚═════╝    ╚═╝       ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝   ╚═╝   ',
-];
+const { colorize, supportsColor } = require('./logger');
 
 /**
- * Prints the ASCII art banner and a short summary of the bot. Replace `ART` with your own!
+ * Draws text as ASCII art. Falls back to the plain text if the font has none of its characters
+ * (figlet fonts only cover basic Latin letters, so a name made of emoji or other scripts would be empty).
+ *
+ * @param {string} text
+ * @param {string} font A figlet font name, e.g. `'ANSI Shadow'`.
+ * @param {number} width Wrap the art at this many columns.
+ */
+function renderAsciiArt(text, font, width) {
+	const art = figlet.textSync(text, { font, width, whitespaceBreak: true }).trimEnd();
+	return art.trim() ? art : text;
+}
+
+/**
+ * Prints the bot's name as ASCII art, followed by a short summary.
  *
  * @param {import('../client').BotClient} client
- * @param {NodeJS.WritableStream} [stream]
+ * @param {NodeJS.WritableStream & { columns?: number }} [stream]
  */
 function printBanner(client, stream = process.stdout) {
 	const colors = supportsColor(stream);
-	const paint = (text) => (colors ? `${ANSI.pink}${text}${ANSI.reset}` : text);
-	const divider = '='.repeat(ART[0].length);
+	const art = renderAsciiArt(client.user.username, client.config.banner.font, stream.columns ?? 100);
 
-	const lines = [
-		divider,
-		...ART,
-		divider,
+	const summary = [
 		`${client.user.tag} is online! (template v${version})`,
-		`Serving ${client.guilds.cache.size} server(s) and ${client.countMembers()} member(s).`,
-		`${client.slashCommands.size} slash command(s) and ${client.prefixCommands.size} prefix command(s) loaded.`,
-		`Prefix: ${client.config.prefix}`,
-		divider,
+		`Servers: ${client.guilds.cache.size} • Members: ${client.countMembers()} • Prefix: ${client.config.prefix}`,
+		`Commands: ${client.slashCommands.size} slash, ${client.prefixCommands.size} prefix`,
 	];
 
-	stream.write(`${lines.map(paint).join('\n')}\n`);
+	stream.write(`\n${colorize(['bold', 'magenta'], art, colors)}\n\n${summary.join('\n')}\n\n`);
 }
 
-module.exports = { printBanner };
+module.exports = { printBanner, renderAsciiArt };

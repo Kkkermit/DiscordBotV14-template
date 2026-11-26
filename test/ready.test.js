@@ -9,7 +9,7 @@ const { createClient } = require('./helpers/fakes');
 function createReadyClient(t) {
 	const client = createClient();
 	t.after(() => client.destroy());
-	client.config = { ...client.config, showStartupBanner: false, updateCheck: { enabled: false } };
+	client.config = { ...client.config, banner: { enabled: false }, updateCheck: { enabled: false } };
 	client.application = /** @type {any} */ ({ id: '100000000000000010' });
 
 	// Replace only the two request methods, so the rest of the REST client (used by destroy()) still works.

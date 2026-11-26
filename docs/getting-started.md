@@ -79,6 +79,7 @@ most common problems.
 ## 5. Make it yours
 
 - Change the prefix, colours, status and messages in [`src/config.js`](../src/config.js).
-- Replace the ASCII art in [`src/lib/banner.js`](../src/lib/banner.js), or set `showStartupBanner: false`.
+- Pick another [figlet font](https://patorjk.com/software/taag) for the startup banner with `banner.font`, or set
+  `banner.enabled: false`.
 - If you keep the update check enabled, point `updateCheck.repository` to your own repository, or disable it.
 - Write your first command: see [Writing commands](commands.md).
