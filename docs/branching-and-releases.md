@@ -71,6 +71,14 @@ The [Release](../.github/workflows/release.yml) workflow then runs the checks ag
 GitHub release with the notes from the changelog, and publishes the Docker image as `ghcr.io/<owner>/<repository>`
 with the tags `4.1.0`, `4.1`, `4` and `latest`. If that version already has a release, it publishes nothing.
 
+### Let Claude Code do it
+
+The repository includes a [release skill](../.claude/skills/release/SKILL.md) for
+[Claude Code](https://claude.com/claude-code). Ask it to "release a minor version" (or patch, or major), from your
+computer or from the Claude app on your phone. It does all four steps above: it prepares the release branch, opens the
+pull requests, waits for their checks, merges them, and checks that the release, Docker image and docs site were
+published.
+
 ## One-time setup
 
 Do this once in your repository on GitHub. You need to be an admin of the repository.
