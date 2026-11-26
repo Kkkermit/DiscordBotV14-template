@@ -1,0 +1,2 @@
+# Formats and lints the staged files before every commit. The config is under "lint-staged" in package.json.
+npx lint-staged

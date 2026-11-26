@@ -1,0 +1,15 @@
+# Keep the image small and never bake secrets into it.
+.env
+.env.*
+!.env.example
+node_modules
+npm-debug.log*
+.git
+.github
+.vscode
+coverage
+docs
+test
+*.md
+Dockerfile
+compose.yaml

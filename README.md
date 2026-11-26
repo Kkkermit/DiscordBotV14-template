@@ -1,128 +1,233 @@
-<!--    ██████╗ ███████╗██╗   ██╗    ██████╗ ██╗   ██╗    ██╗  ██╗██╗  ██╗███████╗██████╗ ███╗   ███╗██╗████████╗
-        ██╔══██╗██╔════╝██║   ██║    ██╔══██╗╚██╗ ██╔╝    ██║ ██╔╝██║ ██╔╝██╔════╝██╔══██╗████╗ ████║██║╚══██╔══╝
-        ██║  ██║█████╗  ██║   ██║    ██████╔╝ ╚████╔╝     █████╔╝ █████╔╝ █████╗  ██████╔╝██╔████╔██║██║   ██║   
-        ██║  ██║██╔══╝  ╚██╗ ██╔╝    ██╔══██╗  ╚██╔╝      ██╔═██╗ ██╔═██╗ ██╔══╝  ██╔══██╗██║╚██╔╝██║██║   ██║   
-        ██████╔╝███████╗ ╚████╔╝     ██████╔╝   ██║       ██║  ██╗██║  ██╗███████╗██║  ██║██║ ╚═╝ ██║██║   ██║   
-        ╚═════╝ ╚══════╝  ╚═══╝      ╚═════╝    ╚═╝       ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝   ╚═╝    -->
-
-<img align="center" alt="banner" src="https://i.postimg.cc/Vv28NDm9/banner.png">
-
 <p align="center">
-<img align="center" alt="GitHub issues" src="https://img.shields.io/github/issues/Kkkermit/DiscordBotV14-template?style=for-the-badge"> 
-<img align="center" alt="GitHub license" src="https://img.shields.io/github/license/Kkkermit/DiscordBotV14-template?style=for-the-badge">
-<img align="center" alt="GitHub license" src="https://img.shields.io/github/stars/Kkkermit/DiscordBotV14-template?style=for-the-badge">
-<img align="center" alt="GitHub license" src="https://img.shields.io/github/forks/Kkkermit/DiscordBotV14-template?style=for-the-badge">
+  <img src="docs/assets/banner.svg" alt="Discord Bot V14 Template: a discord.js v14 bot template with slash and prefix commands" width="100%">
 </p>
 
-<p align="center"><strong>
-Advanced v14 prefix and slash command discord bot
-</strong></p>
-
 <p align="center">
-Easy to use and beginner friendly package that offers the use of both slash commands and prefix command as well as database connection using mongoDB. Easy to set up and get started in. Comes with a few basic starter commands and events such as command logging, guild create & delete events and more...
+  <a href="https://github.com/Kkkermit/DiscordBotV14-template/actions/workflows/ci.yml"><img alt="CI status" src="https://img.shields.io/github/actions/workflow/status/Kkkermit/DiscordBotV14-template/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=CI"></a>
+  <a href="https://github.com/Kkkermit/DiscordBotV14-template/actions/workflows/codeql.yml"><img alt="CodeQL status" src="https://img.shields.io/github/actions/workflow/status/Kkkermit/DiscordBotV14-template/codeql.yml?branch=main&style=for-the-badge&logo=github&label=CodeQL"></a>
+  <a href="https://github.com/Kkkermit/DiscordBotV14-template/releases"><img alt="Latest release" src="https://img.shields.io/github/v/release/Kkkermit/DiscordBotV14-template?style=for-the-badge&color=5865F2"></a>
+  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/github/license/Kkkermit/DiscordBotV14-template?style=for-the-badge"></a>
+  <br>
+  <a href="https://discord.js.org"><img alt="discord.js version" src="https://img.shields.io/github/package-json/dependency-version/Kkkermit/DiscordBotV14-template/discord.js?style=for-the-badge&logo=discord&logoColor=white&color=5865F2"></a>
+  <a href="https://nodejs.org"><img alt="Node.js 24 or newer" src="https://img.shields.io/badge/Node.js-24%2B-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"></a>
+  <a href="https://prettier.io"><img alt="Code style: Prettier" src="https://img.shields.io/badge/code_style-prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black"></a>
+  <a href="https://discord.gg/xcMVwAVjSD"><img alt="Support server" src="https://img.shields.io/badge/Discord-Get_help-5865F2?style=for-the-badge&logo=discord&logoColor=white"></a>
 </p>
 
-<hr>
+<h1 align="center">Discord Bot Template for discord.js v14</h1>
 
-## Table of Contents
-- [Installation](#installation)
-- [Usage](#usage)
-- [Support](#support)
-- [License](#license)
+<p align="center">
+  <b>A clean, beginner-friendly Discord bot template and boilerplate for Node.js.</b><br>
+  Slash commands, prefix commands, events, MongoDB and Docker, ready to go. Add a file, restart, and your<br>
+  command is live. Loading, validation, cooldowns, permissions, error handling and logging are taken care of.
+</p>
 
-<h1 align="center"><strong>
-⭐ If your a fan of this repository or have used it or any of it's code, please consider leaving us a star. It would be greatly appreciated and allows us to see if users value the bot! ⭐
-</strong></h1>
+<p align="center">
+  <a href="docs/getting-started.md">Getting started</a> •
+  <a href="docs/commands.md">Writing commands</a> •
+  <a href="docs/configuration.md">Configuration</a> •
+  <a href="docs/deployment.md">Deployment</a> •
+  <a href="docs/troubleshooting.md">Troubleshooting</a>
+</p>
 
-## Installation
-- Download [Node.js](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
-- Download [Visual Studio Code](https://code.visualstudio.com/download).
+---
 
-## Usage
-- **Project Setup**
+## Contents
 
-    1. Fork the Github project :
-       1. Sign up / Sign in to [GitHub](https://github.com/).
-       2. Navigate to [Testify](https://github.com/Kkkermit/DiscordBotV14-template).
-       3. Click `Star` to support development.
-       4. Click `Fork` to copy all code to your own repository.
-   
-    2. Click the `Code` button. From the drop-down that appears, click `Download ZIP` to download the entire repository as a ZIP folder.
+- [Features](#features)
+- [Quick start](#quick-start)
+- [What you get](#what-you-get)
+- [Adding a command](#adding-a-command)
+- [Project structure](#project-structure)
+- [Scripts](#scripts)
+- [Configuration](#configuration)
+- [Development workflow](#development-workflow)
+- [Documentation](#documentation)
+- [Upgrading from v3](#upgrading-from-v3)
+- [Contributing and support](#contributing-and-support)
 
-    3. Extract the files to a new folder and open it with [Visual Studio Code](https://code.visualstudio.com/download).
+## Features
 
+- **Slash and prefix commands** side by side, organised in category folders and loaded automatically.
+- **Working examples** of autocomplete (`/help`), buttons (`bot-info`), options (`/user-info`) and embeds.
+- **Command options built in**: per-user cooldowns, developer-only commands, required permissions and arguments.
+- **Commands register themselves**: every slash command is registered with Discord when the bot starts, so adding
+  a file and restarting is all it takes.
+- **Clear errors instead of crashes**: a wrong `.env` value, a config typo or a broken command file is explained
+  in the console. Users see a friendly message, never your stack trace.
+- **Your bot's name in ASCII art** on startup, drawn with [figlet](https://github.com/patorjk/figlet.js).
+- **Optional MongoDB** with Mongoose. Leave the connection string empty and the bot runs without a database.
+- **Production ready**: graceful shutdown, minimal gateway intents, safe mention defaults, Docker and Compose.
+- **Modern, simple tooling**: Node.js 24+, ESLint, Prettier on every commit, tests with the built-in Node.js
+  test runner, GitHub Actions for CI, releases and CodeQL, and Dependabot. It's plain JavaScript:
+  no TypeScript and no build step.
 
-- **Obtain Discord Bot Token**
+## Quick start
 
-    1. Sign in to [Discord Developer Portal](https://discord.com/developers/applications).
+You need [Node.js 24 or newer](https://nodejs.org/) and a bot application on the
+[Discord Developer Portal](https://discord.com/developers/applications)
+([step-by-step guide](docs/getting-started.md#1-create-your-discord-bot)).
 
-    2. Create a bot :
-        1. Enter the left side `Applications`.
-        2. Click `New Application` in the upper right corner and enter the name of the bot. After confirmation, enter the new page.
-        3. Click on the left side `Bot`.
-        4. Enable all intents listed under `Privileged Gateway Intents` and click `Save Changes`.
-        5. View and copy the token by clicking the `Reset Token` button.
-   
-    3. Set up OAuth2 :
-        1. Click on `OAuth2` in the left column.
-        2. Click on `URL Generator` in the left column.
-        3. In the right column, select `bot` and `applications.commands` under `SCOPES`.
-        4. Scroll down and select `Administrator` under `BOT PERMISSIONS`.
-        5. Copy the URL at the bottom and paste it into your browser.
-        6. Choose the server you want to add the bot to and click `Continue` > `Authorize`.
+```bash
+# 1. Get the code (or click "Use this template" on GitHub)
+git clone https://github.com/Kkkermit/DiscordBotV14-template.git my-bot
+cd my-bot
 
+# 2. Install the dependencies
+npm install
 
-- **Obtain MongoDB Connection String**
+# 3. Create your .env file. It asks for your token and checks every answer.
+npm run setup
+```
 
-    1. Sign up / Sign in to [MongoDB](https://www.mongodb.com).
-    2. Choose your preferred cloud database plan.
-    3. Customize the cluster settings to your preference and click `Create Cluster`.
-    4. Navigate to the `Network Access` page, click `Add IP Address` and select `Allow access from anywhere`.
-    5. Navigate back to the `Database` page and click `Connect`.
-    6. Create a `database user`, click `Choose a connection method` and select `Connect your application`.
-    7. Copy your connection string and replace `<password>` with the password for the database user that you created earlier.
+4. In the Developer Portal, turn on **Message Content Intent** under **Bot → Privileged Gateway Intents**.
+   Without it the bot can't log in.
+5. [Invite the bot](docs/getting-started.md#3-invite-the-bot-to-your-server) to your server.
+6. Run `npm start` and try `/help` or `?help` in your server.
 
+> [!TIP]
+> Don't see a new slash command yet? Press `Ctrl+R` (`Cmd+R` on macOS) in Discord to refresh it.
 
-- **Setting up the env file**
+## What you get
 
-    *If you go along with this, you can ignore the parts in the `Project Execution` that explain how to generate and fill in the `.env`*
+When the bot starts, it checks your settings, loads every command and event, and greets you with its name:
 
-    1. For easy setup of the env file, ( `.env` ) you can run the command `npm run setup-env`
-    2. Once you've ran the command, it generates a script in the console
-    3. You need to then fill out the fields in the console. Fields marked with the text **"Required"** are you required fields and you need to fill those ones in. The script will not continue if you ignore to fill in those fields. 
-    4. Once you've filled in the field, it will write those fields into and generate the `.env`.
-    5. Alternatively, you can ignore this and fill in the fields yourself by viewing the `.example.env` file.
-    6. You then should be good, and your `.env` should be setup.
+<p align="center">
+  <img src="docs/assets/console.png" alt="The console when the bot starts: commands and events are loaded, the bot logs in and its name is printed in large ASCII art letters" width="820">
+</p>
 
+These commands are included, ready to change or delete:
 
-- **Project Execution**
+| Slash command | Prefix command                      | What it does                                       |
+| ------------- | ----------------------------------- | -------------------------------------------------- |
+| `/help`       | `?help [command]` (`h`, `commands`) | Lists the commands, or shows details about one.    |
+| `/ping`       | `?ping` (`latency`)                 | Shows the round trip and WebSocket latency.        |
+| `/uptime`     | `?uptime` (`botuptime`)             | Shows how long the bot has been online.            |
+| `/bot-info`   | `?bot-info` (`bi`, `botinfo`)       | Bot statistics, with a refresh button.             |
+| `/user-info`  |                                     | Information about a user and their server profile. |
 
-    1. Rename the filed named `example.env` to `.env`
-    2. Navigate to the `Bot` page on the [Discord Developer Portal](https://discord.com/developers/applications) and click `Reset Token`. Afterwards, create a `.env` file within the root directory.
-    3. Paste your bot token into the `token` variable inside the `.env` file.
-    4. Paste your [MongoDB](https://www.mongodb.com) connection string into the `mongodb` variable inside the `.env` file.
-    5. Navigate to the `OAuth2` page and copy the `CLIENT ID`. 
-    6. Paste your client ID into the `clientid` variable inside the `.env` file.
-    7. Navigate to your discord server, enable developer mode and right click the dropdown beside the server name. 
-    8. Click `Copy Server ID` and paste it into the `guildid` variable inside the `.env` file.
-    9. Navigate to the `package.json` file and pay attention to the runnable commands listed under `scripts`.
-    10. Open the terminal in [Visual Studio Code](https://code.visualstudio.com/download) and install all necessary packages using `npm run setup`. This will install the dependencies and give you a brief install guide
-    11. Open a new terminal and type `npm run start` to run the file without using **nodemon** or `npm run start:nodemon` to run the bot with nodemon.
-    12. The bot should then turn online, you should be able to see this by the console logs that is setup upon start up
+The bot also introduces itself when a message only mentions it, and `@YourBot ping` works as a prefix too.
 
-- **Runnable commands (scripts)**
+## Adding a command
 
-   **npm run start** - <br>
-   This starts up the bot with the contents from the `.env` file. Essentially the same as running `node .`
+Create a file in a category folder, for example `src/commands/slash/fun/hello.js`:
 
-   **npm run setup-env** - <br>
-   To run the setup of the `.env` file you can run the command `npm run setup-env`, this generates a script in the console that generates a `.env` file and where you fill out the fields with whats required for the `.env` file and it writes it in the file.
+```js
+// src/commands/slash/fun/hello.js
+const { SlashCommandBuilder } = require('discord.js');
 
+module.exports = {
+  data: new SlashCommandBuilder().setName('hello').setDescription('Say hello!'),
+  cooldown: 5, // Optional, in seconds.
 
-## Support
-Connect with us on [Discord](https://discord.gg/xcMVwAVjSD) for support / any related inquiry.
+  async execute(interaction, client) {
+    await interaction.reply(`Hello ${interaction.user}, I'm ${client.user.username}!`);
+  },
+};
+```
 
-## License
-Released under the terms of [MIT License](https://github.com/Kkkermit/DiscordBotV14-template/blob/main/LICENSE) license.
+Restart the bot and `/hello` is ready, listed in `/help` under **Fun**. Prefix commands work the same way in
+`src/commands/prefix/`. [Writing commands](docs/commands.md) covers options, autocomplete, buttons, permissions and
+more.
 
-**Thanks to [thelegendev](https://github.com/TheLegenDev) for the readme template from [Nub Bot](https://github.com/TheLegenDev/Nub-Bot)** 💛
+## Project structure
+
+```text
+├── .github/                   Workflows (CI, releases, branch rules, CodeQL), rulesets, issue templates
+├── .husky/pre-commit          Formats your staged files with Prettier on every commit
+├── docs/                      Guides (start with getting-started.md)
+├── scripts/
+│   ├── setup-env.js           npm run setup: creates your .env file
+│   ├── prepare-release.js     npm run prepare-release: sets the next version and changelog
+│   └── release-notes.js       Reads a version's notes from CHANGELOG.md for the release
+├── src/
+│   ├── commands/
+│   │   ├── prefix/<category>/ Prefix commands, e.g. prefix/utility/ping.js
+│   │   └── slash/<category>/  Slash commands, e.g. slash/utility/ping.js
+│   ├── database/              MongoDB connection and Mongoose models
+│   ├── events/<category>/     Event listeners, e.g. events/messages/messageCreate.js
+│   ├── handlers/              Loads commands and events, handles shutdown
+│   ├── lib/                   Helpers: logger, embeds, cooldowns, help, banner...
+│   ├── client.js              The Discord client, with the template's helpers
+│   ├── config.js              Your bot's settings
+│   ├── env.js                 Loads and checks the .env file
+│   └── index.js               Starts the bot
+├── test/                      Tests, in the same folders as the code they test
+├── .env.example               Every environment variable, explained
+├── AGENTS.md                  The codebase explained for AI coding agents (and curious humans)
+├── compose.yaml, Dockerfile   Run the bot with Docker
+└── package.json
+```
+
+[Architecture](docs/architecture.md) explains how a message or interaction flows through the bot.
+
+## Scripts
+
+| Command                         | What it does                                                                       |
+| ------------------------------- | ---------------------------------------------------------------------------------- |
+| `npm start`                     | Starts the bot.                                                                    |
+| `npm run dev`                   | Starts the bot and restarts it when you change or add a file in `src/`.            |
+| `npm run setup`                 | Creates your `.env` file step by step.                                             |
+| `npm test`                      | Runs the tests.                                                                    |
+| `npm run test:coverage`         | Runs the tests and checks how much of the code they cover.                         |
+| `npm run lint`                  | Checks the code with ESLint. `npm run lint:fix` fixes what it can.                 |
+| `npm run format`                | Formats every file with Prettier.                                                  |
+| `npm run check`                 | Runs the linter, the format check and the tests, like CI does.                     |
+| `npm run prepare-release minor` | Sets the next version (`patch`, `minor` or `major`) and moves the changelog notes. |
+
+## Configuration
+
+Secrets go in `.env` ([all variables](docs/configuration.md#environment-variables)):
+
+| Variable        | Required | Description                                                          |
+| --------------- | -------- | -------------------------------------------------------------------- |
+| `DISCORD_TOKEN` | Yes      | Your bot token.                                                      |
+| `DEVELOPER_IDS` | No       | Comma-separated user IDs allowed to use `developerOnly` commands.    |
+| `MONGODB_URI`   | No       | MongoDB connection string. Leave it empty to run without a database. |
+| `LOG_LEVEL`     | No       | `debug`, `info` (default), `warn` or `error`.                        |
+
+Everything else is in [`src/config.js`](src/config.js): the prefix, embed colour, banner font, status and activities,
+cooldowns, a command log channel, the replies users see, and the update check. Every setting is described in
+[Configuration](docs/configuration.md#configjs), and mistakes are reported when the bot starts.
+
+## Development workflow
+
+- **Formatting is automatic.** `npm install` sets up a Git hook that runs ESLint and Prettier on the files you
+  commit, so every commit is consistently formatted. With the recommended VS Code extensions, files are also
+  formatted when you save.
+- **Every push and pull request is checked** by GitHub Actions: linting, formatting, the tests on Node.js 24 and 26
+  with a coverage gate, a Docker build and a CodeQL security scan.
+- **Protected branches.** Features and fixes go into `develop` through pull requests, and `develop` goes into `main`.
+  Rulesets you can import make the checks required. See [Branching and releases](docs/branching-and-releases.md).
+- **Merging into `main` releases.** It creates a GitHub release with the notes from [`CHANGELOG.md`](CHANGELOG.md) and
+  publishes a Docker image to the GitHub Container Registry. `npm run prepare-release minor` sets the version.
+
+## Documentation
+
+| Guide                                                    | What's in it                                                        |
+| -------------------------------------------------------- | ------------------------------------------------------------------- |
+| [Getting started](docs/getting-started.md)               | Create the bot, invite it and run it for the first time.            |
+| [Writing commands](docs/commands.md)                     | Slash and prefix commands, options, autocomplete, buttons, helpers. |
+| [Events](docs/events.md)                                 | React to anything that happens on Discord, and gateway intents.     |
+| [Configuration](docs/configuration.md)                   | Every `.env` variable and `config.js` setting.                      |
+| [Database](docs/database.md)                             | Using MongoDB and Mongoose models.                                  |
+| [Deployment](docs/deployment.md)                         | Docker, PM2, hosting platforms and releases.                        |
+| [Branching and releases](docs/branching-and-releases.md) | Protected `main` and `develop` branches, and cutting a release.     |
+| [Architecture](docs/architecture.md)                     | How the template works under the hood, and how it's tested.         |
+| [Troubleshooting](docs/troubleshooting.md)               | Fixes for the most common problems.                                 |
+
+## Upgrading from v3
+
+Version 4 is a rewrite. The main changes are the new environment variable names, the `src/commands/slash` and
+`src/commands/prefix` folders and the reorganised `config.js`. The [changelog](CHANGELOG.md#400) has a step-by-step
+migration guide.
+
+## Contributing and support
+
+- ⭐ If this template helps you, please leave a star. It shows that people find the project useful!
+- Questions? Join the [Discord server](https://discord.gg/xcMVwAVjSD).
+- Found a bug or have an idea? [Open an issue](https://github.com/Kkkermit/DiscordBotV14-template/issues/new/choose).
+- Want to help? Read the [contributing guide](CONTRIBUTING.md) and the [code of conduct](CODE_OF_CONDUCT.md).
+- Security problem? Follow the [security policy](SECURITY.md) instead of opening an issue.
+
+Released under the [MIT License](LICENSE).

@@ -1,0 +1,57 @@
+name: Branch rules
+
+# Checks that a pull request follows the branching model in docs/branching-and-releases.md:
+#   feature/*, bugfix/*, release/* (and Dependabot) → develop → main
+# The rulesets in .github/rulesets/ make these checks required before merging.
+on:
+  pull_request:
+    branches: [main, develop]
+    # "edited" re-runs the checks when someone changes the pull request's base branch.
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  source-branch:
+    name: Source branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the branch may be merged into ${{ github.base_ref }}
+        env:
+          BASE: ${{ github.base_ref }}
+          HEAD: ${{ github.head_ref }}
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          if [ "$BASE" = main ]; then
+            if [ "$HEAD" != develop ] || [ "$HEAD_REPOSITORY" != "$GITHUB_REPOSITORY" ]; then
+              echo "::error::Pull requests into main must come from develop. Change the base branch to develop (Edit, next to the title)."
+              exit 1
+            fi
+          else
+            case "$HEAD" in
+              feature/* | bugfix/* | release/* | dependabot/*) ;;
+              *)
+                echo "::error::Branches merged into develop must start with feature/, bugfix/ or release/, but this one is \"$HEAD\". Rename it, push it again and open a new pull request."
+                exit 1
+                ;;
+            esac
+          fi
+          echo "$HEAD can be merged into $BASE."
+
+  release-version:
+    name: Release version
+    # Merging into main publishes a release, so the version must be new and have notes in CHANGELOG.md.
+    if: github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check the version has not been released yet
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if git ls-remote --exit-code --tags origin "refs/tags/v$version" > /dev/null; then
+            echo "::error::v$version is already released. Run \"npm run prepare-release patch\" (or minor/major) on a release/ branch and merge it into develop first."
+            exit 1
+          fi
+          node scripts/release-notes.js "$version" > /dev/null
+          echo "Merging this pull request publishes v$version."

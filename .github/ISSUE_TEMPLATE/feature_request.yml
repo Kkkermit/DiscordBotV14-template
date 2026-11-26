@@ -1,0 +1,31 @@
+name: Feature request
+description: Suggest an idea or an improvement for the template.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The template aims to stay small and beginner friendly, so explain who would benefit from your idea.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      placeholder: When I build a bot with the template, I always have to...
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: What would you like to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contributing
+      options:
+        - label: I'd like to open a pull request for this.
