@@ -152,6 +152,7 @@ more.
 │   └── types.js               Types for editor autocompletion
 ├── test/                      Tests, in the same folders as the code they test
 ├── .env.example               Every environment variable, explained
+├── AGENTS.md                  The codebase explained for AI coding agents (and curious humans)
 ├── compose.yaml, Dockerfile   Run the bot with Docker
 └── package.json
 ```

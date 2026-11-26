@@ -44,7 +44,8 @@ npm run check   # ESLint, Prettier check and the tests. CI runs the same checks.
 - Add or update tests for behaviour you change. Put them at the same path as the code, e.g. `test/lib/format.test.js`
   for `src/lib/format.js`. [`test/helpers/fakes.js`](test/helpers/fakes.js) has fake messages and interactions so
   commands can be tested without Discord. `npm run test:coverage` shows which lines are still untested.
-- Update the docs (`README.md`, `docs/`, `.env.example`) when you change setup steps, configuration or commands.
+- Update the docs (`README.md`, `docs/`, `.env.example`, `AGENTS.md`) when you change setup steps, configuration,
+  commands or files.
 - Add a line to the `Unreleased` section of [`CHANGELOG.md`](CHANGELOG.md).
 - Never commit tokens, `.env` files or other secrets.
 
