@@ -1,7 +1,7 @@
 'use strict';
 
 const { MessageFlags, SlashCommandBuilder } = require('discord.js');
-const { createSlashCommandEmbed, createSlashHelpEmbed, getVisibleSlashCommands } = require('../../../lib/help');
+const { createSlashCommandEmbed, createSlashHelpEmbed, getVisibleCommands } = require('../../../lib/help');
 
 /** Discord shows at most 25 autocomplete suggestions. */
 const MAX_SUGGESTIONS = 25;
@@ -22,7 +22,7 @@ module.exports = {
 	// Suggests command names while the user types (because of `.setAutocomplete(true)` above).
 	async autocomplete(interaction, client) {
 		const query = interaction.options.getFocused().toLowerCase();
-		const suggestions = getVisibleSlashCommands(client, interaction.user.id)
+		const suggestions = getVisibleCommands(client, interaction.user.id, client.slashCommands)
 			.map((command) => command.data.name)
 			// Context menu commands can have capital letters, so compare in lower case.
 			.filter((name) => name.toLowerCase().includes(query))
@@ -40,7 +40,7 @@ module.exports = {
 			return;
 		}
 
-		const command = getVisibleSlashCommands(client, interaction.user.id).find(
+		const command = getVisibleCommands(client, interaction.user.id, client.slashCommands).find(
 			({ data }) => data.name.toLowerCase() === name,
 		);
 		if (!command) {

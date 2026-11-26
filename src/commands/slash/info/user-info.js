@@ -6,6 +6,14 @@ const { createEmbed } = require('../../../lib/embeds');
 /** Roles shown before the list is cut off, to stay within Discord's embed limits. */
 const MAX_ROLES_SHOWN = 15;
 
+/** @param {string[]} roles Role mentions, highest first. */
+function formatRoles(roles) {
+	if (roles.length === 0) return 'None';
+	const shown = roles.slice(0, MAX_ROLES_SHOWN).join(' ');
+	const hiddenCount = roles.length - MAX_ROLES_SHOWN;
+	return hiddenCount > 0 ? `${shown} and ${hiddenCount} more` : shown;
+}
+
 /** @type {import('../../../types').SlashCommand} */
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -32,12 +40,11 @@ module.exports = {
 			);
 
 		if (member && member.id === user.id) {
+			// Every member has the @everyone role, whose ID is the server's ID, so leave it out.
 			const roles = member.roles.cache
 				.filter((role) => role.id !== interaction.guildId)
 				.sort((a, b) => b.position - a.position)
 				.map((role) => role.toString());
-			const shownRoles = roles.slice(0, MAX_ROLES_SHOWN).join(' ');
-			const hiddenCount = roles.length - MAX_ROLES_SHOWN;
 
 			embed.setColor(member.displayColor || client.config.embedColor).addFields(
 				{
@@ -46,11 +53,7 @@ module.exports = {
 					inline: true,
 				},
 				{ name: 'Nickname', value: member.nickname ?? 'None', inline: true },
-				{
-					name: `Roles (${roles.length})`,
-					value:
-						roles.length > 0 ? `${shownRoles}${hiddenCount > 0 ? ` and ${hiddenCount} more` : ''}` : 'None',
-				},
+				{ name: `Roles (${roles.length})`, value: formatRoles(roles) },
 			);
 		}
 

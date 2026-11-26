@@ -31,7 +31,6 @@ function categoryFields(commands, formatLine) {
 	}));
 }
 
-/** Formats an optional description as ` - description`. */
 const withDescription = (text) => (text ? ` - ${text}` : '');
 
 /**
@@ -59,25 +58,15 @@ function formatSlashCommandName(client, command) {
 }
 
 /**
- * The slash commands a user may see: developer-only commands are hidden from everyone else.
+ * Hides developer-only commands from everyone who isn't a developer.
  *
+ * @template {{ developerOnly?: boolean }} T
  * @param {import('../client').BotClient} client
  * @param {string} userId
+ * @param {import('discord.js').Collection<string, T>} commands
  */
-function getVisibleSlashCommands(client, userId) {
-	return [...client.slashCommands.values()].filter((command) => !command.developerOnly || client.isDeveloper(userId));
-}
-
-/**
- * The prefix commands a user may see: developer-only commands are hidden from everyone else.
- *
- * @param {import('../client').BotClient} client
- * @param {string} userId
- */
-function getVisiblePrefixCommands(client, userId) {
-	return [...client.prefixCommands.values()].filter(
-		(command) => !command.developerOnly || client.isDeveloper(userId),
-	);
+function getVisibleCommands(client, userId, commands) {
+	return [...commands.values()].filter((command) => !command.developerOnly || client.isDeveloper(userId));
 }
 
 /**
@@ -86,7 +75,7 @@ function getVisiblePrefixCommands(client, userId) {
  */
 function createSlashHelpEmbed(client, userId) {
 	const fields = categoryFields(
-		getVisibleSlashCommands(client, userId),
+		getVisibleCommands(client, userId, client.slashCommands),
 		(command) => `${formatSlashCommandName(client, command)}${withDescription(command.data.description)}`,
 	);
 
@@ -127,7 +116,7 @@ function createSlashCommandEmbed(client, command) {
 function createPrefixHelpEmbed(client, userId) {
 	const { prefix } = client.config;
 	const fields = categoryFields(
-		getVisiblePrefixCommands(client, userId),
+		getVisibleCommands(client, userId, client.prefixCommands),
 		(command) => `\`${prefix}${command.name}\`${withDescription(command.description)}`,
 	);
 
@@ -162,8 +151,7 @@ function createPrefixCommandEmbed(client, command) {
 }
 
 module.exports = {
-	getVisibleSlashCommands,
-	getVisiblePrefixCommands,
+	getVisibleCommands,
 	createSlashHelpEmbed,
 	createSlashCommandEmbed,
 	createPrefixHelpEmbed,

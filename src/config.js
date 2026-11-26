@@ -22,7 +22,7 @@ module.exports = {
 		/** Print the bot's name as ASCII art, and a short summary, once it is online. */
 		enabled: true,
 
-		/** Any figlet font, such as 'ANSI Shadow', 'Standard', 'Slant' or 'Big'. Preview them at https://patorjk.com/software/taag */
+		/** A figlet font, such as 'ANSI Shadow', 'Standard', 'Slant' or 'Big'. Preview them at https://patorjk.com/software/taag */
 		font: 'ANSI Shadow',
 	},
 

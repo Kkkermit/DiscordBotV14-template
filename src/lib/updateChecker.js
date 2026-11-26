@@ -36,11 +36,9 @@ function compareVersions(a, b) {
 }
 
 /**
- * Fetches the tag of the latest GitHub release of a repository.
- *
  * @param {string} repository `owner/name`
  * @param {typeof globalThis.fetch} [fetch] Replaceable for tests.
- * @returns {Promise<string | null>} The tag, or `null` when the repository has no releases.
+ * @returns {Promise<string | null>} The latest release's tag, or `null` when there are no releases.
  */
 async function fetchLatestReleaseTag(repository, fetch = globalThis.fetch) {
 	const response = await fetch(`https://api.github.com/repos/${repository}/releases/latest`, {

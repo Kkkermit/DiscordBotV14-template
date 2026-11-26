@@ -55,21 +55,16 @@ async function main() {
 	}
 
 	const rest = new REST().setToken(env.token);
-	const application = /** @type {{ id: string }} */ (await rest.get(Routes.currentApplication()));
-
-	log.info(
-		flags.clear
-			? `Removing all slash commands from ${scope}...`
-			: `Registering ${body.length} command(s) in ${scope}...`,
-	);
+	// The token belongs to one application, so its ID doesn't need to be configured separately.
+	const application = await rest.get(Routes.currentApplication());
 	const registered = await deployCommands({ rest, applicationId: application.id, guildId, body });
-	log.success(
-		flags.clear
-			? `Removed all slash commands from ${scope}.`
-			: `Registered ${registered.length} command(s) in ${scope}.`,
-	);
 
-	if (!guildId && !flags.clear) log.info('Global commands can take up to an hour to show up in every server.');
+	if (flags.clear) {
+		log.success(`Removed all slash commands from ${scope}.`);
+	} else {
+		log.success(`Registered ${registered.length} command(s) in ${scope}.`);
+		if (!guildId) log.info('Global commands can take up to an hour to show up in every server.');
+	}
 }
 
 main().catch((error) => {

@@ -4,13 +4,9 @@ const path = require('node:path');
 const { LEVEL_NAMES } = require('./lib/logger');
 const { SNOWFLAKE_PATTERN } = require('./lib/constants');
 
-/** Absolute path of the `.env` file in the project root. */
 const ENV_FILE_PATH = path.resolve(__dirname, '..', '.env');
 
-/**
- * Thrown when one or more environment variables are missing or invalid.
- * `issues` holds one human-readable message per problem so they can all be shown at once.
- */
+/** Lists every problem with the environment variables in `issues`, so they can all be shown at once. */
 class EnvValidationError extends Error {
 	/** @param {string[]} issues */
 	constructor(issues) {
@@ -30,11 +26,10 @@ class EnvValidationError extends Error {
  */
 
 /**
- * Loads variables from the `.env` file into `process.env`, if the file exists.
- * Variables that are already set in the real environment take precedence over the file.
+ * Loads the `.env` file into `process.env`, if there is one. Variables that are already set
+ * (by Docker or a hosting panel, for example) are not overwritten.
  *
- * @param {string} [filePath]
- * @returns {boolean} `true` when a file was loaded.
+ * @returns {boolean} Whether a file was loaded.
  */
 function loadEnvFile(filePath = ENV_FILE_PATH) {
 	try {
@@ -47,11 +42,11 @@ function loadEnvFile(filePath = ENV_FILE_PATH) {
 }
 
 /**
- * Reads, validates and normalises the bot's environment variables.
+ * Validates the environment variables and returns them in a tidy shape.
  *
  * @param {NodeJS.ProcessEnv} [source]
  * @returns {Readonly<Env>}
- * @throws {EnvValidationError} When a variable is missing or malformed.
+ * @throws {EnvValidationError}
  */
 function parseEnv(source = process.env) {
 	const issues = [];
@@ -97,12 +92,7 @@ function parseEnv(source = process.env) {
 	});
 }
 
-/**
- * Loads the `.env` file (if present) and returns the validated environment.
- *
- * @returns {Readonly<Env>}
- * @throws {EnvValidationError}
- */
+/** @returns {Readonly<Env>} The validated environment, after loading the `.env` file. */
 function loadEnv() {
 	loadEnvFile();
 	return parseEnv(process.env);

@@ -11,10 +11,8 @@ const EVENTS_DIR = path.join(__dirname, '..', 'events');
 const KNOWN_EVENTS = new Set(Object.values(Events));
 
 /**
- * Checks that a module exports a valid event.
- *
- * @param {unknown} event
- * @returns {string | null} The reason it is invalid, or `null` if it is valid.
+ * @param {any} event
+ * @returns {string | null} What is wrong with an event file's export, or `null` if it's valid.
  */
 function validateEvent(event) {
 	if (!event || typeof event !== 'object') return 'the file does not export an event object.';

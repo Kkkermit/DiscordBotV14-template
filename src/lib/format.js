@@ -46,23 +46,17 @@ function truncate(text, maxLength) {
  *
  * @param {string[]} lines
  * @param {number} maxLength
- * @returns {string}
  */
 function joinLines(lines, maxLength) {
-	const kept = [];
-	let length = 0;
-	for (const [index, line] of lines.entries()) {
-		const more = `…and ${lines.length - index} more`;
-		const isLast = index === lines.length - 1;
-		// Keep room for the "…and N more" line unless this is the last line.
-		if (length + line.length + (isLast ? 0 : more.length + 1) > maxLength) {
-			kept.push(more);
-			break;
-		}
-		kept.push(line);
-		length += line.length + 1;
+	const all = lines.join('\n');
+	if (all.length <= maxLength) return all;
+
+	// Drop lines from the end until the rest, plus a note saying how many are missing, fits.
+	for (let keep = lines.length - 1; keep > 0; keep -= 1) {
+		const text = [...lines.slice(0, keep), `…and ${lines.length - keep} more`].join('\n');
+		if (text.length <= maxLength) return text;
 	}
-	return kept.join('\n');
+	return `…and ${lines.length} more`;
 }
 
 /**

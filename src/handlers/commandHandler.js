@@ -18,12 +18,9 @@ const PREFIX_COMMANDS_DIR = path.join(__dirname, '..', 'commands', 'prefix');
 
 const isLowerCaseWord = (value) => typeof value === 'string' && /^\S+$/.test(value) && value === value.toLowerCase();
 
-/**
- * Checks the options both kinds of command support.
- *
- * @param {any} command
- * @returns {string | null} What is wrong, or `null` if nothing is.
- */
+// Each validator returns what is wrong with a command file's export, or `null` if it's valid.
+
+/** @param {any} command */
 function validateCommonOptions(command) {
 	if (typeof command.execute !== 'function') return 'missing an "execute" function.';
 	if (command.cooldown !== undefined && !(Number.isFinite(command.cooldown) && command.cooldown >= 0)) {
@@ -35,12 +32,7 @@ function validateCommonOptions(command) {
 	return null;
 }
 
-/**
- * Checks that a file exports a valid slash (or context menu) command.
- *
- * @param {any} command
- * @returns {string | null} What is wrong, or `null` if nothing is.
- */
+/** @param {any} command A slash or context menu command. */
 function validateSlashCommand(command) {
 	if (typeof command?.data?.toJSON !== 'function') {
 		return 'missing a "data" property built with SlashCommandBuilder or ContextMenuCommandBuilder.';
@@ -57,12 +49,7 @@ function validateSlashCommand(command) {
 	return validateCommonOptions(command);
 }
 
-/**
- * Checks that a file exports a valid prefix command.
- *
- * @param {any} command
- * @returns {string | null} What is wrong, or `null` if nothing is.
- */
+/** @param {any} command */
 function validatePrefixCommand(command) {
 	if (!isLowerCaseWord(command?.name)) return 'missing a "name": a single lower case word.';
 	if (command.aliases !== undefined && !(Array.isArray(command.aliases) && command.aliases.every(isLowerCaseWord))) {
@@ -159,9 +146,9 @@ function loadPrefixCommands(directory = PREFIX_COMMANDS_DIR) {
 }
 
 /**
- * Logs what was loaded and why any file was skipped.
+ * Logs how many commands were loaded and why any file was skipped.
  *
- * @param {string} type
+ * @param {'slash' | 'prefix'} type
  * @param {Collection<string, { category: string }>} commands
  * @param {LoadFailure[]} failures
  */
@@ -178,11 +165,7 @@ function reportLoadResult(type, commands, failures) {
 	log.success(`Loaded ${commands.size} ${type} command(s)${perCategory ? ` (${perCategory})` : ''}.`);
 }
 
-/**
- * Loads all slash and prefix commands onto the client.
- *
- * @param {import('../client').BotClient} client
- */
+/** @param {import('../client').BotClient} client */
 function loadCommands(client) {
 	const slash = loadSlashCommands();
 	client.slashCommands = slash.commands;

@@ -68,8 +68,8 @@ Version 4 is a rewrite of the template with modern discord.js, safer defaults, t
    `execute(interaction, client)`, prefix commands export `name`, `aliases` and `execute(message, client, args)`.
 4. Move files from `src/triggers/` to a folder in `src/events/`.
 5. Replace `client.commands`, `client.pcommands` and `client.aliases` in your code with `client.slashCommands`,
-   `client.prefixCommands` and `client.prefixAliases`, and `client.logs` with `client.logger` (or
-   `require('../../lib/logger').logger`).
+   `client.prefixCommands` and `client.prefixAliases`, and `client.logs` with
+   `const { logger } = require('../../lib/logger')`.
 6. Copy your settings into the new `src/config.js`.
 7. Replace `ephemeral: true` with `flags: MessageFlags.Ephemeral` in your own commands.
 8. Move Mongoose schemas from `src/schemas/` to `src/database/models/`.

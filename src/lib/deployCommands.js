@@ -35,10 +35,8 @@ function deployCommands({ rest, applicationId, guildId = null, body }) {
 }
 
 /**
- * Fetches the slash commands currently registered with Discord.
- *
  * @param {DeployOptions} options
- * @returns {Promise<any[]>}
+ * @returns {Promise<any[]>} The slash commands currently registered with Discord.
  */
 function fetchRegisteredCommands({ rest, applicationId, guildId = null }) {
 	return rest.get(commandsRoute(applicationId, guildId));

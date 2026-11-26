@@ -3,7 +3,6 @@
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const config = require('./config');
 const { CooldownManager } = require('./lib/cooldowns');
-const { logger } = require('./lib/logger');
 
 /**
  * The bot's Discord client: the discord.js `Client` plus the template's commands, config and helpers.
@@ -27,7 +26,6 @@ class BotClient extends Client {
 
 		this.env = env;
 		this.config = config;
-		this.logger = logger;
 
 		/** @type {Collection<string, import('./handlers/commandHandler').LoadedSlashCommand>} */
 		this.slashCommands = new Collection();
@@ -35,9 +33,9 @@ class BotClient extends Client {
 		this.prefixCommands = new Collection();
 		/** @type {Collection<string, string>} Prefix command alias → command name. */
 		this.prefixAliases = new Collection();
-		/** @type {Collection<string, string>} Slash command name → ID, used for clickable mentions in `/help`. */
+		/** @type {Collection<string, string>} Slash command name → ID, for clickable mentions in `/help`. */
 		this.commandIds = new Collection();
-		/** @type {string[]} Slash command files that failed to load. Commands aren't registered while this has entries. */
+		/** @type {string[]} While this isn't empty, slash commands aren't registered on startup. */
 		this.failedSlashCommandFiles = [];
 
 		this.cooldowns = new CooldownManager();
@@ -47,31 +45,22 @@ class BotClient extends Client {
 		this.presenceTimer = null;
 	}
 
-	/**
-	 * Finds a prefix command by its name or one of its aliases, ignoring case.
-	 *
-	 * @param {string} name
-	 */
+	/** @param {string} name A prefix command's name or alias, in any case. */
 	getPrefixCommand(name) {
 		const key = name.toLowerCase();
 		return this.prefixCommands.get(key) ?? this.prefixCommands.get(this.prefixAliases.get(key) ?? '');
 	}
 
-	/** The total number of members across every server the bot is in. */
+	/** The number of members across every server the bot is in. */
 	countMembers() {
 		return this.guilds.cache.reduce((total, guild) => total + guild.memberCount, 0);
 	}
 
-	/**
-	 * Whether the user is listed in `DEVELOPER_IDS`.
-	 *
-	 * @param {string} userId
-	 */
+	/** @param {string} userId Whether this user is listed in `DEVELOPER_IDS`. */
 	isDeveloper(userId) {
 		return this.env.developerIds.includes(userId);
 	}
 
-	/** Stops the bot's timers and closes the connection to Discord. */
 	async destroy() {
 		clearInterval(this.cooldownSweepTimer);
 		clearInterval(this.presenceTimer);
