@@ -10,7 +10,6 @@ COPY package.json package-lock.json .npmrc ./
 RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
 
 COPY src ./src
-COPY scripts ./scripts
 
 # Run as the unprivileged user that ships with the Node.js image.
 USER node

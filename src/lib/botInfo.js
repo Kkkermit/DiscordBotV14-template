@@ -85,4 +85,4 @@ function collectRefreshClicks({ message, userId, client, edit }) {
 	});
 }
 
-module.exports = { createBotInfoEmbed, createBotInfoPayload, collectRefreshClicks };
+module.exports = { createBotInfoPayload, collectRefreshClicks };

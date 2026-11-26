@@ -20,23 +20,23 @@ describe('Logger', () => {
 
 	it('writes every level to the same stream, in order', () => {
 		const { output, stream } = createStream();
-		const logger = new Logger({ stream, colors: false });
-		logger.info('first');
-		logger.error('second');
-		logger.warn('third');
-		assert.match(output.text, /INFO {4}first\n.*ERROR {3}second\n.*WARN {4}third\n/s);
+		const log = new Logger({ stream, colors: false }).child('Test');
+		log.info('first');
+		log.error('second');
+		log.warn('third');
+		assert.match(output.text, /INFO {4}\[Test\] first\n.*ERROR {3}\[Test\] second\n.*WARN {4}\[Test\] third\n/s);
 	});
 
 	it('adds colours when enabled', () => {
 		const { output, stream } = createStream();
-		new Logger({ stream, colors: true }).error('broken');
+		new Logger({ stream, colors: true }).child('Test').error('broken');
 		assert.ok(output.text.includes(styleText('red', 'ERROR'.padEnd(7), { validateStream: false })));
 	});
 
 	it('includes the stack of errors passed as extra arguments', () => {
 		const { output, stream } = createStream();
-		const logger = new Logger({ stream, colors: false });
-		logger.error('Something failed:', new Error('boom'));
+		const log = new Logger({ stream, colors: false }).child('Test');
+		log.error('Something failed:', new Error('boom'));
 		assert.match(output.text, /Something failed: Error: boom\n\s+at /);
 	});
 

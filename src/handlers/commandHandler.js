@@ -137,8 +137,6 @@ function loadCommands(client) {
 }
 
 module.exports = {
-	SLASH_COMMANDS_DIR,
-	PREFIX_COMMANDS_DIR,
 	validateSlashCommand,
 	validatePrefixCommand,
 	loadSlashCommands,

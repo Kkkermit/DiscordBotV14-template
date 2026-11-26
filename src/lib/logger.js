@@ -56,26 +56,6 @@ class Logger {
 		};
 	}
 
-	debug(...args) {
-		this.write('debug', null, args);
-	}
-
-	info(...args) {
-		this.write('info', null, args);
-	}
-
-	success(...args) {
-		this.write('success', null, args);
-	}
-
-	warn(...args) {
-		this.write('warn', null, args);
-	}
-
-	error(...args) {
-		this.write('error', null, args);
-	}
-
 	write(level, label, args) {
 		if (SEVERITY[level] < SEVERITY[this.level]) return;
 
@@ -83,7 +63,7 @@ class Logger {
 			colorize('dim', formatTimestamp(this.now()), this.colors),
 			colorize(LEVEL_COLORS[level], level.toUpperCase().padEnd(LABEL_WIDTH), this.colors),
 		];
-		if (label) parts.push(colorize('magenta', `[${label}]`, this.colors));
+		parts.push(colorize('magenta', `[${label}]`, this.colors));
 		parts.push(formatWithOptions({ colors: this.colors }, ...args));
 
 		this.stream.write(`${parts.join(' ')}\n`);

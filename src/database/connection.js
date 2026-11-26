@@ -7,7 +7,7 @@ let listenersAttached = false;
 
 async function connectDatabase(uri) {
 	log.info('Connecting to MongoDB...');
-	const connection = await mongoose.connect(uri, { serverSelectionTimeoutMS: 10_000 });
+	await mongoose.connect(uri, { serverSelectionTimeoutMS: 10_000 });
 	log.success(`Connected to MongoDB (database "${mongoose.connection.name}").`);
 
 	// Added after connecting, so a failed first connection is only reported once.
@@ -17,7 +17,6 @@ async function connectDatabase(uri) {
 		mongoose.connection.on('error', (error) => log.error('MongoDB connection error:', error));
 		listenersAttached = true;
 	}
-	return connection;
 }
 
 async function disconnectDatabase() {

@@ -45,9 +45,8 @@ function createClient(env = {}) {
 	return client;
 }
 
-function createSentMessage(payload) {
+function createSentMessage() {
 	return {
-		payload,
 		edits: [],
 		createdTimestamp: Date.now(),
 		collector: null,
@@ -79,7 +78,7 @@ function createMessage(content, { authorId = USER_ID, permissions = [] } = {}) {
 		replies: [],
 		async reply(payload) {
 			this.replies.push(payload);
-			return createSentMessage(payload);
+			return createSentMessage();
 		},
 	};
 }
@@ -118,7 +117,7 @@ function createInteraction(commandName, { userId = USER_ID, options = {}, focuse
 		async reply(payload) {
 			this.replied = true;
 			this.replies.push(payload);
-			this.sentMessage = createSentMessage(payload);
+			this.sentMessage = createSentMessage();
 			return { resource: { message: this.sentMessage } };
 		},
 		async editReply(payload) {
