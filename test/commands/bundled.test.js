@@ -208,6 +208,16 @@ describe('prefix commands', () => {
 		});
 	}
 
+	it('help says when a command does not exist, without echoing pings or code', async (t) => {
+		const client = createClient();
+		t.after(() => client.destroy());
+		const message = createMessage('?help x`<@1>`');
+
+		await client.prefixCommands.get('help').execute(message, client, ['x`<@1>`']);
+		assert.match(message.replies[0].content, /no command called `x<@1>`/);
+		assert.deepEqual(message.replies[0].allowedMentions, { parse: [] });
+	});
+
 	it('help shows the details of a command by alias', async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());

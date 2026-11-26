@@ -6,6 +6,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { describe, it } = require('node:test');
 const {
+	loadCommands,
 	loadPrefixCommands,
 	loadSlashCommands,
 	validatePrefixCommand,
@@ -148,5 +149,21 @@ describe('loadPrefixCommands', () => {
 		assert.equal(aliases.get('helpme'), 'help');
 		assert.equal(aliases.has('info'), false);
 		assert.equal(warnings.length, 2);
+	});
+});
+
+describe('loadCommands', () => {
+	it('puts the bundled commands on the client', () => {
+		const client = {
+			slashCommands: null,
+			prefixCommands: null,
+			prefixAliases: null,
+			failedSlashCommandFiles: null,
+		};
+		loadCommands(client);
+		assert.equal(client.slashCommands.size, 5);
+		assert.equal(client.prefixCommands.size, 4);
+		assert.equal(client.prefixAliases.get('h'), 'help');
+		assert.deepEqual(client.failedSlashCommandFiles, []);
 	});
 });
