@@ -12,7 +12,7 @@ Version 4 is a rewrite of the template with modern discord.js, safer defaults, t
 
 ### Breaking changes
 
-- **Node.js 22.12 or newer** is required (Node.js 18 has reached end of life).
+- **Node.js 24 or newer** is required (Node.js 18 has reached end of life; 24 is the current LTS).
 - **Environment variables are renamed:** `token` → `DISCORD_TOKEN`, `devid` → `DEVELOPER_IDS` (now a
   comma-separated list), `mongodb` → `MONGODB_URI`. `clientid` and the unused `guildid` are no longer needed.
 - **Commands moved:** `src/commands/` → `src/commands/slash/` and `src/prefix/` → `src/commands/prefix/`.
@@ -41,7 +41,7 @@ Version 4 is a rewrite of the template with modern discord.js, safer defaults, t
 - Dockerfile and Compose file with an optional MongoDB service.
 - ESLint, Prettier, EditorConfig and a pre-commit hook (Husky and lint-staged) that formats staged files.
 - Tests with the Node.js test runner and a coverage gate (`npm run test:coverage`).
-- GitHub Actions: CI on Node.js 22 and 24, a release workflow that publishes a GitHub release and a Docker image
+- GitHub Actions: CI on Node.js 24 and 26, a release workflow that publishes a GitHub release and a Docker image
   to the GitHub Container Registry, CodeQL scanning, and Dependabot.
 - Documentation in `docs/`, a contributing guide, code of conduct, security policy and issue templates.
 
@@ -67,7 +67,7 @@ Version 4 is a rewrite of the template with modern discord.js, safer defaults, t
 
 ### Migrating from 3.x
 
-1. Install Node.js 22.12 or newer.
+1. Install Node.js 24 or newer.
 2. Update your `.env` file with the new variable names (or run `npm run setup`).
 3. Move your slash commands to `src/commands/slash/<category>/` and your prefix commands to
    `src/commands/prefix/<category>/`, with lower case folder names. Their shape is unchanged: slash commands export

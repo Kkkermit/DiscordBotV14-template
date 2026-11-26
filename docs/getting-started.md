@@ -4,7 +4,7 @@ This guide takes you from nothing to a running bot. It takes about ten minutes.
 
 ## Requirements
 
-- [Node.js](https://nodejs.org/) **22.12 or newer**. Check with `node --version`. If you use
+- [Node.js](https://nodejs.org/) **24 or newer**. Check with `node --version`. If you use
   [nvm](https://github.com/nvm-sh/nvm), run `nvm use` in the project folder to switch to the version in `.nvmrc`.
 - A code editor. [Visual Studio Code](https://code.visualstudio.com/) works well: it will suggest the ESLint and
   Prettier extensions when you open the project.

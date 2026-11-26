@@ -1,6 +1,6 @@
 # Deployment
 
-Once your bot works locally, you'll want it online all the time. Any machine or service that can run Node.js 22.12+
+Once your bot works locally, you'll want it online all the time. Any machine or service that can run Node.js 24+
 works: a VPS, a Raspberry Pi, or a hosting platform.
 
 ## Before you deploy

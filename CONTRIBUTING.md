@@ -17,7 +17,7 @@ so not every feature belongs in it.
 
 ## Development setup
 
-You need Node.js 22.12 or newer.
+You need Node.js 24 or newer.
 
 ```bash
 git clone https://github.com/<your-username>/DiscordBotV14-template.git

@@ -52,7 +52,7 @@ the bot to update Discord's list, then press `Ctrl+R` in Discord.
 
 ### `npm install` fails with "Unsupported engine"
 
-Your Node.js version is too old. Install Node.js 22.12 or newer from [nodejs.org](https://nodejs.org/), or run
+Your Node.js version is too old. Install Node.js 24 or newer from [nodejs.org](https://nodejs.org/), or run
 `nvm install` in the project folder if you use nvm.
 
 ### My commit was stopped by the pre-commit hook

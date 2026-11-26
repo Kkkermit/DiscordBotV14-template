@@ -8,10 +8,6 @@ updates:
       # One pull request for all tooling updates instead of one per package.
       dev-dependencies:
         dependency-type: development
-    ignore:
-      # lint-staged 17 needs Node.js 22.22+, but the template supports Node.js 22.12+.
-      - dependency-name: lint-staged
-        versions: ['>=17']
     open-pull-requests-limit: 5
 
   - package-ecosystem: github-actions

@@ -9,7 +9,7 @@
   <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/github/license/Kkkermit/DiscordBotV14-template?style=for-the-badge"></a>
   <br>
   <a href="https://discord.js.org"><img alt="discord.js version" src="https://img.shields.io/github/package-json/dependency-version/Kkkermit/DiscordBotV14-template/discord.js?style=for-the-badge&logo=discord&logoColor=white&color=5865F2"></a>
-  <a href="https://nodejs.org"><img alt="Node.js 22.12 or newer" src="https://img.shields.io/badge/Node.js-22.12%2B-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"></a>
+  <a href="https://nodejs.org"><img alt="Node.js 24 or newer" src="https://img.shields.io/badge/Node.js-24%2B-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"></a>
   <a href="https://prettier.io"><img alt="Code style: Prettier" src="https://img.shields.io/badge/code_style-prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black"></a>
   <a href="https://discord.gg/xcMVwAVjSD"><img alt="Support server" src="https://img.shields.io/badge/Discord-Get_help-5865F2?style=for-the-badge&logo=discord&logoColor=white"></a>
 </p>
@@ -58,13 +58,13 @@
 - **Your bot's name in ASCII art** on startup, drawn with [figlet](https://github.com/patorjk/figlet.js).
 - **Optional MongoDB** with Mongoose. Leave the connection string empty and the bot runs without a database.
 - **Production ready**: graceful shutdown, minimal gateway intents, safe mention defaults, Docker and Compose.
-- **Modern, simple tooling**: Node.js 22+, ESLint, Prettier on every commit, tests with the built-in Node.js
+- **Modern, simple tooling**: Node.js 24+, ESLint, Prettier on every commit, tests with the built-in Node.js
   test runner, GitHub Actions for CI, releases and CodeQL, and Dependabot. No build step and no TypeScript needed,
   and VS Code still autocompletes your commands thanks to a one-line type hint.
 
 ## Quick start
 
-You need [Node.js 22.12 or newer](https://nodejs.org/) and a bot application on the
+You need [Node.js 24 or newer](https://nodejs.org/) and a bot application on the
 [Discord Developer Portal](https://discord.com/developers/applications)
 ([step-by-step guide](docs/getting-started.md#1-create-your-discord-bot)).
 
@@ -194,7 +194,7 @@ cooldowns, a command log channel, the replies users see, and the update check. E
 - **Formatting is automatic.** `npm install` sets up a Git hook that runs ESLint and Prettier on the files you
   commit, so every commit is consistently formatted. With the recommended VS Code extensions, files are also
   formatted when you save.
-- **Every push and pull request is checked** by GitHub Actions: linting, formatting, the tests on Node.js 22 and 24
+- **Every push and pull request is checked** by GitHub Actions: linting, formatting, the tests on Node.js 24 and 26
   with a coverage gate, a Docker build and a CodeQL security scan.
 - **Releases are one command.** `npm version minor && git push --follow-tags` creates a GitHub release with the notes
   from [`CHANGELOG.md`](CHANGELOG.md) and publishes a Docker image to the GitHub Container Registry. See

@@ -13,7 +13,7 @@ simple, readable and well documented above all else.
 
 | Topic           | Details                                                                                     |
 | --------------- | ------------------------------------------------------------------------------------------- |
-| Runtime         | Node.js **22.12+** (`engines` in `package.json`, enforced by `engine-strict` in `.npmrc`)   |
+| Runtime         | Node.js **24+** (`engines` in `package.json`, enforced by `engine-strict` in `.npmrc`)      |
 | Language        | JavaScript, **CommonJS** (`require` / `module.exports`). No build step, no TypeScript.      |
 | Types           | Only a one-line `@type` hint on command exports, backed by `src/types.js`. No JSDoc blocks. |
 | Dependencies    | `discord.js` 14, `mongoose` 9 (optional database), `figlet` (startup banner)                |
@@ -115,10 +115,10 @@ A timer forces exit after 8 s (below Docker's 10 s stop timeout). Unhandled reje
 
 | File                                 | Purpose                                                                                                                                           |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `workflows/ci.yml`                   | On push to `main` and pull requests (and reusable via `workflow_call`): lint + format check, `test:coverage` on Node 22.x and 24.x, Docker build. |
+| `workflows/ci.yml`                   | On push to `main` and pull requests (and reusable via `workflow_call`): lint + format check, `test:coverage` on Node 24.x and 26.x, Docker build. |
 | `workflows/release.yml`              | On `v*.*.*` tags: runs CI, checks the tag equals `package.json` version, creates a GitHub release from `CHANGELOG.md`, pushes the image to GHCR.  |
 | `workflows/codeql.yml`               | CodeQL security scan on push, pull requests and weekly.                                                                                           |
-| `dependabot.yml`                     | Weekly npm updates (dev dependencies grouped, `lint-staged >= 17` ignored because it needs Node 22.22+), monthly GitHub Actions updates.          |
+| `dependabot.yml`                     | Weekly npm updates (dev dependencies grouped), monthly GitHub Actions updates.                                                                    |
 | `ISSUE_TEMPLATE/bug_report.yml`      | Bug report form (version, Node.js version, OS, logs; warns not to paste tokens).                                                                  |
 | `ISSUE_TEMPLATE/feature_request.yml` | Feature request form.                                                                                                                             |
 | `ISSUE_TEMPLATE/config.yml`          | Disables blank issues; links to the Discord server and the discord.js docs.                                                                       |
@@ -317,7 +317,7 @@ module.exports = {
 - **User-facing text:** friendly, never a stack trace. Configurable replies live in `config.messages`.
 - **Safety:** when echoing user input, pass `allowedMentions: { parse: [] }` and keep it out of code blocks
   (`escapeCodeBlock`). Keep embeds within Discord limits.
-- **Dependencies:** only add one when it clearly helps the template. Check its `engines` against Node 22.12.
+- **Dependencies:** only add one when it clearly helps the template. Check its `engines` against Node 24.
 
 ## Common tasks
 
@@ -361,7 +361,7 @@ covered module, because testing it needs a real MongoDB server.
 ## CI/CD and releases
 
 - **CI** (`.github/workflows/ci.yml`): `npm ci`, `npm run lint`,
-  `npm run format:check`, `npm run test:coverage` on Node 22.x and 24.x, and a Docker build.
+  `npm run format:check`, `npm run test:coverage` on Node 24.x and 26.x, and a Docker build.
 - **Release** (`.github/workflows/release.yml`): `npm version <patch|minor|major>` then `git push --follow-tags`.
   The tag must match `package.json`. Write the `## <version>` section in `CHANGELOG.md` first: its content becomes the
   release notes. The image is pushed to `ghcr.io/<owner>/<repo>` with full, minor and major version tags.
@@ -377,7 +377,7 @@ covered module, because testing it needs a real MongoDB server.
 - **One stream for logs.** The logger writes every level to stdout so Docker and PM2 keep the order. Don't log to
   stderr.
 - **`.env` is never committed.** Don't create or print real tokens. `.env.example` documents every variable.
-- **Node version:** keep everything compatible with Node 22.12. `lint-staged` stays on v16 for this reason.
+- **Node version:** Node 24 or newer. Keep every dependency compatible with Node 24 (check `engines`).
 - **The `prepare` script is `husky || true`** so production installs without dev dependencies don't fail. The
   Dockerfile also uses `--ignore-scripts`.
 - **Banner fonts** come from figlet; `validateConfig` rejects unknown fonts.
