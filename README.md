@@ -14,10 +14,12 @@
   <a href="https://discord.gg/xcMVwAVjSD"><img alt="Support server" src="https://img.shields.io/badge/Discord-Get_help-5865F2?style=for-the-badge&logo=discord&logoColor=white"></a>
 </p>
 
+<h1 align="center">Discord Bot Template for discord.js v14</h1>
+
 <p align="center">
-  <b>A clean, beginner-friendly starting point for your own Discord bot.</b><br>
-  Add a file, restart, and your command is live. Loading, validation, cooldowns, permissions,<br>
-  error handling and logging are taken care of, so you can focus on what your bot does.
+  <b>A clean, beginner-friendly Discord bot template and boilerplate for Node.js.</b><br>
+  Slash commands, prefix commands, events, MongoDB and Docker, ready to go. Add a file, restart, and your<br>
+  command is live. Loading, validation, cooldowns, permissions, error handling and logging are taken care of.
 </p>
 
 <p align="center">

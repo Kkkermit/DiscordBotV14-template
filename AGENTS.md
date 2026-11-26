@@ -127,8 +127,9 @@ A timer forces exit after 8 s (below Docker's 10 s stop timeout). Unhandled reje
 ### `docs/`
 
 User guides: `getting-started.md`, `commands.md`, `events.md`, `configuration.md`, `database.md`, `deployment.md`
-(including releases), `architecture.md`, `troubleshooting.md`. `docs/assets/` holds `banner.svg` (README banner) and
-`console.png` (screenshot of the startup console). Update the guides whenever behaviour, settings or commands change.
+(including releases), `architecture.md`, `troubleshooting.md`. `docs/assets/` holds `banner.svg` (README banner),
+`console.png` (screenshot of the startup console) and `social-preview.png` (1280×640 image to upload under
+**Settings → Social preview** on GitHub). Update the guides whenever behaviour, settings or commands change.
 
 ### `scripts/`
 
