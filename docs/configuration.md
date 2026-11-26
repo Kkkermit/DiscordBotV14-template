@@ -12,17 +12,16 @@ Both are validated when the bot starts. If a value is wrong, the bot tells you w
 Create the `.env` file with `npm run setup`, or copy [`.env.example`](../.env.example). Variables that are already set
 in your environment (for example by Docker or your hosting panel) take priority over the file.
 
-| Variable           | Required | Default | Description                                                                                |
-| ------------------ | -------- | ------- | ------------------------------------------------------------------------------------------ |
-| `DISCORD_TOKEN`    | Yes      |         | The bot token from **Developer Portal → Bot → Reset Token**.                               |
-| `DISCORD_GUILD_ID` | No       |         | A server ID. Slash commands are registered in that server only, and update instantly.      |
-| `DEVELOPER_IDS`    | No       |         | Comma-separated user IDs, e.g. `123...,456...`. They can use `developerOnly` commands.     |
-| `MONGODB_URI`      | No       |         | A `mongodb://` or `mongodb+srv://` connection string. The database is disabled when empty. |
-| `LOG_LEVEL`        | No       | `info`  | `debug` shows everything, `warn` and `error` show only problems.                           |
+| Variable        | Required | Default | Description                                                                                |
+| --------------- | -------- | ------- | ------------------------------------------------------------------------------------------ |
+| `DISCORD_TOKEN` | Yes      |         | The bot token from **Developer Portal → Bot → Reset Token**.                               |
+| `DEVELOPER_IDS` | No       |         | Comma-separated user IDs, e.g. `123...,456...`. They can use `developerOnly` commands.     |
+| `MONGODB_URI`   | No       |         | A `mongodb://` or `mongodb+srv://` connection string. The database is disabled when empty. |
+| `LOG_LEVEL`     | No       | `info`  | `debug` shows everything, `warn` and `error` show only problems.                           |
 
 > [!NOTE]
 > Coming from v3? The old names (`token`, `clientid`, `guildid`, `devid`, `mongodb`) are no longer read.
-> `clientid` isn't needed any more. See the [migration guide](../CHANGELOG.md#400).
+> `clientid` and `guildid` aren't needed any more. See the [migration guide](../CHANGELOG.md#400).
 
 ## config.js
 
@@ -53,12 +52,11 @@ activities: [
 
 ### commands
 
-| Setting                  | Default | Description                                                                               |
-| ------------------------ | ------- | ----------------------------------------------------------------------------------------- |
-| `registerOnStartup`      | `true`  | Register slash commands every time the bot starts. Turn off to use `npm run deploy` only. |
-| `defaultCooldownSeconds` | `3`     | Cooldown for commands that don't set `cooldown`. `0` disables it.                         |
-| `mentionAsPrefix`        | `true`  | Allow `@YourBot ping` as well as `?ping`.                                                 |
-| `replyToUnknownCommands` | `true`  | Reply with a hint when someone types the prefix and a command that doesn't exist.         |
+| Setting                  | Default | Description                                                                       |
+| ------------------------ | ------- | --------------------------------------------------------------------------------- |
+| `defaultCooldownSeconds` | `3`     | Cooldown for commands that don't set `cooldown`. `0` disables it.                 |
+| `mentionAsPrefix`        | `true`  | Allow `@YourBot ping` as well as `?ping`.                                         |
+| `replyToUnknownCommands` | `true`  | Reply with a hint when someone types the prefix and a command that doesn't exist. |
 
 ### logging
 

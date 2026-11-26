@@ -51,8 +51,11 @@ function formatSlashCommandName(client, command) {
 	if (type === ApplicationCommandType.User || type === ApplicationCommandType.Message) {
 		return `\`${name}\` (right-click menu)`;
 	}
-	const id = client.commandIds.get(name);
-	return id ? chatInputApplicationCommandMention(name, id) : `\`/${name}\``;
+	// Filled in by `commands.set()` when the bot registers its commands on startup.
+	const registered = client.application?.commands.cache.find(
+		(command) => command.name === name && command.type === ApplicationCommandType.ChatInput,
+	);
+	return registered ? chatInputApplicationCommandMention(name, registered.id) : `\`/${name}\``;
 }
 
 /**

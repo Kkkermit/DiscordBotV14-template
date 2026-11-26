@@ -60,7 +60,6 @@ function validateConfig(config) {
 		);
 	});
 
-	check(isBoolean(commands?.registerOnStartup), 'commands.registerOnStartup must be true or false.');
 	check(isBoolean(commands?.mentionAsPrefix), 'commands.mentionAsPrefix must be true or false.');
 	check(isBoolean(commands?.replyToUnknownCommands), 'commands.replyToUnknownCommands must be true or false.');
 	check(

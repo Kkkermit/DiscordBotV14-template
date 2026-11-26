@@ -49,7 +49,8 @@
 - **Slash and prefix commands** side by side, organised in category folders and loaded automatically.
 - **Working examples** of autocomplete (`/help`), buttons (`bot-info`), options (`/user-info`) and embeds.
 - **Command options built in**: per-user cooldowns, developer-only commands, required permissions and arguments.
-- **Instant updates while developing**: slash commands are registered in your test server in seconds.
+- **Commands register themselves**: every slash command is registered with Discord when the bot starts, so adding
+  a file and restarting is all it takes.
 - **Clear errors instead of crashes**: a wrong `.env` value, a config typo or a broken command file is explained
   in the console. Users see a friendly message, never your stack trace.
 - **Your bot's name in ASCII art** on startup, drawn with [figlet](https://github.com/patorjk/figlet.js).
@@ -84,8 +85,7 @@ Then, in the Developer Portal, turn on **Message Content Intent** under **Bot �
 [invite the bot](docs/getting-started.md#3-invite-the-bot-to-your-server) to your server and try `/help` or `?help`.
 
 > [!TIP]
-> Set `DISCORD_GUILD_ID` to your test server's ID while developing. Slash commands then update instantly instead of
-> taking up to an hour.
+> Don't see a new slash command yet? Press `Ctrl+R` in Discord to refresh it.
 
 ## What you get
 
@@ -136,7 +136,6 @@ more.
 ├── .husky/pre-commit          Formats your staged files with Prettier on every commit
 ├── docs/                      Guides (start with getting-started.md)
 ├── scripts/
-│   ├── deploy-commands.js     npm run deploy: register slash commands without starting the bot
 │   └── setup-env.js           npm run setup: creates your .env file
 ├── src/
 │   ├── commands/
@@ -161,29 +160,27 @@ more.
 
 ## Scripts
 
-| Command                 | What it does                                                            |
-| ----------------------- | ----------------------------------------------------------------------- |
-| `npm start`             | Starts the bot.                                                         |
-| `npm run dev`           | Starts the bot and restarts it every time you save a file.              |
-| `npm run setup`         | Creates your `.env` file step by step.                                  |
-| `npm run deploy`        | Registers slash commands. Add `-- --global` or `-- --clear` (see docs). |
-| `npm test`              | Runs the tests.                                                         |
-| `npm run test:coverage` | Runs the tests and checks how much of the code they cover.              |
-| `npm run lint`          | Checks the code with ESLint. `npm run lint:fix` fixes what it can.      |
-| `npm run format`        | Formats every file with Prettier.                                       |
-| `npm run check`         | Runs the linter, the format check and the tests, like CI does.          |
+| Command                 | What it does                                                       |
+| ----------------------- | ------------------------------------------------------------------ |
+| `npm start`             | Starts the bot.                                                    |
+| `npm run dev`           | Starts the bot and restarts it every time you save a file.         |
+| `npm run setup`         | Creates your `.env` file step by step.                             |
+| `npm test`              | Runs the tests.                                                    |
+| `npm run test:coverage` | Runs the tests and checks how much of the code they cover.         |
+| `npm run lint`          | Checks the code with ESLint. `npm run lint:fix` fixes what it can. |
+| `npm run format`        | Formats every file with Prettier.                                  |
+| `npm run check`         | Runs the linter, the format check and the tests, like CI does.     |
 
 ## Configuration
 
 Secrets go in `.env` ([all variables](docs/configuration.md#environment-variables)):
 
-| Variable           | Required | Description                                                               |
-| ------------------ | -------- | ------------------------------------------------------------------------- |
-| `DISCORD_TOKEN`    | Yes      | Your bot token.                                                           |
-| `DISCORD_GUILD_ID` | No       | Test server ID. Slash commands are registered there and update instantly. |
-| `DEVELOPER_IDS`    | No       | Comma-separated user IDs allowed to use `developerOnly` commands.         |
-| `MONGODB_URI`      | No       | MongoDB connection string. Leave it empty to run without a database.      |
-| `LOG_LEVEL`        | No       | `debug`, `info` (default), `warn` or `error`.                             |
+| Variable        | Required | Description                                                          |
+| --------------- | -------- | -------------------------------------------------------------------- |
+| `DISCORD_TOKEN` | Yes      | Your bot token.                                                      |
+| `DEVELOPER_IDS` | No       | Comma-separated user IDs allowed to use `developerOnly` commands.    |
+| `MONGODB_URI`   | No       | MongoDB connection string. Leave it empty to run without a database. |
+| `LOG_LEVEL`     | No       | `debug`, `info` (default), `warn` or `error`.                        |
 
 Everything else is in [`src/config.js`](src/config.js): the prefix, embed colour, banner font, status and activities,
 cooldowns, a command log channel, the replies users see, and the update check. Every setting is described in

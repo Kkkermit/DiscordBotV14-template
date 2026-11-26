@@ -17,7 +17,6 @@ class EnvValidationError extends Error {
 /**
  * @typedef {object} Env
  * @property {string} token Bot token used to log in to Discord.
- * @property {string | null} guildId Development server ID. When set, slash commands are registered there instantly.
  * @property {readonly string[]} developerIds User IDs allowed to run `developerOnly` commands.
  * @property {string | null} mongoUri MongoDB connection string. The database is disabled when empty.
  * @property {string} logLevel Minimum level printed by the logger.
@@ -55,11 +54,6 @@ function parseEnv(source = process.env) {
 		issues.push('DISCORD_TOKEN is required. Copy it from the "Bot" page of the Discord Developer Portal.');
 	}
 
-	const guildId = read('DISCORD_GUILD_ID');
-	if (guildId && !SNOWFLAKE_PATTERN.test(guildId)) {
-		issues.push(`DISCORD_GUILD_ID must be a server ID (17-20 digits), received "${guildId}".`);
-	}
-
 	const developerIds = (read('DEVELOPER_IDS') ?? '')
 		.split(',')
 		.map((id) => id.trim())
@@ -83,7 +77,6 @@ function parseEnv(source = process.env) {
 
 	return Object.freeze({
 		token,
-		guildId,
 		developerIds: Object.freeze([...new Set(developerIds)]),
 		mongoUri,
 		logLevel,

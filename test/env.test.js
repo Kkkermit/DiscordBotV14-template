@@ -10,36 +10,34 @@ const TOKEN = 'test-token';
 describe('parseEnv', () => {
 	it('returns normalised values with defaults', () => {
 		const env = parseEnv({ DISCORD_TOKEN: ` ${TOKEN} ` });
-		assert.deepEqual(env, { token: TOKEN, guildId: null, developerIds: [], mongoUri: null, logLevel: 'info' });
+		assert.deepEqual(env, { token: TOKEN, developerIds: [], mongoUri: null, logLevel: 'info' });
 		assert.ok(Object.isFrozen(env));
 	});
 
 	it('parses every optional variable', () => {
 		const env = parseEnv({
 			DISCORD_TOKEN: TOKEN,
-			DISCORD_GUILD_ID: '123456789012345678',
 			DEVELOPER_IDS: '123456789012345678, 223456789012345678,123456789012345678',
 			MONGODB_URI: 'mongodb+srv://user:pass@cluster.example.net/bot',
 			LOG_LEVEL: 'DEBUG',
 		});
-		assert.equal(env.guildId, '123456789012345678');
 		assert.deepEqual(env.developerIds, ['123456789012345678', '223456789012345678']);
 		assert.equal(env.mongoUri, 'mongodb+srv://user:pass@cluster.example.net/bot');
 		assert.equal(env.logLevel, 'debug');
 	});
 
 	it('treats empty values as unset', () => {
-		const env = parseEnv({ DISCORD_TOKEN: TOKEN, DISCORD_GUILD_ID: '', MONGODB_URI: '   ' });
-		assert.equal(env.guildId, null);
+		const env = parseEnv({ DISCORD_TOKEN: TOKEN, DEVELOPER_IDS: '', MONGODB_URI: '   ' });
+		assert.deepEqual(env.developerIds, []);
 		assert.equal(env.mongoUri, null);
 	});
 
 	it('reports every problem at once', () => {
 		assert.throws(
-			() => parseEnv({ DISCORD_GUILD_ID: 'abc', DEVELOPER_IDS: '1', MONGODB_URI: 'http://x', LOG_LEVEL: 'loud' }),
+			() => parseEnv({ DEVELOPER_IDS: '1', MONGODB_URI: 'http://x', LOG_LEVEL: 'loud' }),
 			(error) => {
 				assert.ok(error instanceof EnvValidationError);
-				assert.equal(error.issues.length, 5);
+				assert.equal(error.issues.length, 4);
 				assert.match(error.issues[0], /DISCORD_TOKEN is required/);
 				return true;
 			},

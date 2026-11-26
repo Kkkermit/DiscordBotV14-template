@@ -58,7 +58,7 @@ async function handleCommand(interaction, client) {
 	const command = client.slashCommands.get(interaction.commandName);
 
 	if (!command) {
-		log.warn(`Received unknown command "/${interaction.commandName}". Run "npm run deploy" to refresh commands.`);
+		log.warn(`Received unknown command "/${interaction.commandName}". Restart the bot to update Discord's list.`);
 		await sendNotice(interaction, 'This command is no longer available.');
 		return;
 	}

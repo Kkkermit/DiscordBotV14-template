@@ -60,7 +60,7 @@ promise rejections are logged and the bot keeps running.
 | `src/handlers/`        | Loading commands and events, process signals.                                    |
 | `src/lib/`             | Reusable helpers: logger, embeds, help, cooldowns, formatting, update checker... |
 | `src/database/`        | MongoDB connection and Mongoose models.                                          |
-| `scripts/`             | The `npm run setup` and `npm run deploy` tools.                                  |
+| `scripts/`             | The `npm run setup` tool that creates the `.env` file.                           |
 | `test/`                | Tests, in the same folders as the code they test (`test/lib/format.test.js`...). |
 | `.github/workflows/`   | CI, release and CodeQL pipelines.                                                |
 

@@ -16,8 +16,8 @@ describe('setup-env', () => {
 	});
 
 	it('validates a single field with the same rules as the bot', () => {
-		assert.equal(validateField('DISCORD_GUILD_ID', '123456789012345678'), null);
-		assert.match(validateField('DISCORD_GUILD_ID', 'abc'), /DISCORD_GUILD_ID/);
+		assert.equal(validateField('DEVELOPER_IDS', '123456789012345678'), null);
+		assert.match(validateField('DEVELOPER_IDS', 'abc'), /DEVELOPER_IDS/);
 		assert.match(validateField('MONGODB_URI', 'localhost'), /MONGODB_URI/);
 	});
 
@@ -27,7 +27,6 @@ describe('setup-env', () => {
 		const file = path.join(directory, '.env');
 		const values = {
 			DISCORD_TOKEN: 'token.with#hash',
-			DISCORD_GUILD_ID: '123456789012345678',
 			DEVELOPER_IDS: '123456789012345678, 223456789012345678',
 			MONGODB_URI: 'mongodb+srv://user:p@ss@cluster.example.net/bot?retryWrites=true&w=majority',
 		};

@@ -6,10 +6,7 @@ works: a VPS, a Raspberry Pi, or a hosting platform.
 ## Before you deploy
 
 - Keep `.env` out of git. Set the variables in your host's dashboard or in a `.env` file on the server.
-- Decide where slash commands are registered. In production, leave `DISCORD_GUILD_ID` **empty** so commands are
-  registered globally (in every server). Global changes can take up to an hour to show up.
-- Consider setting `commands.registerOnStartup` to `false` and running `npm run deploy` only when commands change.
-  Registering on every start is fine for most bots, but it's an extra API request each time.
+- Slash commands are registered every time the bot starts, so deploying new commands is just a restart.
 - Use `npm ci --omit=dev` to install exactly the locked versions without development tools.
 
 ## Docker

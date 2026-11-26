@@ -13,8 +13,8 @@ Version 4 is a rewrite of the template with modern discord.js, safer defaults, t
 ### Breaking changes
 
 - **Node.js 22.12 or newer** is required (Node.js 18 has reached end of life).
-- **Environment variables are renamed:** `token` → `DISCORD_TOKEN`, `guildid` → `DISCORD_GUILD_ID`,
-  `devid` → `DEVELOPER_IDS` (now a comma-separated list), `mongodb` → `MONGODB_URI`. `clientid` is no longer needed.
+- **Environment variables are renamed:** `token` → `DISCORD_TOKEN`, `devid` → `DEVELOPER_IDS` (now a
+  comma-separated list), `mongodb` → `MONGODB_URI`. `clientid` and the unused `guildid` are no longer needed.
 - **Commands moved:** `src/commands/` → `src/commands/slash/` and `src/prefix/` → `src/commands/prefix/`.
   Category folders are lower case (`utility`); `/help` shows them capitalised.
 - **Prefix command names and aliases** must be lower case. Users can still type them in any case.
@@ -32,8 +32,8 @@ Version 4 is a rewrite of the template with modern discord.js, safer defaults, t
   `permissions`.
 - `/help` with command details and autocomplete, `/user-info`, and prefix `help <command>`.
 - Mentioning the bot works as a prefix (`@Bot ping`).
-- Registering slash commands in a single server for instant updates (`DISCORD_GUILD_ID`), and `npm run deploy`
-  with `--global` and `--clear`.
+- Slash commands are not registered while a command file fails to load, so a typo can't delete a command from
+  Discord.
 - Validation of `.env` and `config.js` with clear startup errors, and of every command and event file.
 - Graceful shutdown on `SIGINT`/`SIGTERM`, and handling of uncaught errors.
 - A levelled logger with scopes, `LOG_LEVEL`, and `NO_COLOR`/`FORCE_COLOR` support.

@@ -52,23 +52,15 @@ editor.
 
 ### Registering slash commands
 
-Discord needs to know about your slash commands before they appear. By default the bot registers them every time it
-starts (`commands.registerOnStartup` in `config.js`), so adding a file and restarting is enough.
+Discord needs to know about your slash commands before they appear. The bot registers all of them globally (in every
+server it's in) each time it starts, so adding a file and restarting is enough. Registering replaces Discord's whole
+list, so renamed and deleted commands disappear too.
 
-- With `DISCORD_GUILD_ID` set, commands are registered in that server only and update **instantly**.
-- Without it, commands are registered **globally** and can take up to an hour to show up everywhere.
-
-You can also register them without starting the bot:
-
-```bash
-npm run deploy                # Same scope as the bot: your test server if DISCORD_GUILD_ID is set, otherwise global
-npm run deploy -- --global    # Register globally even if DISCORD_GUILD_ID is set
-npm run deploy -- --clear     # Remove all commands from the scope (add --global to clear global commands)
-```
+If a command file has an error, the bot skips registering until you fix it. Otherwise the broken command would be
+removed from Discord.
 
 > [!TIP]
-> Seeing every command twice? You registered them both globally and in your test server. Run
-> `npm run deploy -- --global --clear` to remove the global copies while developing.
+> Don't see a new or changed command? Press `Ctrl+R` in the Discord app to refresh it.
 
 ### Replies
 

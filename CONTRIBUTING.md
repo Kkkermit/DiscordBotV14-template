@@ -27,8 +27,7 @@ npm run setup   # Create a .env file for your own test bot
 npm run dev     # Start the bot and restart it when you save
 ```
 
-Use a separate test bot and server for development, and set `DISCORD_GUILD_ID` so slash command changes show up
-instantly.
+Use a separate test bot and server for development, so you can try changes without affecting your real bot.
 
 `npm install` also sets up a pre-commit hook. Every time you commit, it runs ESLint (fixing what it can) and Prettier
 on the files you changed, so you never have to think about formatting. If ESLint finds a problem it can't fix, the

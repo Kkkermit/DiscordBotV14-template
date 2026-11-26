@@ -38,14 +38,11 @@ npm run setup
 
 Or copy `.env.example` to `.env` and fill it in yourself. Only `DISCORD_TOKEN` is required.
 
-### Optional: a development server
+### Optional: your user ID
 
-Set `DISCORD_GUILD_ID` to the ID of your test server. Slash commands are then registered in that server only and
-update the moment you restart the bot. Without it, commands are registered globally and can take up to an hour to
-appear or change.
-
-To copy an ID, enable **Developer Mode** in Discord (**User Settings → Advanced**), then right-click the server icon
-and choose **Copy Server ID**. The same works for users (`DEVELOPER_IDS`) and channels.
+Put your Discord user ID in `DEVELOPER_IDS` to use commands marked `developerOnly`. To copy an ID, enable
+**Developer Mode** in Discord (**User Settings → Advanced**), then right-click your name and choose **Copy User ID**.
+The same works for servers and channels.
 
 ## 3. Invite the bot to your server
 

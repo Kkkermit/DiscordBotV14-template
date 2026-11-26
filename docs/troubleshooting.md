@@ -22,22 +22,12 @@ and enable **Message Content Intent** (and any other privileged intent you added
 
 ### Slash commands don't show up
 
-- Without `DISCORD_GUILD_ID`, commands are global and can take up to an hour to appear. Set `DISCORD_GUILD_ID` while
-  developing for instant updates.
+- Commands are registered when the bot starts. Restart it and look for `Registered N slash command(s)` in the console.
 - The bot must be invited with the `applications.commands` scope. Re-invite it with the link from
   [Getting started](getting-started.md#3-invite-the-bot-to-your-server).
-- Check the console for `Skipped slash command ...` errors: a broken command file isn't registered.
+- Check the console for `Skipped slash command ...` errors. While a command file is broken, the bot doesn't register
+  any commands, so the broken one isn't removed from Discord.
 - Press `Ctrl+R` in the Discord desktop app to refresh its command cache.
-
-### Every slash command appears twice
-
-They're registered both globally and in your test server. While developing, remove the global copies with
-`npm run deploy -- --global --clear`. In production, remove the server copies with `npm run deploy -- --clear`
-(with `DISCORD_GUILD_ID` set to that server) and leave `DISCORD_GUILD_ID` empty.
-
-### "Missing Access" when registering commands
-
-The bot isn't in the server set as `DISCORD_GUILD_ID`, or that ID is wrong. Invite the bot or fix the ID.
 
 ### Prefix commands don't respond
 
@@ -50,7 +40,7 @@ The bot isn't in the server set as `DISCORD_GUILD_ID`, or that ID is wrong. Invi
 ### "This command is no longer available"
 
 Discord still lists a command that the bot no longer has, usually because you deleted or renamed the file. Restart
-the bot (with `registerOnStartup` enabled) or run `npm run deploy` to update Discord's list.
+the bot to update Discord's list, then press `Ctrl+R` in Discord.
 
 ### "Could not connect to MongoDB"
 

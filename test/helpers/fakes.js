@@ -41,7 +41,6 @@ function createUser(id, username = `user${id.slice(-2)}`) {
 function createClient(env = {}) {
 	const client = new BotClient({
 		token: 'test-token',
-		guildId: null,
 		developerIds: [DEVELOPER_ID],
 		mongoUri: null,
 		logLevel: 'error',

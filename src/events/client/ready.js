@@ -1,6 +1,5 @@
-const { ApplicationCommandType, Collection, Events } = require('discord.js');
+const { Events } = require('discord.js');
 const { printBanner } = require('../../lib/banner');
-const { deployCommands, fetchRegisteredCommands } = require('../../lib/deployCommands');
 const { logger } = require('../../lib/logger');
 const { startPresenceRotation } = require('../../lib/presence');
 const { checkForUpdates } = require('../../lib/updateChecker');
@@ -8,37 +7,19 @@ const { checkForUpdates } = require('../../lib/updateChecker');
 const log = logger.child('Ready');
 
 /**
- * Registers (or fetches) the slash commands and remembers their IDs so `/help` can show clickable mentions.
+ * Registers every slash command globally, replacing the list Discord had before.
  *
  * @param {import('../../client').BotClient} client
  */
-async function syncSlashCommands(client) {
-	const { guildId } = client.env;
-	const scope = guildId ? `server ${guildId}` : 'all servers (global)';
-	const options = { rest: client.rest, applicationId: client.application.id, guildId };
-
-	const { registerOnStartup } = client.config.commands;
-	const hasBrokenFiles = client.failedSlashCommandFiles.length > 0;
-
-	let registered;
-	if (registerOnStartup && !hasBrokenFiles) {
-		const body = client.slashCommands.map((command) => command.data.toJSON());
-		registered = await deployCommands({ ...options, body });
-		log.success(`Registered ${registered.length} slash command(s) in ${scope}.`);
-		if (!guildId) {
-			log.info('Global commands can take up to an hour to appear. Set DISCORD_GUILD_ID while developing.');
-		}
-	} else {
-		// Registering now would delete the broken commands from Discord, so keep the current list instead.
-		if (registerOnStartup) {
-			log.warn('Slash commands were not registered because a command file failed to load. Fix it and restart.');
-		}
-		registered = await fetchRegisteredCommands(options);
-		log.info(`Found ${registered.length} registered slash command(s) in ${scope}.`);
+async function registerSlashCommands(client) {
+	// Registering replaces the whole list, so it would delete a command whose file failed to load.
+	if (client.failedSlashCommandFiles.length > 0) {
+		log.warn('Slash commands were not registered because a command file failed to load. Fix it and restart.');
+		return;
 	}
 
-	const chatCommands = registered.filter((command) => command.type === ApplicationCommandType.ChatInput);
-	client.commandIds = new Collection(chatCommands.map((command) => [command.name, command.id]));
+	const registered = await client.application.commands.set(client.slashCommands.map((command) => command.data));
+	log.success(`Registered ${registered.size} slash command(s).`);
 }
 
 /** @type {import('../../types').BotEvent} */
@@ -52,10 +33,9 @@ module.exports = {
 		startPresenceRotation(client);
 
 		try {
-			await syncSlashCommands(client);
+			await registerSlashCommands(client);
 		} catch (error) {
-			log.error('Could not sync slash commands with Discord:', error);
-			if (client.env.guildId) log.error('Make sure the bot is in the server set as DISCORD_GUILD_ID.');
+			log.error('Could not register the slash commands with Discord:', error);
 		}
 
 		if (client.config.banner.enabled) printBanner(client);

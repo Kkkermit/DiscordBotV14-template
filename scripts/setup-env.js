@@ -20,7 +20,6 @@ const log = logger.child('Setup');
  */
 const FIELDS = [
 	{ key: 'DISCORD_TOKEN', question: 'Bot token (Developer Portal → Bot → Reset Token)', required: true },
-	{ key: 'DISCORD_GUILD_ID', question: 'Development server ID, for instant command updates', required: false },
 	{ key: 'DEVELOPER_IDS', question: 'Your Discord user ID(s), comma-separated', required: false },
 	{ key: 'MONGODB_URI', question: 'MongoDB connection string', required: false },
 ];

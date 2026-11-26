@@ -31,8 +31,6 @@ class BotClient extends Client {
 		this.prefixCommands = new Collection();
 		/** @type {Collection<string, string>} Prefix command alias → command name. */
 		this.prefixAliases = new Collection();
-		/** @type {Collection<string, string>} Slash command name → ID, for clickable mentions in `/help`. */
-		this.commandIds = new Collection();
 		/** @type {string[]} While this isn't empty, slash commands aren't registered on startup. */
 		this.failedSlashCommandFiles = [];
 

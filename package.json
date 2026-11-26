@@ -28,7 +28,6 @@
 	"scripts": {
 		"start": "node src/index.js",
 		"dev": "node --watch src/index.js",
-		"deploy": "node scripts/deploy-commands.js",
 		"setup": "node scripts/setup-env.js",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",

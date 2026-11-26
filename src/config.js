@@ -46,12 +46,6 @@ module.exports = {
 	},
 
 	commands: {
-		/**
-		 * Register slash commands with Discord every time the bot starts.
-		 * Disable this if you prefer to run `npm run deploy` manually after changing commands.
-		 */
-		registerOnStartup: true,
-
 		/** Cooldown (in seconds) used when a command doesn't set its own `cooldown`. `0` disables it. */
 		defaultCooldownSeconds: 3,
 
