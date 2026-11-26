@@ -29,6 +29,7 @@
 		"start": "node src/index.js",
 		"dev": "node --watch-path=src src/index.js",
 		"setup": "node scripts/setup-env.js",
+		"prepare-release": "node scripts/prepare-release.js",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
 		"format": "prettier --write .",

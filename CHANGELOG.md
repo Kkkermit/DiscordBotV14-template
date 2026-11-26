@@ -41,8 +41,10 @@ Version 4 is a rewrite of the template with modern discord.js, safer defaults, t
 - Dockerfile and Compose file with an optional MongoDB service.
 - ESLint, Prettier, EditorConfig and a pre-commit hook (Husky and lint-staged) that formats staged files.
 - Tests with the Node.js test runner and a coverage gate (`npm run test:coverage`).
-- GitHub Actions: CI on Node.js 24 and 26, a release workflow that publishes a GitHub release and a Docker image
-  to the GitHub Container Registry, CodeQL scanning, and Dependabot.
+- GitHub Actions: CI on Node.js 24 and 26, CodeQL scanning, Dependabot, and a release workflow that publishes a
+  GitHub release and a Docker image to the GitHub Container Registry whenever `develop` is merged into `main`.
+- Protected `main` and `develop` branches: importable rulesets, a check that pull requests come from the right
+  branches, and `npm run prepare-release` to set the next version and changelog.
 - Documentation in `docs/`, a contributing guide, code of conduct, security policy and issue templates.
 
 ### Fixed

@@ -12,6 +12,7 @@
 
 ## Checklist
 
+- [ ] This pull request goes into `develop`, from a `feature/` or `bugfix/` branch
 - [ ] `npm run check` passes (lint, format and tests)
 - [ ] I added or updated tests for the changed behaviour
 - [ ] I updated the docs and `.env.example` where needed

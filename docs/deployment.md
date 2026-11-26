@@ -62,23 +62,12 @@ Colours are turned off automatically when the output isn't a terminal. Set `NO_C
 
 ## Releasing a new version
 
-The [release workflow](../.github/workflows/release.yml) publishes a version of your bot whenever you push a tag that
-starts with `v`:
+Merging `develop` into `main` publishes a release: a GitHub release with the notes from
+[`CHANGELOG.md`](../CHANGELOG.md), and a Docker image on the GitHub Container Registry as
+`ghcr.io/<owner>/<repository>`, tagged with the full version (`4.1.0`), the minor version (`4.1`), the major version
+(`4`) and `latest`. [Branching and releases](branching-and-releases.md) explains the steps and the one-time setup.
 
-```bash
-npm version patch          # or minor / major: updates package.json and creates a tag such as v4.0.1
-git push --follow-tags     # pushes the commit and the tag
-```
-
-GitHub Actions then:
-
-1. runs the same checks as CI (lint, format, tests, Docker build),
-2. checks that the tag matches the version in `package.json`,
-3. creates a GitHub release with the notes from that version's section in [`CHANGELOG.md`](../CHANGELOG.md),
-4. publishes a Docker image to the GitHub Container Registry as `ghcr.io/<owner>/<repository>`, tagged with the full
-   version (`4.0.1`), the minor version (`4.0`) and the major version (`4`).
-
-Write the changelog section (`## 4.0.1`) before you tag. To run a published image:
+To run a published image:
 
 ```bash
 docker run -d --env-file .env --restart unless-stopped ghcr.io/<owner>/<repository>:4

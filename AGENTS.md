@@ -11,30 +11,32 @@ matching section here in the same change.
 A beginner-friendly **discord.js v14** bot template. People fork it to start their own bot, so the code must stay
 simple, readable and well documented above all else.
 
-| Topic           | Details                                                                                    |
-| --------------- | ------------------------------------------------------------------------------------------ |
-| Runtime         | Node.js **24+** (`engines` in `package.json`, enforced by `engine-strict` in `.npmrc`)     |
-| Language        | JavaScript, **CommonJS** (`require` / `module.exports`). No build step, no TypeScript.     |
-| Types           | None: plain JavaScript with no JSDoc.                                                      |
-| Dependencies    | `discord.js` 14, `mongoose` 9 (optional database), `figlet` (startup banner)               |
-| Dev tooling     | ESLint 10 (flat config), Prettier 3, Husky + lint-staged (pre-commit), Node's test runner  |
-| Entry point     | `src/index.js` (`npm start`)                                                               |
-| Configuration   | Secrets in `.env` (validated by `src/env.js`), settings in `src/config.js` (validated too) |
-| Package version | `package.json` `version` is the template version, used by the banner and update checker    |
+| Topic           | Details                                                                                          |
+| --------------- | ------------------------------------------------------------------------------------------------ |
+| Runtime         | Node.js **24+** (`engines` in `package.json`, enforced by `engine-strict` in `.npmrc`)           |
+| Language        | JavaScript, **CommonJS** (`require` / `module.exports`). No build step, no TypeScript.           |
+| Types           | None: plain JavaScript with no JSDoc.                                                            |
+| Dependencies    | `discord.js` 14, `mongoose` 9 (optional database), `figlet` (startup banner)                     |
+| Dev tooling     | ESLint 10 (flat config), Prettier 3, Husky + lint-staged (pre-commit), Node's test runner        |
+| Entry point     | `src/index.js` (`npm start`)                                                                     |
+| Configuration   | Secrets in `.env` (validated by `src/env.js`), settings in `src/config.js` (validated too)       |
+| Package version | `package.json` `version` is the template version, used by the banner and update checker          |
+| Branches        | `feature/*`, `bugfix/*`, `release/*` → `develop` → `main`. Every merge into `main` is a release. |
 
 ## Commands
 
-| Command                 | Use it to                                                                      |
-| ----------------------- | ------------------------------------------------------------------------------ |
-| `npm install`           | Install dependencies. Also installs the pre-commit hook (`prepare` → `husky`). |
-| `npm run setup`         | Create `.env` interactively (`scripts/setup-env.js`).                          |
-| `npm start`             | Run the bot. Needs a real `DISCORD_TOKEN` and network access to Discord.       |
-| `npm run dev`           | Run the bot with `node --watch`, restarting on file changes.                   |
-| `npm test`              | Run every test (`node --test "test/**/*.test.js"`).                            |
-| `npm run test:coverage` | Tests plus coverage. Fails below 85% lines, 80% branches, 80% functions.       |
-| `npm run lint`          | ESLint. `npm run lint:fix` fixes what it can.                                  |
-| `npm run format`        | Prettier on every file. `npm run format:check` only checks.                    |
-| `npm run check`         | Lint, format check and tests: **run this before you finish any change.**       |
+| Command                                         | Use it to                                                                      |
+| ----------------------------------------------- | ------------------------------------------------------------------------------ |
+| `npm install`                                   | Install dependencies. Also installs the pre-commit hook (`prepare` → `husky`). |
+| `npm run setup`                                 | Create `.env` interactively (`scripts/setup-env.js`).                          |
+| `npm start`                                     | Run the bot. Needs a real `DISCORD_TOKEN` and network access to Discord.       |
+| `npm run dev`                                   | Run the bot with `node --watch`, restarting on file changes.                   |
+| `npm test`                                      | Run every test (`node --test "test/**/*.test.js"`).                            |
+| `npm run test:coverage`                         | Tests plus coverage. Fails below 85% lines, 80% branches, 80% functions.       |
+| `npm run lint`                                  | ESLint. `npm run lint:fix` fixes what it can.                                  |
+| `npm run format`                                | Prettier on every file. `npm run format:check` only checks.                    |
+| `npm run check`                                 | Lint, format check and tests: **run this before you finish any change.**       |
+| `npm run prepare-release <patch\|minor\|major>` | Set the next version and move the `## Unreleased` changelog notes under it.    |
 
 Run a single test file with `node --test test/lib/format.test.js`.
 
@@ -56,7 +58,8 @@ There is no network access to Discord in tests, and none is needed: tests use fa
    skipped, never fatal.
 7. If `MONGODB_URI` is set, `connectDatabase()` runs. Failure → logged hint, `shutdown(..., 1)`.
 8. `client.login(token)`. Failure → `describeLoginError()` hint, `shutdown(..., 1)`.
-9. Discord emits `clientReady` → `src/events/client/ready.js` sets the presence, **registers all slash commands
+9. Discord emits `shardReady` → `src/events/client/shardReady.js` starts the presence rotation (on every new session,
+   because Discord forgets the status). `clientReady` → `src/events/client/ready.js` **registers all slash commands
    globally** with `client.application.commands.set()`, prints the figlet banner and checks for updates.
 
 ### Slash and context menu commands (`src/events/interactions/interactionCreate.js`)
@@ -84,58 +87,63 @@ A timer forces exit after 8 s (below Docker's 10 s stop timeout). Unhandled reje
 
 ### Root
 
-| File                                | Purpose                                                                                                                      |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `package.json`                      | Scripts, dependencies, `engines`, and the `lint-staged` config (`*.js`: eslint --fix + prettier; others: prettier).          |
-| `package-lock.json`                 | Locked dependency tree. Always commit it with dependency changes.                                                            |
-| `.env.example`                      | Every environment variable with an explanation. Copy to `.env`. Keep in sync with `src/env.js`.                              |
-| `eslint.config.js`                  | Flat config: `@eslint/js` recommended, Node globals, CommonJS, extra rules (see [Code style](#code-style)), prettier last.   |
-| `.prettierrc.json`                  | Tabs (width 4), 120 columns, single quotes, trailing commas. Markdown and YAML use 2 spaces.                                 |
-| `.prettierignore`                   | `node_modules/`, `coverage/`, `package-lock.json`.                                                                           |
-| `.editorconfig`                     | Same indentation and LF line endings for editors without Prettier.                                                           |
-| `.gitattributes`                    | Forces LF line endings in the repository.                                                                                    |
-| `.gitignore`                        | Ignores `node_modules`, `.env*` (except `.env.example`), logs, coverage, editor files (keeps `.vscode` settings).            |
-| `.npmrc`                            | `engine-strict=true`: installing on an unsupported Node.js version fails with a clear error.                                 |
-| `.nvmrc`                            | `24`, the Node.js version for nvm and the CI lint job.                                                                       |
-| `jsconfig.json`                     | Editor project settings for IntelliSense (Node 16 module resolution, JSON imports). Type checking is off.                    |
-| `.husky/pre-commit`                 | Runs `npx lint-staged` on every commit.                                                                                      |
-| `.vscode/settings.json`             | Format on save with Prettier, ESLint fix on save, LF line endings.                                                           |
-| `.vscode/extensions.json`           | Recommends ESLint, Prettier and EditorConfig.                                                                                |
-| `Dockerfile`                        | `node:24-alpine`, `npm ci --omit=dev --ignore-scripts`, copies `src` and `scripts`, runs as `node`, `CMD node src/index.js`. |
-| `.dockerignore`                     | Keeps `.env`, `node_modules`, `.git`, tests, docs and Markdown out of the image.                                             |
-| `compose.yaml`                      | `bot` service (reads `.env`, restarts, `init: true`) and an optional `mongo:8` service under the `database` profile.         |
-| `README.md`                         | Project overview, quick start, features, structure, scripts, configuration.                                                  |
-| `CHANGELOG.md`                      | Keep a Changelog format. Add entries under `## Unreleased`. Release notes are taken from here.                               |
-| `CONTRIBUTING.md`                   | Contributor guide: setup, checks, code style, commit messages, pull requests.                                                |
-| `CODE_OF_CONDUCT.md`, `SECURITY.md` | Contributor Covenant 2.1; how to report vulnerabilities privately.                                                           |
-| `LICENSE`                           | MIT.                                                                                                                         |
-| `AGENTS.md`                         | This file.                                                                                                                   |
+| File                                | Purpose                                                                                                                        |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `package.json`                      | Scripts, dependencies, `engines`, and the `lint-staged` config (`*.js`: eslint --fix + prettier; others: prettier).            |
+| `package-lock.json`                 | Locked dependency tree. Always commit it with dependency changes.                                                              |
+| `.env.example`                      | Every environment variable with an explanation. Copy to `.env`. Keep in sync with `src/env.js`.                                |
+| `eslint.config.js`                  | Flat config: `@eslint/js` recommended, Node globals, CommonJS, extra rules (see [Code style](#code-style)), prettier last.     |
+| `.prettierrc.json`                  | Tabs (width 4), 120 columns, single quotes, trailing commas. Markdown and YAML use 2 spaces.                                   |
+| `.prettierignore`                   | `node_modules/`, `coverage/`, `package-lock.json`.                                                                             |
+| `.editorconfig`                     | Same indentation and LF line endings for editors without Prettier.                                                             |
+| `.gitattributes`                    | Forces LF line endings in the repository.                                                                                      |
+| `.gitignore`                        | Ignores `node_modules`, `.env*` (except `.env.example`), logs, coverage, editor files (keeps `.vscode` settings).              |
+| `.npmrc`                            | `engine-strict=true`: installing on an unsupported Node.js version fails with a clear error.                                   |
+| `.nvmrc`                            | `24`, the Node.js version for nvm and the CI lint job.                                                                         |
+| `.husky/pre-commit`                 | Runs `npx lint-staged` on every commit.                                                                                        |
+| `.vscode/settings.json`             | Format on save with Prettier, ESLint fix on save, LF line endings.                                                             |
+| `.vscode/extensions.json`           | Recommends ESLint, Prettier and EditorConfig.                                                                                  |
+| `Dockerfile`                        | `node:24-alpine`, `npm ci --omit=dev --ignore-scripts`, copies `src`, runs as `node`, `CMD node src/index.js`.                 |
+| `.dockerignore`                     | Keeps `.env`, `node_modules`, `.git`, tests, docs and Markdown out of the image.                                               |
+| `compose.yaml`                      | `bot` service (reads `.env`, restarts, `init: true`) and an optional `mongo:8` service (`database` profile, `127.0.0.1` only). |
+| `README.md`                         | Project overview, quick start, features, structure, scripts, configuration.                                                    |
+| `CHANGELOG.md`                      | Keep a Changelog format. Add entries under `## Unreleased`. Release notes are taken from here.                                 |
+| `CONTRIBUTING.md`                   | Contributor guide: setup, checks, code style, commit messages, pull requests.                                                  |
+| `CODE_OF_CONDUCT.md`, `SECURITY.md` | Contributor Covenant 2.1; how to report vulnerabilities privately.                                                             |
+| `LICENSE`                           | MIT.                                                                                                                           |
+| `AGENTS.md`                         | This file.                                                                                                                     |
 
 ### `.github/`
 
-| File                                 | Purpose                                                                                                                                           |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `workflows/ci.yml`                   | On push to `main` and pull requests (and reusable via `workflow_call`): lint + format check, `test:coverage` on Node 24.x and 26.x, Docker build. |
-| `workflows/release.yml`              | On `v*.*.*` tags: runs CI, checks the tag equals `package.json` version, creates a GitHub release from `CHANGELOG.md`, pushes the image to GHCR.  |
-| `workflows/codeql.yml`               | CodeQL security scan on push, pull requests and weekly.                                                                                           |
-| `dependabot.yml`                     | Weekly npm updates (dev dependencies grouped), monthly GitHub Actions updates.                                                                    |
-| `ISSUE_TEMPLATE/bug_report.yml`      | Bug report form (version, Node.js version, OS, logs; warns not to paste tokens).                                                                  |
-| `ISSUE_TEMPLATE/feature_request.yml` | Feature request form.                                                                                                                             |
-| `ISSUE_TEMPLATE/config.yml`          | Disables blank issues; links to the Discord server and the discord.js docs.                                                                       |
-| `PULL_REQUEST_TEMPLATE.md`           | Pull request summary, type of change and checklist (`npm run check`, tests, docs, changelog).                                                     |
+| File                                 | Purpose                                                                                                                                                                                                                             |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `workflows/ci.yml`                   | On push to `main`/`develop`, pull requests and `workflow_call`: lint + format check, `test:coverage` on Node 24.x and 26.x, Docker build. Only older runs of the same pull request are cancelled.                                   |
+| `workflows/release.yml`              | On push to `main`: runs CI; if tag `v<package.json version>` doesn't exist, creates the release and tag (notes from `scripts/release-notes.js`) and pushes the image to GHCR (`x.y.z`, `x.y`, `x`, `latest`).                       |
+| `workflows/branch-rules.yml`         | On pull requests into `main`/`develop`: **Source branch** (`main` ← this repo's `develop` only; `develop` ← `feature/*`, `bugfix/*`, `release/*`, `dependabot/*`) and, into `main`, **Release version** (new tag, changelog notes). |
+| `workflows/codeql.yml`               | CodeQL security scan on push to `main`/`develop`, pull requests and weekly.                                                                                                                                                         |
+| `dependabot.yml`                     | Weekly npm updates (dev dependencies grouped), monthly GitHub Actions updates, both into `develop`.                                                                                                                                 |
+| `rulesets/main.json`, `develop.json` | Branch rulesets to import on GitHub: no deletion or force push, pull requests only, required checks (names must match the job names).                                                                                               |
+| `rulesets/release-tags.json`         | Tag ruleset: `v*` tags can't be deleted or moved.                                                                                                                                                                                   |
+| `ISSUE_TEMPLATE/bug_report.yml`      | Bug report form (version, Node.js version, OS, logs; warns not to paste tokens).                                                                                                                                                    |
+| `ISSUE_TEMPLATE/feature_request.yml` | Feature request form.                                                                                                                                                                                                               |
+| `ISSUE_TEMPLATE/config.yml`          | Disables blank issues; links to the Discord server and the discord.js docs.                                                                                                                                                         |
+| `PULL_REQUEST_TEMPLATE.md`           | Pull request summary, type of change and checklist (into `develop`, `npm run check`, tests, docs, changelog).                                                                                                                       |
 
 ### `docs/`
 
-User guides: `getting-started.md`, `commands.md`, `events.md`, `configuration.md`, `database.md`, `deployment.md`
-(including releases), `architecture.md`, `troubleshooting.md`. `docs/assets/` holds `banner.svg` (README banner),
+User guides: `getting-started.md`, `commands.md`, `events.md`, `configuration.md`, `database.md`, `deployment.md`,
+`branching-and-releases.md` (branch model, cutting a release, importing the rulesets), `architecture.md`,
+`troubleshooting.md`. `docs/assets/` holds `banner.svg` (README banner),
 `console.png` (screenshot of the startup console) and `social-preview.png` (1280×640 image to upload under
 **Settings → Social preview** on GitHub). Update the guides whenever behaviour, settings or commands change.
 
 ### `scripts/`
 
-| File           | Purpose                                                                                                                                                                                                                                                                                                                                |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `setup-env.js` | `npm run setup`. Asks for each field in `FIELDS` (`DISCORD_TOKEN` required; `DEVELOPER_IDS`, `MONGODB_URI` optional), validates each answer with `parseEnv` (`validateField`), writes `.env` (`buildEnvFile`, `formatEnvValue` quotes values safely) and `chmod 600`s it. Asks before overwriting. Exports the pure helpers for tests. |
+| File                 | Purpose                                                                                                                                                                                                                                                                                                                                                                                             |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `setup-env.js`       | `npm run setup`. Asks for each field in `FIELDS` (`DISCORD_TOKEN` required; `DEVELOPER_IDS`, `MONGODB_URI` optional), validates each answer with `parseEnv` (`validateField`), writes `.env` (`buildEnvFile`, `formatEnvValue` quotes values safely) and `chmod 600`s it. Asks before overwriting. Exports the pure helpers for tests.                                                              |
+| `prepare-release.js` | `npm run prepare-release <type>`. `bumpVersion(version, type)`, `addReleaseToChangelog(changelog, version, date)` (moves the `## Unreleased` notes under `## <version> - <date>`, keeps an empty Unreleased heading; refuses empty notes or an existing section), `prepareRelease(type, root, date)` (writes `package.json`, `package-lock.json`, `CHANGELOG.md` only after everything worked out). |
+| `release-notes.js`   | `node scripts/release-notes.js <version>` prints that version's notes to stdout (errors to stderr, exit 1 if missing). `findChangelogSection(changelog, title)` → `{ start, end, notes }` or `null`; a heading may have text after the title (a date).                                                                                                                                              |
 
 ### `src/` top level
 
@@ -169,32 +177,33 @@ skipped, so shared helpers can live next to commands.
 Loaded recursively. Every file exports `{ name, once?, execute }`; `execute` receives the event's arguments **followed by the
 client**.
 
-| File                                | Event               | Purpose                                                                                                                  |
-| ----------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `client/ready.js`                   | `clientReady` once  | Presence, global slash command registration (skipped while `failedSlashCommandFiles` isn't empty), banner, update check. |
-| `client/error.js`                   | `error`             | Logs client errors (without a listener Node would crash).                                                                |
-| `client/warn.js`                    | `warn`              | Logs client warnings.                                                                                                    |
-| `guilds/guildCreate.js`             | `guildCreate`       | Logs joined servers.                                                                                                     |
-| `guilds/guildDelete.js`             | `guildDelete`       | Logs servers the bot was removed from.                                                                                   |
-| `interactions/interactionCreate.js` | `interactionCreate` | Runs slash/context menu commands and autocomplete (see above).                                                           |
-| `messages/messageCreate.js`         | `messageCreate`     | Runs prefix commands (see above).                                                                                        |
-| `messages/mention.js`               | `messageCreate`     | Introduces the bot when a message is only a mention of it (`<@id>` or `<@!id>`).                                         |
+| File                                | Event               | Purpose                                                                                                        |
+| ----------------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `client/ready.js`                   | `clientReady` once  | Global slash command registration (skipped while `failedSlashCommandFiles` isn't empty), banner, update check. |
+| `client/shardReady.js`              | `shardReady`        | `startPresenceRotation(client)` each time a shard connects, since Discord forgets the status on a new session. |
+| `client/error.js`                   | `error`             | Logs client errors (without a listener Node would crash).                                                      |
+| `client/warn.js`                    | `warn`              | Logs client warnings.                                                                                          |
+| `guilds/guildCreate.js`             | `guildCreate`       | Logs joined servers.                                                                                           |
+| `guilds/guildDelete.js`             | `guildDelete`       | Logs servers the bot was removed from.                                                                         |
+| `interactions/interactionCreate.js` | `interactionCreate` | Runs slash/context menu commands and autocomplete (see above).                                                 |
+| `messages/messageCreate.js`         | `messageCreate`     | Runs prefix commands (see above).                                                                              |
+| `messages/mention.js`               | `messageCreate`     | Introduces the bot when a message is only a mention of it (`<@id>` or `<@!id>`).                               |
 
 ### `src/handlers/`
 
 | File                | Exports and behaviour                                                                                                                                                                                                                                                                                                                                                                                                 |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `commandHandler.js` | `validateSlashCommand`, `validatePrefixCommand` (return a message or `null`), `loadSlashCommands(dir)`, `loadPrefixCommands(dir)` (also builds aliases; a name always beats an alias, conflicting aliases become `warnings`), `loadCommands(client)` (sets the client collections and `failedSlashCommandFiles`, logs results). Shared loop: `loadCommandFiles`. Each loaded command gains `category` and `filePath`. |
-| `eventHandler.js`   | `validateEvent`, `loadEvents(client, dir)`: wraps every `execute` in a try/catch that logs errors with the file name, warns about names that aren't discord.js `Events`, returns the count.                                                                                                                                                                                                                           |
+| `eventHandler.js`   | `EVENTS_DIR`, `validateEvent`, `loadEvents(client, dir)`: wraps every `execute` in a try/catch that logs errors with the file name, warns about names that aren't discord.js `Events`, returns the count.                                                                                                                                                                                                             |
 | `processHandler.js` | `registerProcessHandlers(client)` → `{ shutdown }` (see [Shutdown](#shutdown-srchandlersprocesshandlerjs)).                                                                                                                                                                                                                                                                                                           |
 
 ### `src/lib/`
 
 | File                | Exports and behaviour                                                                                                                                                                                                                                                                                                                                            |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `logger.js`         | `logger` (app-wide `Logger`), `Logger` (`setLevel`, `child(label)`, `debug/info/success/warn/error`), `LEVEL_NAMES`, `supportsColor(stream)` (NO_COLOR/FORCE_COLOR/TTY), `colorize(style, text, enabled)` (`util.styleText`), `formatTimestamp`. Writes everything to stdout.                                                                                    |
+| `logger.js`         | `logger` (app-wide `Logger`), `Logger` (`setLevel`, `child(label)` → `{ debug, info, success, warn, error }`, `write`), `LEVEL_NAMES`, `supportsColor(stream)` (NO_COLOR/FORCE_COLOR/TTY), `colorize(style, text, enabled)` (`util.styleText`), `formatTimestamp`. Writes everything to stdout.                                                                  |
 | `banner.js`         | `renderAsciiArt(text, font, width)` (figlet, falls back to plain text), `printBanner(client, stream)` (bot name + summary).                                                                                                                                                                                                                                      |
-| `botInfo.js`        | `createBotInfoEmbed`, `createBotInfoPayload` (embed + refresh button `bot-info:refresh`), `collectRefreshClicks({ message, userId, client, edit })`.                                                                                                                                                                                                             |
+| `botInfo.js`        | `createBotInfoPayload` (embed + refresh button `bot-info:refresh`), `collectRefreshClicks({ message, userId, client, edit })`.                                                                                                                                                                                                                                   |
 | `commandLogger.js`  | `logCommandUsage(client, { type, command, user, guild })`: console log, plus an embed in `logging.commandLogChannelId`. Pauses a channel that isn't a text channel or that Discord rejects (`DiscordAPIError`) until restart; never throws.                                                                                                                      |
 | `constants.js`      | `SNOWFLAKE_PATTERN` (17–20 digit Discord IDs).                                                                                                                                                                                                                                                                                                                   |
 | `cooldowns.js`      | `CooldownManager` (`consume(key, userId, ms, now)` → remaining ms or 0, `sweep(now)`, `size`), `checkCooldown(client, key, userId, seconds)` → cooldown message or `null`.                                                                                                                                                                                       |
@@ -203,8 +212,8 @@ client**.
 | `format.js`         | `formatDuration(ms)`, `truncate(text, max)`, `joinLines(lines, max)` (drops whole lines, adds "…and N more"), `formatMessage(template, values)`, `escapeCodeBlock(text)`.                                                                                                                                                                                        |
 | `help.js`           | `getVisibleCommands(client, userId, commands)` (hides `developerOnly`), `createSlashHelpEmbed`, `createSlashCommandEmbed`, `createPrefixHelpEmbed`, `createPrefixCommandEmbed`. Keeps embeds under Discord limits (25 fields, 1024 per field, 4500-character budget for lists). Slash names become clickable mentions using `client.application.commands.cache`. |
 | `prefix.js`         | `getPrefixes(client)` (prefix + mention forms, longest first), `parsePrefixCommand(content, prefixes)` → `{ prefix, name, args }` or `null`.                                                                                                                                                                                                                     |
-| `presence.js`       | `startPresenceRotation(client)`: sets status, rotates `presence.activities` every `rotateIntervalSeconds`. `name` may be a function of the client.                                                                                                                                                                                                               |
-| `replies.js`        | `replyEphemeral(interaction, options)`: reply or followUp with `MessageFlags.Ephemeral`.                                                                                                                                                                                                                                                                         |
+| `presence.js`       | `startPresenceRotation(client)`: sets status and the first activity, then refreshes every `rotateIntervalSeconds` (also with one activity, so function names stay current). `name` may be a function of the client. Restarting clears the old timer.                                                                                                             |
+| `replies.js`        | `replyEphemeral(interaction, options)`: `editReply` after `deferReply()`, otherwise reply or followUp with `MessageFlags.Ephemeral`.                                                                                                                                                                                                                             |
 | `updateChecker.js`  | `parseVersion`, `compareVersions` (numeric major.minor.patch), `fetchLatestReleaseTag(repo, fetch)`, `checkForUpdates({ repository, version, fetch })` → `'outdated'                                                                                                                                                                                             | 'latest' | 'unknown'`; never throws. |
 | `validateConfig.js` | `validateConfig(config)` → list of problems (prefix, colour, banner font via `figlet.fontsSync()`, presence status/interval ≥ 15 s/activities, command options, log channel ID, update repository, messages).                                                                                                                                                    |
 
@@ -219,29 +228,33 @@ client**.
 
 Tests mirror `src/`: the test for `src/lib/format.js` is `test/lib/format.test.js`.
 
-| File                               | Covers                                                                                                                                                  |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `helpers/fakes.js`                 | Shared fakes (see [Testing](#testing)). Sets the logger to `error` so test output stays readable.                                                       |
-| `startup.test.js`                  | Runs `src/index.js` as a child process with invalid environment variables and checks the messages.                                                      |
-| `env.test.js`                      | `parseEnv` and `loadEnvFile`.                                                                                                                           |
-| `commands/bundled.test.js`         | Runs every bundled command against fakes, including `/help` limits and the refresh button.                                                              |
-| `events/interactionCreate.test.js` | Slash routing, unknown commands, `developerOnly`, cooldowns, `followUp` after errors, autocomplete guard and errors.                                    |
-| `events/messageCreate.test.js`     | Arguments, aliases and mention prefix, ignored senders, unknown-command hints, notice throttling, permissions, `args`, cooldowns, errors.               |
-| `events/mention.test.js`           | The mention reply and when it stays quiet.                                                                                                              |
-| `events/ready.test.js`             | Global registration with `commands.set()` and the broken-file guard.                                                                                    |
-| `handlers/commandHandler.test.js`  | The bundled commands load cleanly; validators; categories, `_` files, broken files and duplicates (temporary fixture folders); aliases; `loadCommands`. |
-| `handlers/eventHandler.test.js`    | `validateEvent`; the bundled events register; listeners catch errors and receive the client last.                                                       |
-| `handlers/processHandler.test.js`  | `shutdown` closes the client, runs once and exits with the right code (`process.exit` mocked).                                                          |
-| `lib/banner.test.js`               | figlet rendering, wrapping, the plain-text fallback and the printed summary.                                                                            |
-| `lib/commandLogger.test.js`        | Log channel embeds with mentions disabled and escaping, pausing after Discord errors, retrying after network errors.                                    |
-| `lib/cooldowns.test.js`            | `CooldownManager.consume` and `sweep`.                                                                                                                  |
-| `lib/format.test.js`               | `formatDuration`, `truncate`, `joinLines`, `formatMessage`, `escapeCodeBlock`.                                                                          |
-| `lib/logger.test.js`               | Output format, ordering, colours, error stacks, levels shared with children, `supportsColor`.                                                           |
-| `lib/prefix.test.js`               | `parsePrefixCommand` and `getPrefixes`.                                                                                                                 |
-| `lib/presence.test.js`             | Activity rotation with mocked timers.                                                                                                                   |
-| `lib/updateChecker.test.js`        | Version parsing and comparison, fetching releases, `checkForUpdates` results.                                                                           |
-| `lib/validateConfig.test.js`       | The default config is valid; each kind of mistake is reported.                                                                                          |
-| `scripts/setup-env.test.js`        | `formatEnvValue`, `validateField`, and that the written `.env` parses back correctly.                                                                   |
+| File                               | Covers                                                                                                                                                         |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `helpers/fakes.js`                 | Shared fakes (see [Testing](#testing)). Sets the logger to `error` so test output stays readable.                                                              |
+| `startup.test.js`                  | Runs `src/index.js` as a child process with invalid environment variables and checks the messages.                                                             |
+| `env.test.js`                      | `parseEnv` and `loadEnvFile`.                                                                                                                                  |
+| `commands/bundled.test.js`         | Runs every bundled command against fakes, including `/help` limits and the refresh button. A removed command's tests are skipped (`needsSlash`/`needsPrefix`). |
+| `events/interactionCreate.test.js` | Slash routing, unknown commands, `developerOnly`, cooldowns, `followUp` after errors, autocomplete guard and errors.                                           |
+| `events/messageCreate.test.js`     | Arguments, aliases and mention prefix, ignored senders, unknown-command hints, notice throttling, permissions, `args`, cooldowns, errors.                      |
+| `events/mention.test.js`           | The mention reply and when it stays quiet.                                                                                                                     |
+| `events/ready.test.js`             | Global registration with `commands.set()` and the broken-file guard.                                                                                           |
+| `events/shardReady.test.js`        | The presence rotation starts on `shardReady`.                                                                                                                  |
+| `handlers/commandHandler.test.js`  | The bundled commands load cleanly; validators; categories, `_` files, broken files and duplicates (temporary fixture folders); aliases; `loadCommands`.        |
+| `handlers/eventHandler.test.js`    | `validateEvent`; the bundled events register; listeners catch errors and receive the client last.                                                              |
+| `handlers/processHandler.test.js`  | `shutdown` closes the client, runs once and exits with the right code (`process.exit` mocked).                                                                 |
+| `lib/banner.test.js`               | figlet rendering, wrapping, the plain-text fallback and the printed summary.                                                                                   |
+| `lib/commandLogger.test.js`        | Log channel embeds with mentions disabled and escaping, pausing after Discord errors, retrying after network errors.                                           |
+| `lib/cooldowns.test.js`            | `CooldownManager.consume` and `sweep`.                                                                                                                         |
+| `lib/format.test.js`               | `formatDuration`, `truncate`, `joinLines`, `formatMessage`, `escapeCodeBlock`.                                                                                 |
+| `lib/logger.test.js`               | Output format, ordering, colours, error stacks, levels shared with children, `supportsColor`.                                                                  |
+| `lib/prefix.test.js`               | `parsePrefixCommand` and `getPrefixes`.                                                                                                                        |
+| `lib/presence.test.js`             | Activity rotation with mocked timers.                                                                                                                          |
+| `lib/replies.test.js`              | `replyEphemeral` uses reply, followUp or editReply depending on the interaction's state.                                                                       |
+| `lib/updateChecker.test.js`        | Version parsing and comparison, fetching releases, `checkForUpdates` results.                                                                                  |
+| `lib/validateConfig.test.js`       | The default config is valid; each kind of mistake is reported.                                                                                                 |
+| `scripts/setup-env.test.js`        | `formatEnvValue`, `validateField`, and that the written `.env` parses back correctly.                                                                          |
+| `scripts/prepare-release.test.js`  | Version bumps, the changelog move and its refusals, and that files are written together or not at all (temporary folder).                                      |
+| `scripts/release-notes.test.js`    | Finding a version's section (with a date, no prefix mix-ups) and the CLI against the real `CHANGELOG.md`, which must have notes for the current version.       |
 
 ## Contracts
 
@@ -317,16 +330,18 @@ module.exports = {
 
 ## Common tasks
 
-| Task                     | What to change                                                                                                                                                                   |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Add a slash command      | New file in `src/commands/slash/<category>/`. Add a test in `test/commands/`. Update the command table in `README.md` if it ships with the template.                             |
-| Add a prefix command     | New file in `src/commands/prefix/<category>/`. Name and aliases lower case and unique.                                                                                           |
-| Add an event             | New file in `src/events/<category>/`. If it needs another gateway intent, add it in `src/client.js` and document it in `docs/events.md`.                                         |
-| Add a `config.js` option | `src/config.js` (with a comment), a check in `src/lib/validateConfig.js`, a test in `test/lib/validateConfig.test.js`, and `docs/configuration.md`.                              |
-| Add an env variable      | `parseEnv` and the `Env` typedef in `src/env.js`, `.env.example`, `FIELDS` in `scripts/setup-env.js` if users should be asked, tests, `docs/configuration.md`, the README table. |
-| Add a helper             | `src/lib/<name>.js` plus `test/lib/<name>.test.js`. Document it in `docs/commands.md` ("Useful helpers") if command authors should use it.                                       |
-| Add a Mongoose model     | `src/database/models/<Name>.js`. Check `isDatabaseConnected()` in commands that need it, since the database is optional.                                                         |
-| Change behaviour         | Update tests, the relevant `docs/` guide, `README.md` if affected, and add a line under `## Unreleased` in `CHANGELOG.md`.                                                       |
+| Task                     | What to change                                                                                                                                                                                                                 |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Add a slash command      | New file in `src/commands/slash/<category>/`. Add a test in `test/commands/`. Update the command table in `README.md` if it ships with the template.                                                                           |
+| Add a prefix command     | New file in `src/commands/prefix/<category>/`. Name and aliases lower case and unique.                                                                                                                                         |
+| Add an event             | New file in `src/events/<category>/`. If it needs another gateway intent, add it in `src/client.js` and document it in `docs/events.md`.                                                                                       |
+| Add a `config.js` option | `src/config.js` (with a comment), a check in `src/lib/validateConfig.js`, a test in `test/lib/validateConfig.test.js`, and `docs/configuration.md`.                                                                            |
+| Add an env variable      | `parseEnv` in `src/env.js`, `.env.example`, `FIELDS` in `scripts/setup-env.js` if users should be asked, tests, `docs/configuration.md`, the README table.                                                                     |
+| Add a helper             | `src/lib/<name>.js` plus `test/lib/<name>.test.js`. Document it in `docs/commands.md` ("Useful helpers") if command authors should use it.                                                                                     |
+| Add a Mongoose model     | `src/database/models/<Name>.js`. Check `isDatabaseConnected()` in commands that need it, since the database is optional.                                                                                                       |
+| Change behaviour         | Update tests, the relevant `docs/` guide, `README.md` if affected, and add a line under `## Unreleased` in `CHANGELOG.md`.                                                                                                     |
+| Cut a release            | `npm run prepare-release <type>` on `develop`, commit it on `release/<version>`, pull request into `develop`, then a pull request from `develop` into `main` merged with a merge commit. See `docs/branching-and-releases.md`. |
+| Rename a CI job          | Update the required check names in `.github/rulesets/main.json` and `develop.json`, and `docs/branching-and-releases.md`.                                                                                                      |
 
 ## Testing
 
@@ -338,9 +353,11 @@ Tests use `node:test` and `node:assert/strict`. There is no mocking library: use
 - `createClient(env?)`: a real `BotClient` that never logs in, with the bundled commands loaded, a fake bot user
   named `TemplateBot` and `readyTimestamp` 90 s ago. Always `t.after(() => client.destroy())`.
 - `createMessage(content, { authorId, permissions })`: a guild message. Replies are recorded in `message.replies`;
-  `reply()` returns a fake sent message with `edit()` and `createMessageComponentCollector()` (an `EventEmitter`).
+  `reply()` returns a fake sent message (also kept in `message.sentMessages`) with `edit()` (recorded in `edits`) and
+  `createMessageComponentCollector()` (an `EventEmitter`).
 - `createInteraction(name, { userId, options, focused })`: records `replies`, `followUps`, `edits`, `responses` and
-  `sentMessage`. Set `interaction.autocomplete = true` to make it an autocomplete interaction.
+  `sentMessage`. `options` answers `getString`, `getInteger`, `getNumber`, `getBoolean`, `getUser`, `getChannel` and
+  `getRole` by name; `getMember` returns `null`. Set `interaction.autocomplete = true` to make it an autocomplete interaction.
 - `createUser(id, username?)`.
 
 Patterns used in the suite:
@@ -356,12 +373,18 @@ covered module, because testing it needs a real MongoDB server.
 
 ## CI/CD and releases
 
-- **CI** (`.github/workflows/ci.yml`): `npm ci`, `npm run lint`,
-  `npm run format:check`, `npm run test:coverage` on Node 24.x and 26.x, and a Docker build.
-- **Release** (`.github/workflows/release.yml`): `npm version <patch|minor|major>` then `git push --follow-tags`.
-  The tag must match `package.json`. Write the `## <version>` section in `CHANGELOG.md` first: its content becomes the
-  release notes. The image is pushed to `ghcr.io/<owner>/<repo>` with full, minor and major version tags.
-- **CodeQL** (`.github/workflows/codeql.yml`) and **Dependabot** (`.github/dependabot.yml`) run automatically.
+- **Branches** (`docs/branching-and-releases.md`): `feature/*`, `bugfix/*` and `release/*` branches are merged into
+  `develop`; `develop` is merged into `main` with a merge commit (never squash: `main` and `develop` would diverge).
+  Both are protected by the rulesets in `.github/rulesets/`, which the maintainer imports on GitHub once.
+- **CI** (`.github/workflows/ci.yml`): `npm ci`, `npm run lint`, `npm run format:check`, `npm run test:coverage` on
+  Node 24.x and 26.x, and a Docker build. **Branch rules** (`branch-rules.yml`) checks the source branch and, for
+  `main`, that the version is new and has changelog notes.
+- **Release** (`.github/workflows/release.yml`): every push to `main` runs CI, then publishes `v<package.json version>`
+  if that tag doesn't exist: a GitHub release with the notes from `CHANGELOG.md` (`scripts/release-notes.js`) and
+  the image `ghcr.io/<owner>/<repo>` tagged `x.y.z`, `x.y`, `x` and `latest`. Versions are set with
+  `npm run prepare-release`, never by pushing tags.
+- **CodeQL** (`.github/workflows/codeql.yml`) and **Dependabot** (`.github/dependabot.yml`, into `develop`) run
+  automatically.
 
 ## Important rules and gotchas
 
@@ -380,5 +403,7 @@ covered module, because testing it needs a real MongoDB server.
 - **Presence updates** are rate-limited by Discord; `rotateIntervalSeconds` must be `0` or at least 15.
 - **Prefix notices** (unknown command, cooldown, missing permissions...) are limited to one per user every 5 seconds.
 - **Optional database:** the bot must keep working when `MONGODB_URI` is empty.
+- **Required check names** in `.github/rulesets/*.json` must match the workflow job names exactly, or pull requests
+  wait forever for a check that never reports.
 - **Docs are part of the change.** Behaviour, settings or file changes need matching updates in `docs/`, `README.md`,
   `CHANGELOG.md` and this file.

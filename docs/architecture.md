@@ -53,17 +53,18 @@ promise rejections are logged and the bot keeps running.
 
 ## Folder overview
 
-| Path                   | Contents                                                                         |
-| ---------------------- | -------------------------------------------------------------------------------- |
-| `src/commands/slash/`  | Slash and context menu commands, one folder per category.                        |
-| `src/commands/prefix/` | Prefix commands, one folder per category.                                        |
-| `src/events/`          | Event listeners, grouped by topic.                                               |
-| `src/handlers/`        | Loading commands and events, process signals.                                    |
-| `src/lib/`             | Reusable helpers: logger, embeds, help, cooldowns, formatting, update checker... |
-| `src/database/`        | MongoDB connection and Mongoose models.                                          |
-| `scripts/`             | The `npm run setup` tool that creates the `.env` file.                           |
-| `test/`                | Tests, in the same folders as the code they test (`test/lib/format.test.js`...). |
-| `.github/workflows/`   | CI, release and CodeQL pipelines.                                                |
+| Path                   | Contents                                                                                   |
+| ---------------------- | ------------------------------------------------------------------------------------------ |
+| `src/commands/slash/`  | Slash and context menu commands, one folder per category.                                  |
+| `src/commands/prefix/` | Prefix commands, one folder per category.                                                  |
+| `src/events/`          | Event listeners, grouped by topic.                                                         |
+| `src/handlers/`        | Loading commands and events, process signals.                                              |
+| `src/lib/`             | Reusable helpers: logger, embeds, help, cooldowns, formatting, update checker...           |
+| `src/database/`        | MongoDB connection and Mongoose models.                                                    |
+| `scripts/`             | `npm run setup` (creates `.env`) and the release helpers.                                  |
+| `test/`                | Tests, in the same folders as the code they test (`test/lib/format.test.js`...).           |
+| `.github/workflows/`   | CI, release, branch rules and CodeQL pipelines.                                            |
+| `.github/rulesets/`    | Branch and tag protection to import on GitHub (see [releases](branching-and-releases.md)). |
 
 ## Testing
 

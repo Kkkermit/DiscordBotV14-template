@@ -66,9 +66,13 @@ Use [Conventional Commits](https://www.conventionalcommits.org/): `type: short d
 
 ## Pull requests
 
-1. Fork the repository and create a branch from `main`, named after the change (e.g. `fix/help-autocomplete`).
+New work goes into the `develop` branch, and `develop` is merged into `main` for each release (see
+[Branching and releases](docs/branching-and-releases.md)).
+
+1. Fork the repository and create a branch from `develop`. Start its name with `feature/` for a new feature or
+   `bugfix/` for a fix, e.g. `bugfix/help-autocomplete`. Other names fail the **Source branch** check.
 2. Make your changes in focused commits.
 3. Run `npm run check`.
-4. Open a pull request and fill in the template. Link the issue it fixes, e.g. `Closes #12`.
+4. Open a pull request **into `develop`** and fill in the template. Link the issue it fixes, e.g. `Closes #12`.
 
 A maintainer will review it as soon as possible. Thank you for contributing!

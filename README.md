@@ -133,11 +133,13 @@ more.
 ## Project structure
 
 ```text
-├── .github/                   CI, release and CodeQL workflows, issue templates, Dependabot
+├── .github/                   Workflows (CI, releases, branch rules, CodeQL), rulesets, issue templates
 ├── .husky/pre-commit          Formats your staged files with Prettier on every commit
 ├── docs/                      Guides (start with getting-started.md)
 ├── scripts/
-│   └── setup-env.js           npm run setup: creates your .env file
+│   ├── setup-env.js           npm run setup: creates your .env file
+│   ├── prepare-release.js     npm run prepare-release: sets the next version and changelog
+│   └── release-notes.js       Reads a version's notes from CHANGELOG.md for the release
 ├── src/
 │   ├── commands/
 │   │   ├── prefix/<category>/ Prefix commands, e.g. prefix/utility/ping.js
@@ -161,16 +163,17 @@ more.
 
 ## Scripts
 
-| Command                 | What it does                                                            |
-| ----------------------- | ----------------------------------------------------------------------- |
-| `npm start`             | Starts the bot.                                                         |
-| `npm run dev`           | Starts the bot and restarts it when you change or add a file in `src/`. |
-| `npm run setup`         | Creates your `.env` file step by step.                                  |
-| `npm test`              | Runs the tests.                                                         |
-| `npm run test:coverage` | Runs the tests and checks how much of the code they cover.              |
-| `npm run lint`          | Checks the code with ESLint. `npm run lint:fix` fixes what it can.      |
-| `npm run format`        | Formats every file with Prettier.                                       |
-| `npm run check`         | Runs the linter, the format check and the tests, like CI does.          |
+| Command                         | What it does                                                                       |
+| ------------------------------- | ---------------------------------------------------------------------------------- |
+| `npm start`                     | Starts the bot.                                                                    |
+| `npm run dev`                   | Starts the bot and restarts it when you change or add a file in `src/`.            |
+| `npm run setup`                 | Creates your `.env` file step by step.                                             |
+| `npm test`                      | Runs the tests.                                                                    |
+| `npm run test:coverage`         | Runs the tests and checks how much of the code they cover.                         |
+| `npm run lint`                  | Checks the code with ESLint. `npm run lint:fix` fixes what it can.                 |
+| `npm run format`                | Formats every file with Prettier.                                                  |
+| `npm run check`                 | Runs the linter, the format check and the tests, like CI does.                     |
+| `npm run prepare-release minor` | Sets the next version (`patch`, `minor` or `major`) and moves the changelog notes. |
 
 ## Configuration
 
@@ -194,22 +197,24 @@ cooldowns, a command log channel, the replies users see, and the update check. E
   formatted when you save.
 - **Every push and pull request is checked** by GitHub Actions: linting, formatting, the tests on Node.js 24 and 26
   with a coverage gate, a Docker build and a CodeQL security scan.
-- **Releases are one command.** `npm version minor && git push --follow-tags` creates a GitHub release with the notes
-  from [`CHANGELOG.md`](CHANGELOG.md) and publishes a Docker image to the GitHub Container Registry. See
-  [Deployment](docs/deployment.md#releasing-a-new-version).
+- **Protected branches.** Features and fixes go into `develop` through pull requests, and `develop` goes into `main`.
+  Rulesets you can import make the checks required. See [Branching and releases](docs/branching-and-releases.md).
+- **Merging into `main` releases.** It creates a GitHub release with the notes from [`CHANGELOG.md`](CHANGELOG.md) and
+  publishes a Docker image to the GitHub Container Registry. `npm run prepare-release minor` sets the version.
 
 ## Documentation
 
-| Guide                                      | What's in it                                                        |
-| ------------------------------------------ | ------------------------------------------------------------------- |
-| [Getting started](docs/getting-started.md) | Create the bot, invite it and run it for the first time.            |
-| [Writing commands](docs/commands.md)       | Slash and prefix commands, options, autocomplete, buttons, helpers. |
-| [Events](docs/events.md)                   | React to anything that happens on Discord, and gateway intents.     |
-| [Configuration](docs/configuration.md)     | Every `.env` variable and `config.js` setting.                      |
-| [Database](docs/database.md)               | Using MongoDB and Mongoose models.                                  |
-| [Deployment](docs/deployment.md)           | Docker, PM2, hosting platforms and releases.                        |
-| [Architecture](docs/architecture.md)       | How the template works under the hood, and how it's tested.         |
-| [Troubleshooting](docs/troubleshooting.md) | Fixes for the most common problems.                                 |
+| Guide                                                    | What's in it                                                        |
+| -------------------------------------------------------- | ------------------------------------------------------------------- |
+| [Getting started](docs/getting-started.md)               | Create the bot, invite it and run it for the first time.            |
+| [Writing commands](docs/commands.md)                     | Slash and prefix commands, options, autocomplete, buttons, helpers. |
+| [Events](docs/events.md)                                 | React to anything that happens on Discord, and gateway intents.     |
+| [Configuration](docs/configuration.md)                   | Every `.env` variable and `config.js` setting.                      |
+| [Database](docs/database.md)                             | Using MongoDB and Mongoose models.                                  |
+| [Deployment](docs/deployment.md)                         | Docker, PM2, hosting platforms and releases.                        |
+| [Branching and releases](docs/branching-and-releases.md) | Protected `main` and `develop` branches, and cutting a release.     |
+| [Architecture](docs/architecture.md)                     | How the template works under the hood, and how it's tested.         |
+| [Troubleshooting](docs/troubleshooting.md)               | Fixes for the most common problems.                                 |
 
 ## Upgrading from v3
 
