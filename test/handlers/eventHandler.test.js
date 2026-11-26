@@ -41,4 +41,19 @@ describe('loadEvents', () => {
 		await assert.doesNotReject(listener('payload'));
 		assert.equal(client.received, 'payload');
 	});
+
+	it('runs "once" events only the first time', async (t) => {
+		const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'events-'));
+		t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
+		fs.writeFileSync(
+			path.join(directory, 'once.js'),
+			`module.exports = { name: 'custom', once: true, execute(client) { client.runs = (client.runs ?? 0) + 1; } };`,
+		);
+
+		const client = new EventEmitter();
+		loadEvents(client, directory);
+		client.emit('custom');
+		client.emit('custom');
+		assert.equal(client.runs, 1);
+	});
 });

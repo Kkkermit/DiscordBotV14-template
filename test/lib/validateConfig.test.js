@@ -41,6 +41,20 @@ describe('validateConfig', () => {
 		assert.equal(issues.length, 2);
 	});
 
+	it('checks the banner font, activities and command options', () => {
+		const issues = validateConfig(
+			withChanges({
+				banner: { enabled: true, font: 'Not A Font' },
+				presence: { ...config.presence, activities: [{ type: 99, name: 'x' }] },
+				commands: { ...config.commands, mentionAsPrefix: 'yes' },
+			}),
+		);
+		assert.equal(issues.length, 3);
+		assert.match(issues.join('\n'), /banner\.font/);
+		assert.match(issues.join('\n'), /activities\[0\]\.type/);
+		assert.match(issues.join('\n'), /mentionAsPrefix/);
+	});
+
 	it('requires every message', () => {
 		const issues = validateConfig(withChanges({ messages: { ...config.messages, error: '' } }));
 		assert.deepEqual(issues, ['messages.error must not be empty.']);

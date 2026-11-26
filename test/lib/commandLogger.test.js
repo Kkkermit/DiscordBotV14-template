@@ -47,6 +47,24 @@ describe('logCommandUsage', () => {
 		assert.equal(attempts, 1);
 	});
 
+	it('skips a channel the bot cannot send messages in', async (t) => {
+		let lookups = 0;
+		const client = createLoggingClient(t, {
+			isSendable: () => false,
+			send: async () => assert.fail('should not send'),
+		});
+		const fetch = client.channels.fetch;
+		client.channels.fetch = async (...args) => {
+			lookups += 1;
+			return fetch(...args);
+		};
+		const { logCommandUsage } = loadCommandLogger();
+
+		await logCommandUsage(client, usage);
+		await logCommandUsage(client, usage);
+		assert.equal(lookups, 1, 'the channel should be skipped after the first try');
+	});
+
 	it('keeps trying after a network error, which may be temporary', async (t) => {
 		let attempts = 0;
 		const client = createLoggingClient(t, {

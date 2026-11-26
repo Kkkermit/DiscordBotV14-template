@@ -12,7 +12,9 @@ function createReadyClient(t) {
 	const registrations = [];
 	client.application = {
 		commands: {
-			set: async (commands) => {
+			set: async (...args) => {
+				const [commands] = args;
+				assert.equal(args.length, 1, 'commands must be registered globally, without a server ID');
 				registrations.push(commands);
 				return new Collection(commands.map((command, index) => [`id-${index}`, command]));
 			},

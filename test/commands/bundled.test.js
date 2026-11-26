@@ -41,7 +41,9 @@ describe('slash commands', () => {
 		const interaction = createInteraction('ping');
 
 		await client.slashCommands.get('ping').execute(interaction, client);
-		assert.equal(embedOf(interaction.edits[0]).title, '🏓 Pong!');
+		const embed = embedOf(interaction.edits[0]);
+		assert.equal(embed.title, '🏓 Pong!');
+		assert.match(embed.fields[0].value, /^`\d+ms`$/);
 	});
 
 	it('/uptime shows the uptime', needsSlash('uptime'), async (t) => {
@@ -114,7 +116,7 @@ describe('slash commands', () => {
 			client.slashCommands.set(name, {
 				data: new SlashCommandBuilder().setName(name).setDescription('A'.repeat(100)),
 				execute: async () => {},
-				category: `Category ${i % 12}`,
+				category: `Category ${i % 30}`,
 				filePath: `${name}.js`,
 			});
 		}
@@ -123,6 +125,7 @@ describe('slash commands', () => {
 		await client.slashCommands.get('help').execute(interaction, client);
 		const embed = embedOf(interaction.replies[0]);
 		assert.ok(embedLength(embed) <= 6000, `embed is ${embedLength(embed)} characters`);
+		assert.ok(embed.fields.length <= 25, 'Discord allows at most 25 fields');
 		assert.ok(embed.fields.every((field) => field.value.length <= 1024));
 		assert.ok(embed.fields.some((field) => /…and \d+ more$/.test(field.value)));
 	});
@@ -205,6 +208,19 @@ describe('slash commands', () => {
 		assert.ok(!fields['Roles (20)'].includes(GUILD_ID), '@everyone should not be listed');
 	});
 
+	it('/user-info skips server details for someone who is not in the server', needsSlash('user-info'), async (t) => {
+		const client = createClient();
+		t.after(() => client.destroy());
+		const outsider = createUser('100000000000000009', 'outsider');
+		const interaction = createInteraction('user-info', { options: { user: outsider } });
+		interaction.inCachedGuild = () => true;
+		interaction.member = { id: interaction.user.id, roles: { cache: new Collection() } };
+
+		await client.slashCommands.get('user-info').execute(interaction, client);
+		const fieldNames = embedOf(interaction.replies[0]).fields.map(({ name }) => name);
+		assert.ok(!fieldNames.includes('Nickname'), "the caller's server details must not be shown");
+	});
+
 	it('/user-info describes the requested user', needsSlash('user-info'), async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());
@@ -219,13 +235,15 @@ describe('slash commands', () => {
 
 describe('prefix commands', () => {
 	for (const name of ['ping', 'uptime', 'help', 'bot-info']) {
-		it(`${name} replies`, needsPrefix(name), async (t) => {
+		it(`${name} replies with an embed`, needsPrefix(name), async (t) => {
 			const client = createClient();
 			t.after(() => client.destroy());
 			const message = createMessage(`?${name}`);
 
 			await client.prefixCommands.get(name).execute(message, client, []);
-			assert.ok(message.replies.length > 0, 'no reply was sent');
+			// Some commands reply straight away with an embed, others edit their first reply into one.
+			const finalReply = message.sentMessages[0].edits[0] ?? message.replies[0];
+			assert.ok(finalReply.embeds?.length > 0, 'expected an embed in the reply');
 		});
 	}
 

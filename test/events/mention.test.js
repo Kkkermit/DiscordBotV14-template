@@ -15,15 +15,16 @@ describe('mention', () => {
 		}
 	});
 
-	it('stays quiet when the mention is part of a longer message or from a bot', async (t) => {
+	it('stays quiet for longer messages, bots and DMs', async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());
 		const chat = createMessage(`<@${BOT_ID}> how are you?`);
 		const fromBot = createMessage(`<@${BOT_ID}>`);
 		fromBot.author.bot = true;
+		const inDm = createMessage(`<@${BOT_ID}>`);
+		inDm.inGuild = () => false;
 
-		await mention.execute(chat, client);
-		await mention.execute(fromBot, client);
-		assert.equal(chat.replies.length + fromBot.replies.length, 0);
+		for (const message of [chat, fromBot, inDm]) await mention.execute(message, client);
+		assert.equal(chat.replies.length + fromBot.replies.length + inDm.replies.length, 0);
 	});
 });

@@ -76,14 +76,18 @@ function createMessage(content, { authorId = USER_ID, permissions = [] } = {}) {
 		createdTimestamp: Date.now(),
 		inGuild: () => true,
 		replies: [],
+		sentMessages: [],
 		async reply(payload) {
 			this.replies.push(payload);
-			return createSentMessage();
+			const sent = createSentMessage();
+			this.sentMessages.push(sent);
+			return sent;
 		},
 	};
 }
 
 function createInteraction(commandName, { userId = USER_ID, options = {}, focused = '' } = {}) {
+	const getOption = (name) => options[name] ?? null;
 	const interaction = {
 		commandName,
 		user: createUser(userId),
@@ -108,9 +112,15 @@ function createInteraction(commandName, { userId = USER_ID, options = {}, focuse
 		isContextMenuCommand: () => false,
 		inCachedGuild: () => false,
 		toString: () => `/${commandName}`,
+		// Every option getter returns the value passed in `options`, or null.
 		options: {
-			getString: (name) => options[name] ?? null,
-			getUser: (name) => options[name] ?? null,
+			getString: getOption,
+			getInteger: getOption,
+			getNumber: getOption,
+			getBoolean: getOption,
+			getUser: getOption,
+			getChannel: getOption,
+			getRole: getOption,
 			getMember: () => null,
 			getFocused: () => focused,
 		},

@@ -48,6 +48,9 @@ describe('the bundled commands', () => {
 		for (const command of loadPrefixCommands().commands.values()) {
 			assert.ok(command.description, `${command.name} has no description`);
 		}
+		for (const command of loadSlashCommands().commands.values()) {
+			assert.ok(command.data.description, `/${command.data.name} has no description`);
+		}
 	});
 });
 

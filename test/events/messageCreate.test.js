@@ -30,18 +30,23 @@ describe('messageCreate (prefix commands)', () => {
 		assert.equal(message.replies[0].embeds[0].data.author.name, 'TemplateBot information');
 	});
 
-	it('ignores bots, webhooks and messages without the prefix', async (t) => {
+	it('ignores bots, webhooks, system messages, DMs and messages without the prefix', async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());
 		const fromBot = createMessage('?ping');
 		fromBot.author.bot = true;
 		const fromWebhook = createMessage('?ping');
 		fromWebhook.webhookId = '1';
+		const system = createMessage('?ping');
+		system.system = true;
+		const inDm = createMessage('?ping');
+		inDm.inGuild = () => false;
 		const chat = createMessage('just chatting');
 
-		for (const message of [fromBot, fromWebhook, chat]) await messageCreate.execute(message, client);
+		const messages = [fromBot, fromWebhook, system, inDm, chat];
+		for (const message of messages) await messageCreate.execute(message, client);
 		assert.deepEqual(
-			[fromBot, fromWebhook, chat].flatMap((message) => message.replies),
+			messages.flatMap((message) => message.replies),
 			[],
 		);
 	});
