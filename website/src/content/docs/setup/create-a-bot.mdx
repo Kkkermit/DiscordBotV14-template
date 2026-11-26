@@ -1,0 +1,100 @@
+---
+title: Create your Discord bot
+description: Create a bot in the Discord Developer Portal, get its token, enable the Message Content intent and invite it to your server.
+---
+
+import { LinkCard, Steps } from '@astrojs/starlight/components';
+
+Every Discord bot belongs to an **application** in the Discord Developer Portal. Here you create one, get the bot's
+**token** (its password), and invite the bot to your server.
+
+## Create the application
+
+<Steps>
+
+1. Open the [Discord Developer Portal](https://discord.com/developers/applications) and log in.
+
+2. Click **New Application**, give it a name (this becomes your bot's name), accept the terms and click **Create**.
+
+3. Optional: on the **General Information** page, add an app icon and a description. They're shown on the bot's
+   profile.
+
+</Steps>
+
+## Get the bot token
+
+<Steps>
+
+1. Open the **Bot** page in the sidebar.
+
+2. Click **Reset Token**, confirm, and then click **Copy**. Paste the token somewhere safe for now: you'll need it in
+   [Configure your bot](../configuration/).
+
+</Steps>
+
+:::danger[Keep your token secret]
+Anyone who has your token can control your bot. Never share it, post it in Discord or commit it to GitHub. If it
+leaks, click **Reset Token** straight away: the old token stops working immediately.
+:::
+
+## Enable the Message Content intent
+
+Still on the **Bot** page, scroll to **Privileged Gateway Intents**, switch on **Message Content Intent** and click
+**Save Changes**.
+
+The bot needs it to read messages, which is how prefix commands such as `?ping` work. Slash commands work without it.
+The template doesn't need the other privileged intents (Presence and Server Members).
+
+## Invite the bot to your server
+
+<Steps>
+
+1. Open the **OAuth2** page in the sidebar and scroll to **OAuth2 URL Generator**.
+
+2. Under **Scopes**, tick `bot` and `applications.commands`. The second one lets the bot add slash commands.
+
+3. Under **Bot Permissions**, tick:
+
+   - View Channels
+   - Send Messages
+   - Send Messages in Threads
+   - Embed Links
+   - Read Message History
+
+   That's everything the bundled commands need. Add more only when your own features need them, and avoid
+   **Administrator**.
+
+4. Copy the **Generated URL** at the bottom, open it in your browser, choose your server and click **Authorize**.
+
+</Steps>
+
+The bot now appears in your server's member list, offline until you start it.
+
+:::tip[Prefer a ready-made link?]
+This link asks for the same permissions. Replace `YOUR_CLIENT_ID` with the **Application ID** from the **General
+Information** page:
+
+```text
+https://discord.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&scope=bot+applications.commands&permissions=274877991936
+```
+
+:::
+
+## Copy your user ID
+
+The template has **developer-only** commands that only you can use. To mark yourself as the developer, you need your
+Discord user ID. With **Developer Mode** turned on (**User Settings → Advanced**), right-click your name in Discord and
+choose **Copy User ID**. It's a long number, like `123456789012345678`.
+
+## Checklist
+
+- [ ] You copied your bot token and kept it private
+- [ ] **Message Content Intent** is on
+- [ ] The bot is in your server
+- [ ] You copied your user ID (optional, for developer-only commands)
+
+<LinkCard
+  title="Next: Install the template"
+  description="Download the code and install its packages."
+  href="../installation/"
+/>

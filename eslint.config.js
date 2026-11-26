@@ -4,7 +4,7 @@ const prettier = require('eslint-config-prettier/flat');
 const globals = require('globals');
 
 module.exports = defineConfig([
-	globalIgnores(['node_modules/', 'coverage/']),
+	globalIgnores(['node_modules/', 'coverage/', 'website/dist/', 'website/.astro/']),
 	js.configs.recommended,
 	{
 		languageOptions: {
@@ -25,6 +25,11 @@ module.exports = defineConfig([
 			'prefer-const': 'error',
 			'prefer-template': 'error',
 		},
+	},
+	// The docs website (website/) uses ES modules, like most Astro projects.
+	{
+		files: ['**/*.mjs'],
+		languageOptions: { sourceType: 'module' },
 	},
 	// Turns off stylistic rules that would conflict with Prettier. Keep this last.
 	prettier,

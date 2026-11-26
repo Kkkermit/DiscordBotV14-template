@@ -1,0 +1,109 @@
+---
+title: Configure your bot
+description: Create the .env file with your Discord bot token, and change the prefix, colours and status in config.js.
+---
+
+import { LinkCard, TabItem, Tabs } from '@astrojs/starlight/components';
+
+The bot reads its settings from two places:
+
+- **`.env`** holds secrets: your bot token, and your database password if you use one. **Never share it.**
+- **`src/config.js`** holds everything else: the prefix, colours, status and messages. It's safe to commit.
+
+Both are checked when the bot starts. If something is wrong, the bot tells you which setting and why, then stops.
+
+## Create the `.env` file
+
+<Tabs>
+  <TabItem label="Guided setup">
+    The easiest way. Run:
+
+    ```bash
+    npm run setup
+    ```
+
+    It asks three questions and checks each answer. Paste your answer and press <kbd>Enter</kbd>, or just press
+    <kbd>Enter</kbd> to skip an optional one:
+
+    ```text frame="terminal" title="npm run setup" wrap
+    INFO    [Setup] Answer the questions below. Press Enter to skip optional ones.
+    Bot token (Developer Portal → Bot → Reset Token) (required): ••••••••
+    Your Discord user ID(s), comma-separated (Developer Mode → right-click your name → Copy User ID) (optional): 123456789012345678
+    MongoDB connection string (optional):
+    SUCCESS [Setup] Saved .env. Start the bot with "npm start".
+    ```
+
+    If you already have a `.env` file, it asks before replacing it.
+
+  </TabItem>
+  <TabItem label="By hand">
+    Copy the example file:
+
+    ```bash
+    # macOS and Linux
+    cp .env.example .env
+
+    # Windows (PowerShell)
+    Copy-Item .env.example .env
+    ```
+
+    Open `.env` in your editor and paste your token after `DISCORD_TOKEN=`, with no spaces or quotes:
+
+    ```ini title=".env"
+    DISCORD_TOKEN=your-bot-token
+    DEVELOPER_IDS=123456789012345678
+    MONGODB_URI=
+    LOG_LEVEL=info
+    ```
+
+  </TabItem>
+</Tabs>
+
+### The settings in `.env`
+
+| Setting         | What it does                                                                                                                   |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `DISCORD_TOKEN` | **Required.** Your bot token from [Create your Discord bot](../create-a-bot/#get-the-bot-token).                               |
+| `DEVELOPER_IDS` | Optional. Your user ID; separate several with commas. These users can run commands marked `developerOnly`.                     |
+| `MONGODB_URI`   | Optional. A MongoDB connection string. Leave it empty to run without a database. See [Add a database](../../extras/database/). |
+| `LOG_LEVEL`     | Optional. How much the console shows: `debug`, `info` (the default), `warn` or `error`.                                        |
+
+:::danger[Keep `.env` private]
+The template's `.gitignore` already stops Git from committing `.env`. Don't paste it anywhere, and don't rename it:
+the file must be called exactly `.env` (not `.env.txt`) and sit next to `package.json`.
+:::
+
+## Make it yours in `config.js`
+
+Open `src/config.js`. Every setting has a short comment, and the defaults work, so change only what you want. The ones
+people change first:
+
+```js title="src/config.js" {3,6,9}
+module.exports = {
+  // Prefix for message commands, e.g. ?ping
+  prefix: '?',
+
+  // A discord.js colour name like 'Blurple' or 'Green', or a hex number like 0x5865f2.
+  embedColor: 'Blurple',
+
+  // Shown in bot-info and in embed footers.
+  developerName: 'Kkermit',
+
+  presence: {
+    // 'online', 'idle', 'dnd' or 'invisible'.
+    status: 'online',
+    // ...
+  },
+  // ...
+};
+```
+
+- **`prefix`**: what starts a prefix command, like `?` in `?ping`. Mentioning the bot works too: `@YourBot ping`.
+- **`embedColor`**: the colour down the side of the bot's replies.
+- **`developerName`**: your name, shown in every reply's footer. Change it to yours.
+- **`presence`**: the bot's status and the "Watching…" or "Playing…" text under its name.
+
+[`docs/configuration.md`](https://github.com/Kkkermit/DiscordBotV14-template/blob/main/docs/configuration.md#configjs)
+lists every setting, including the startup banner font, cooldowns, a log channel and the replies users see.
+
+<LinkCard title="Next: Run your bot" description="Start the bot and try your first commands." href="../first-run/" />

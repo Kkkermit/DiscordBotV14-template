@@ -2,6 +2,10 @@
 
 This guide takes you from nothing to a running bot. It takes about ten minutes.
 
+> [!TIP]
+> The [documentation site](https://kkkermit.github.io/DiscordBotV14-template/) has the same guide in more detail, with
+> install steps for Windows, macOS and Linux.
+
 ## Requirements
 
 - [Node.js](https://nodejs.org/) **24 or newer**. Check with `node --version`. If you use

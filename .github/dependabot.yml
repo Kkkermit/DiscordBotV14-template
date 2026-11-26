@@ -12,6 +12,16 @@ updates:
         dependency-type: development
     open-pull-requests-limit: 5
 
+  # The documentation website: one pull request a month for all its packages.
+  - package-ecosystem: npm
+    directory: /website
+    target-branch: develop
+    schedule:
+      interval: monthly
+    groups:
+      website:
+        patterns: ['*']
+
   - package-ecosystem: github-actions
     directory: /
     target-branch: develop
