@@ -128,6 +128,7 @@ A timer forces exit after 8 s (below Docker's 10 s stop timeout). Unhandled reje
 | `ISSUE_TEMPLATE/feature_request.yml` | Feature request form.                                                                                                                                                                                                               |
 | `ISSUE_TEMPLATE/config.yml`          | Disables blank issues; links to the Discord server and the discord.js docs.                                                                                                                                                         |
 | `PULL_REQUEST_TEMPLATE.md`           | Pull request summary, type of change and checklist (into `develop`, `npm run check`, tests, docs, changelog).                                                                                                                       |
+| `FUNDING.yml`                        | The Sponsor button (Buy Me a Coffee). GitHub reads it from `main`, so changes show after a release.                                                                                                                                 |
 
 ### `docs/`
 

@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## Unreleased
 
+## 4.0.1 - 2026-11-26
+
+### Added
+
+- A **Sponsor** button on the GitHub page (`.github/FUNDING.yml`).
+
 ## 4.0.0
 
 Version 4 is a rewrite of the template with modern discord.js, safer defaults, tests and full documentation.
