@@ -137,7 +137,6 @@ more.
 ├── docs/                      Guides (start with getting-started.md)
 ├── scripts/
 │   ├── deploy-commands.js     npm run deploy: register slash commands without starting the bot
-│   ├── install-git-hooks.js   Sets up the pre-commit hook when you run npm install
 │   └── setup-env.js           npm run setup: creates your .env file
 ├── src/
 │   ├── commands/
@@ -228,5 +227,4 @@ migration guide.
 - Want to help? Read the [contributing guide](CONTRIBUTING.md) and the [code of conduct](CODE_OF_CONDUCT.md).
 - Security problem? Follow the [security policy](SECURITY.md) instead of opening an issue.
 
-Released under the [MIT License](LICENSE). The original README design was inspired by
-[Nub Bot](https://github.com/TheLegenDev/Nub-Bot) by [thelegendev](https://github.com/TheLegenDev). 💛
+Released under the [MIT License](LICENSE).
