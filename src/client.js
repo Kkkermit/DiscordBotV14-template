@@ -1,5 +1,3 @@
-'use strict';
-
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const config = require('./config');
 const { CooldownManager } = require('./lib/cooldowns');

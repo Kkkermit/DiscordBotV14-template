@@ -112,8 +112,6 @@ The bot also introduces itself when a message only mentions it, and `@YourBot pi
 Create a file in a category folder, for example `src/commands/slash/fun/hello.js`:
 
 ```js
-'use strict';
-
 const { SlashCommandBuilder } = require('discord.js');
 
 /** @type {import('../../../types').SlashCommand} */

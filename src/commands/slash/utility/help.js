@@ -1,5 +1,3 @@
-'use strict';
-
 const { MessageFlags, SlashCommandBuilder } = require('discord.js');
 const { createSlashCommandEmbed, createSlashHelpEmbed, getVisibleCommands } = require('../../../lib/help');
 

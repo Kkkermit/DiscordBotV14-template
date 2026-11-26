@@ -1,5 +1,3 @@
-'use strict';
-
 // Runs on `npm install` (the "prepare" script) and sets up the Git hooks in .husky/.
 // Production installs (`npm ci --omit=dev`) don't include Husky, so it's skipped there instead of failing.
 

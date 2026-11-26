@@ -1,5 +1,3 @@
-'use strict';
-
 const { ApplicationCommandType, Collection, Events } = require('discord.js');
 const { printBanner } = require('../../lib/banner');
 const { deployCommands, fetchRegisteredCommands } = require('../../lib/deployCommands');

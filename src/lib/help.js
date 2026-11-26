@@ -1,5 +1,3 @@
-'use strict';
-
 const { ApplicationCommandType, PermissionsBitField, chatInputApplicationCommandMention } = require('discord.js');
 const { createEmbed } = require('./embeds');
 const { joinLines, truncate } = require('./format');

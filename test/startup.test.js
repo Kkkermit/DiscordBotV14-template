@@ -1,5 +1,3 @@
-'use strict';
-
 const assert = require('node:assert/strict');
 const { execFile } = require('node:child_process');
 const path = require('node:path');

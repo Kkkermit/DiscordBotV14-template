@@ -1,5 +1,3 @@
-'use strict';
-
 const { time, TimestampStyles } = require('discord.js');
 const { formatMessage } = require('./format');
 

@@ -1,5 +1,3 @@
-'use strict';
-
 const { formatWithOptions, styleText } = require('node:util');
 
 /** Levels a user can choose with `LOG_LEVEL`, from most to least verbose. */

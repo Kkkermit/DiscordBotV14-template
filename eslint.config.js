@@ -1,5 +1,3 @@
-'use strict';
-
 const js = require('@eslint/js');
 const { defineConfig, globalIgnores } = require('eslint/config');
 const prettier = require('eslint-config-prettier/flat');
@@ -26,7 +24,6 @@ module.exports = defineConfig([
 			'object-shorthand': 'error',
 			'prefer-const': 'error',
 			'prefer-template': 'error',
-			strict: ['error', 'global'],
 		},
 	},
 	// Turns off stylistic rules that would conflict with Prettier. Keep this last.

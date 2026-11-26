@@ -1,5 +1,3 @@
-'use strict';
-
 const assert = require('node:assert/strict');
 const { describe, it } = require('node:test');
 const { escapeCodeBlock, formatDuration, formatMessage, joinLines, truncate } = require('../../src/lib/format');

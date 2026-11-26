@@ -1,5 +1,3 @@
-'use strict';
-
 const { createEmbed } = require('../../../lib/embeds');
 
 /** @type {import('../../../types').PrefixCommand} */

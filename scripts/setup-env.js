@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Interactive helper that creates the `.env` file.
  *

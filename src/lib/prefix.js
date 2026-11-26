@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Returns every prefix that can start a command: the configured prefix and, if enabled,
  * the bot's mention (`<@id>` and the legacy `<@!id>` form).

@@ -1,5 +1,3 @@
-'use strict';
-
 const { SlashCommandBuilder, time, TimestampStyles } = require('discord.js');
 const { createEmbed } = require('../../../lib/embeds');
 

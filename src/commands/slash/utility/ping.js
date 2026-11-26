@@ -1,5 +1,3 @@
-'use strict';
-
 const { SlashCommandBuilder } = require('discord.js');
 const { createEmbed } = require('../../../lib/embeds');
 

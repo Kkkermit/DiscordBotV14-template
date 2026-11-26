@@ -1,5 +1,3 @@
-'use strict';
-
 const path = require('node:path');
 const { Collection, PermissionsBitField } = require('discord.js');
 const { findJsFiles, getCategory } = require('../lib/files');

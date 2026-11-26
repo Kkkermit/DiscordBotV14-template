@@ -1,5 +1,3 @@
-'use strict';
-
 const DURATION_UNITS = Object.freeze([
 	{ label: 'd', ms: 86_400_000 },
 	{ label: 'h', ms: 3_600_000 },

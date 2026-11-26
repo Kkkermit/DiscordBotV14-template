@@ -1,5 +1,3 @@
-'use strict';
-
 const { collectRefreshClicks, createBotInfoPayload } = require('../../../lib/botInfo');
 
 /** @type {import('../../../types').PrefixCommand} */

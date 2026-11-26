@@ -1,5 +1,3 @@
-'use strict';
-
 const { logger } = require('./logger');
 
 const log = logger.child('Presence');

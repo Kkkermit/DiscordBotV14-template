@@ -1,5 +1,3 @@
-'use strict';
-
 /*
  * Shared type definitions used for editor IntelliSense (VS Code reads these JSDoc types automatically).
  * Annotate your command and event exports with them, like the bundled commands do, to get

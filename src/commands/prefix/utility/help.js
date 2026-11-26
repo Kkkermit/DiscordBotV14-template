@@ -1,5 +1,3 @@
-'use strict';
-
 const { createPrefixCommandEmbed, createPrefixHelpEmbed } = require('../../../lib/help');
 
 /** @type {import('../../../types').PrefixCommand} */

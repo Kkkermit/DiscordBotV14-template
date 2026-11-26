@@ -1,5 +1,3 @@
-'use strict';
-
 const { EventEmitter } = require('node:events');
 const { PermissionsBitField } = require('discord.js');
 const { BotClient } = require('../../src/client');

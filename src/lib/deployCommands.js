@@ -1,5 +1,3 @@
-'use strict';
-
 const { Routes } = require('discord.js');
 
 /**

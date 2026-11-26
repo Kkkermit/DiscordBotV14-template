@@ -1,5 +1,3 @@
-'use strict';
-
 const path = require('node:path');
 const { Events } = require('discord.js');
 const { findJsFiles } = require('../lib/files');

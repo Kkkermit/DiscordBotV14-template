@@ -16,8 +16,6 @@ If a command file has a mistake, the bot logs which file and why, skips it, and 
 
 ```js
 // src/commands/slash/fun/roll.js
-'use strict';
-
 const { SlashCommandBuilder } = require('discord.js');
 
 /** @type {import('../../../types').SlashCommand} */
@@ -208,8 +206,6 @@ module.exports = {
 
 ```js
 // src/commands/prefix/fun/say.js
-'use strict';
-
 const { PermissionFlagsBits } = require('discord.js');
 
 /** @type {import('../../../types').PrefixCommand} */

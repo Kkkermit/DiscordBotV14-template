@@ -1,5 +1,3 @@
-'use strict';
-
 const { Events } = require('discord.js');
 const { logger } = require('../../lib/logger');
 

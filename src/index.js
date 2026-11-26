@@ -1,5 +1,3 @@
-'use strict';
-
 // Discord Bot V14 Template by Kkermit. Released under the MIT License.
 
 const { BotClient } = require('./client');

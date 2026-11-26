@@ -51,7 +51,7 @@ npm run check   # ESLint, Prettier check and the tests. CI runs the same checks.
 
 ## Code style
 
-- CommonJS modules with `'use strict';`, formatted by Prettier (tabs, single quotes, 120 columns).
+- CommonJS modules (`require` / `module.exports`), formatted by Prettier (tabs, single quotes, 120 columns).
 - Prefer clear names and small functions over comments. When you do comment, explain why rather than what.
 - Document exported functions with JSDoc, including types, so editors can show IntelliSense.
 - Use the scoped logger (`logger.child('Feature')`) instead of `console.log`.

@@ -1,5 +1,3 @@
-'use strict';
-
 const { ActivityType, resolveColor } = require('discord.js');
 const figlet = require('figlet');
 const { SNOWFLAKE_PATTERN } = require('./constants');

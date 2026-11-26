@@ -45,8 +45,6 @@ Store Discord IDs as strings: they are too large for JavaScript numbers.
 
 ```js
 // src/commands/slash/admin/set-welcome.js
-'use strict';
-
 const {
   ChannelType,
   InteractionContextType,

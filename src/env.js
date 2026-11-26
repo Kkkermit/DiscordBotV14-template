@@ -1,5 +1,3 @@
-'use strict';
-
 const path = require('node:path');
 const { LEVEL_NAMES } = require('./lib/logger');
 const { SNOWFLAKE_PATTERN } = require('./lib/constants');

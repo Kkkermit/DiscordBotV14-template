@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Registers the slash commands with Discord without starting the bot.
  *

@@ -1,5 +1,3 @@
-'use strict';
-
 const { version: currentVersion } = require('../../package.json');
 const { logger } = require('./logger');
 

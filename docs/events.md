@@ -7,8 +7,6 @@ and much more. Every `.js` file in `src/events/<category>/` is registered automa
 
 ```js
 // src/events/guilds/channelCreate.js
-'use strict';
-
 const { Events } = require('discord.js');
 const { logger } = require('../../lib/logger');
 
@@ -65,8 +63,6 @@ privileged intents.
 
 ```js
 // src/events/guilds/guildMemberAdd.js
-'use strict';
-
 const { Events } = require('discord.js');
 
 const WELCOME_CHANNEL_ID = '123456789012345678';

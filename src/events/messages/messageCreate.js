@@ -1,5 +1,3 @@
-'use strict';
-
 const { Events, PermissionsBitField } = require('discord.js');
 const { logCommandUsage } = require('../../lib/commandLogger');
 const { checkCooldown } = require('../../lib/cooldowns');

@@ -1,5 +1,3 @@
-'use strict';
-
 const { ActivityType } = require('discord.js');
 
 /**

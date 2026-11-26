@@ -1,5 +1,3 @@
-'use strict';
-
 const { DiscordAPIError, EmbedBuilder, codeBlock } = require('discord.js');
 const { escapeCodeBlock, truncate } = require('./format');
 const { logger } = require('./logger');

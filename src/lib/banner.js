@@ -1,5 +1,3 @@
-'use strict';
-
 const figlet = require('figlet');
 const { version } = require('../../package.json');
 const { colorize, supportsColor } = require('./logger');

@@ -1,5 +1,3 @@
-'use strict';
-
 const { SlashCommandBuilder } = require('discord.js');
 const { collectRefreshClicks, createBotInfoPayload } = require('../../../lib/botInfo');
 
