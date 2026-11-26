@@ -49,6 +49,12 @@ npm run check   # ESLint, Prettier check and the tests. CI runs the same checks.
 - Add a line to the `Unreleased` section of [`CHANGELOG.md`](CHANGELOG.md).
 - Never commit tokens, `.env` files or other secrets.
 
+## Working on the documentation site
+
+The [documentation site](https://kkkermit.github.io/DiscordBotV14-template/) lives in `website/` and has its own
+packages. Run `cd website && npm install && npm run dev` to preview it while you edit. [`website/README.md`](website/README.md)
+explains how the pages work.
+
 ## Code style
 
 - CommonJS modules (`require` / `module.exports`), formatted by Prettier (tabs, single quotes, 120 columns).

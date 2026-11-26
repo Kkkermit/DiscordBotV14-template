@@ -1,0 +1,67 @@
+---
+title: Discord Bot V14 Template
+description: A beginner-friendly discord.js v14 bot template for Node.js. Slash commands, prefix commands, events, MongoDB and Docker, ready to go.
+template: splash
+editUrl: false
+hero:
+  tagline: A clean, beginner-friendly starting point for your Discord bot. Slash commands, prefix commands, events, MongoDB and Docker are ready to go. Add a file, restart, and your command is live.
+  image:
+    file: ../../assets/logo.svg
+    alt: ''
+  actions:
+    - text: Get started
+      link: setup/quick-start/
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/Kkkermit/DiscordBotV14-template
+      icon: github
+      variant: minimal
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+## What you get
+
+<CardGrid>
+  <Card title="Slash and prefix commands" icon="comment">
+    Drop a file in a folder and it becomes a command. Cooldowns, permissions, developer-only commands and `/help` are
+    built in.
+  </Card>
+  <Card title="Safe by default" icon="approve-check-circle">
+    Your settings are checked on startup with clear messages, broken files are skipped, and errors never crash the bot
+    or show users a stack trace.
+  </Card>
+  <Card title="Optional database" icon="seti:db">
+    Add a MongoDB connection string to save data with Mongoose, or leave it empty and the bot runs without one.
+  </Card>
+  <Card title="Ready to deploy" icon="rocket">
+    Run it anywhere Node.js runs, or with Docker. Tests, linting and formatting are set up and run on every push.
+  </Card>
+</CardGrid>
+
+## Set up your bot
+
+It takes about ten minutes, and you don't need to have made a bot before.
+
+<CardGrid>
+  <LinkCard
+    title="Quick start"
+    description="Done this before? Six commands from nothing to a running bot."
+    href="setup/quick-start/"
+  />
+  <LinkCard
+    title="What you need"
+    description="Node.js, Git, an editor and a Discord server, and how to install them."
+    href="setup/prerequisites/"
+  />
+  <LinkCard
+    title="Create your Discord bot"
+    description="Get a token and invite the bot in the Discord Developer Portal."
+    href="setup/create-a-bot/"
+  />
+  <LinkCard
+    title="Install and run"
+    description="Download the template, configure it and start your bot."
+    href="setup/installation/"
+  />
+</CardGrid>

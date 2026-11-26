@@ -1,3 +1,5 @@
 node_modules/
 coverage/
+website/dist/
+website/.astro/
 package-lock.json

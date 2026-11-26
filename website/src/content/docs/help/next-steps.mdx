@@ -1,0 +1,86 @@
+---
+title: Next steps
+description: Write your first command, make the bot yours and find the guides for events, the database and deployment.
+---
+
+import { CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
+
+Your bot is running. Here's how to make it do something new.
+
+## Write your first command
+
+<Steps>
+
+1. Create a file at `src/commands/slash/fun/hello.js`. The folder name, `fun`, becomes its category in `/help`.
+
+   ```js title="src/commands/slash/fun/hello.js"
+   const { SlashCommandBuilder } = require('discord.js');
+
+   module.exports = {
+     data: new SlashCommandBuilder().setName('hello').setDescription('Say hello.'),
+
+     async execute(interaction) {
+       await interaction.reply(`Hello, ${interaction.user}!`);
+     },
+   };
+   ```
+
+2. Save it. With `npm run dev` running, the bot restarts by itself. Otherwise, restart it.
+
+3. Type `/hello` in your server.
+
+</Steps>
+
+That's all a command needs: a name, a description and what it does. The bot finds the file, adds it to `/help` and
+registers it with Discord.
+
+## Make it yours
+
+- Set `developerName` in `src/config.js` to your name, and pick your prefix, colours and status.
+- In `package.json`, change `name`, `description` and `author` to your bot's. The `version` there is your bot's version
+  from now on.
+- The startup update check tells you about new releases of this template. Once you change `version`, set
+  `updateCheck.enabled: false` in `src/config.js`.
+
+## Guides
+
+These guides are in the repository's `docs/` folder.
+
+<CardGrid>
+  <LinkCard
+    title="Writing commands"
+    description="Options, autocomplete, buttons, permissions, cooldowns and prefix commands."
+    href="https://github.com/Kkkermit/DiscordBotV14-template/blob/main/docs/commands.md"
+  />
+  <LinkCard
+    title="Events"
+    description="React to anything on Discord, like members joining, and choose gateway intents."
+    href="https://github.com/Kkkermit/DiscordBotV14-template/blob/main/docs/events.md"
+  />
+  <LinkCard
+    title="Configuration"
+    description="Every .env variable and config.js setting."
+    href="https://github.com/Kkkermit/DiscordBotV14-template/blob/main/docs/configuration.md"
+  />
+  <LinkCard
+    title="Database"
+    description="Mongoose models, and saving data from a command."
+    href="https://github.com/Kkkermit/DiscordBotV14-template/blob/main/docs/database.md"
+  />
+  <LinkCard
+    title="Deployment"
+    description="Keep your bot online with Docker, PM2 or a hosting platform."
+    href="https://github.com/Kkkermit/DiscordBotV14-template/blob/main/docs/deployment.md"
+  />
+  <LinkCard
+    title="Architecture"
+    description="How the template works under the hood, and how it's tested."
+    href="https://github.com/Kkkermit/DiscordBotV14-template/blob/main/docs/architecture.md"
+  />
+</CardGrid>
+
+## Get help
+
+Stuck? Ask in the [support server](https://discord.gg/xcMVwAVjSD). Found a bug or have an idea?
+[Open an issue](https://github.com/Kkkermit/DiscordBotV14-template/issues/new/choose). Contributions are welcome: see
+the [contributing guide](https://github.com/Kkkermit/DiscordBotV14-template/blob/main/CONTRIBUTING.md).

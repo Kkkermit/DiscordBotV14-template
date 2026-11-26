@@ -1,0 +1,155 @@
+---
+title: What you need
+description: The tools and accounts you need before setting up the Discord bot template, and how to install them on Windows, macOS and Linux.
+---
+
+import { Badge, Card, CardGrid, LinkCard, TabItem, Tabs } from '@astrojs/starlight/components';
+
+You need four things to run the bot: Node.js, Git, a code editor, and a Discord account with a server to test in.
+They're all free. Already have them? Skip to [creating your bot](../create-a-bot/).
+
+<CardGrid>
+  <Card title="Node.js 24 or newer" icon="node">
+    Runs your bot's JavaScript code. It comes with **npm**, which installs the bot's packages.
+  </Card>
+  <Card title="Git" icon="seti:git">
+    Downloads the template and keeps track of your changes.
+  </Card>
+  <Card title="A code editor" icon="vscode">
+    Where you write your bot. Visual Studio Code is a good choice if you don't have one yet.
+  </Card>
+  <Card title="A Discord server" icon="discord">
+    A server where you're allowed to add bots. A private test server is best.
+  </Card>
+</CardGrid>
+
+## Node.js
+
+<Badge text="Required" variant="caution" /> The template needs **Node.js 24 or newer**. Install the **LTS** (long-term
+support) version: it's the most stable one, and any version from 24 up works.
+
+<Tabs syncKey="os">
+  <TabItem label="Windows" icon="seti:windows">
+    Download the **LTS** installer from [nodejs.org](https://nodejs.org/) and run it with the default options. Or
+    install it from a terminal (PowerShell or Command Prompt):
+
+    ```powershell
+    winget install OpenJS.NodeJS.LTS
+    ```
+
+    Close and reopen your terminal afterwards, so it finds the `node` command.
+
+  </TabItem>
+  <TabItem label="macOS" icon="apple">
+    Download the **LTS** installer from [nodejs.org](https://nodejs.org/) and run it. Or, if you use
+    [Homebrew](https://brew.sh/):
+
+    ```bash
+    brew install node
+    ```
+
+  </TabItem>
+  <TabItem label="Linux" icon="linux">
+    The Node.js in your distribution's package manager is often too old, so use
+    [nvm](https://github.com/nvm-sh/nvm#installing-and-updating), the Node Version Manager. Install nvm with the
+    command from its README, open a new terminal, then run:
+
+    ```bash
+    nvm install --lts
+    ```
+
+  </TabItem>
+</Tabs>
+
+Check that it worked. Both commands should print a version number, and `node` should print `v24` or higher:
+
+```bash
+node --version
+npm --version
+```
+
+:::tip[Using nvm?]
+The template has an `.nvmrc` file, so running `nvm install` and then `nvm use` in the project folder switches to the
+right version for you.
+:::
+
+## Git
+
+<Badge text="Required" variant="caution" /> Git downloads the template and keeps track of your changes.
+
+<Tabs syncKey="os">
+  <TabItem label="Windows" icon="seti:windows">
+    Download it from [git-scm.com](https://git-scm.com/download/win), or:
+
+    ```powershell
+    winget install --id Git.Git -e
+    ```
+
+  </TabItem>
+  <TabItem label="macOS" icon="apple">
+    macOS offers to install Git the first time you use it. To install it straight away:
+
+    ```bash
+    xcode-select --install
+    ```
+
+    Or, with Homebrew: `brew install git`.
+
+  </TabItem>
+  <TabItem label="Linux" icon="linux">
+    ```bash
+    # Ubuntu and Debian
+    sudo apt install git
+
+    # Fedora
+    sudo dnf install git
+    ```
+
+  </TabItem>
+</Tabs>
+
+Check it with `git --version`.
+
+:::note
+Git is the easiest way to get the template and to update it later, but it isn't strictly needed: you can also
+download the code as a ZIP file. See [Install the template](../installation/).
+:::
+
+## A code editor
+
+<Badge text="Recommended" variant="tip" /> Any editor works. [Visual Studio Code](https://code.visualstudio.com/) is
+free and works especially well with the template: when you open the project, it suggests the ESLint, Prettier and
+EditorConfig extensions. Install them, and your code is checked and formatted every time you save.
+
+## A Discord account and server
+
+<Badge text="Required" variant="caution" /> You need a [Discord](https://discord.com/) account and a server where you
+have the **Manage Server** permission, so you can add your bot. Create a private test server for this:
+
+1. In Discord, click **+** (**Add a Server**) at the bottom of your server list.
+2. Choose **Create My Own**, then **For me and my friends**, and give it a name.
+
+Next, turn on **Developer Mode**. It lets you copy the IDs of users, servers and channels, which you'll need later:
+open **User Settings → Advanced** and switch on **Developer Mode**.
+
+## Optional extras
+
+You don't need these to get started. Add them later if your bot needs them.
+
+- **[Docker](https://www.docker.com/products/docker-desktop/)** to run the bot or a local database in a container. See
+  [Run with Docker](../../extras/docker/).
+- **A MongoDB database** to save data, such as settings for each server. A free
+  [MongoDB Atlas](https://www.mongodb.com/atlas) cluster works. See [Add a database](../../extras/database/).
+
+## Checklist
+
+- [ ] `node --version` prints `v24` or higher
+- [ ] `git --version` prints a version
+- [ ] You have a code editor
+- [ ] You have a Discord server for testing, and Developer Mode is on
+
+<LinkCard
+  title="Next: Create your Discord bot"
+  description="Get a bot token and invite the bot to your server."
+  href="../create-a-bot/"
+/>

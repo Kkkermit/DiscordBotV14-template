@@ -23,6 +23,7 @@
 </p>
 
 <p align="center">
+  <a href="https://kkkermit.github.io/DiscordBotV14-template/"><b>Documentation site</b></a> •
   <a href="docs/getting-started.md">Getting started</a> •
   <a href="docs/commands.md">Writing commands</a> •
   <a href="docs/configuration.md">Configuration</a> •
@@ -153,6 +154,7 @@ more.
 │   ├── env.js                 Loads and checks the .env file
 │   └── index.js               Starts the bot
 ├── test/                      Tests, in the same folders as the code they test
+├── website/                   The documentation site (Starlight), published to GitHub Pages
 ├── .env.example               Every environment variable, explained
 ├── AGENTS.md                  The codebase explained for AI coding agents (and curious humans)
 ├── compose.yaml, Dockerfile   Run the bot with Docker
@@ -203,6 +205,10 @@ cooldowns, a command log channel, the replies users see, and the update check. E
   publishes a Docker image to the GitHub Container Registry. `npm run prepare-release minor` sets the version.
 
 ## Documentation
+
+New to Discord bots? The **[documentation site](https://kkkermit.github.io/DiscordBotV14-template/)** walks you through
+the whole setup: what to install, creating the bot, configuring it and running it for the first time. The guides below
+cover everything else.
 
 | Guide                                                    | What's in it                                                        |
 | -------------------------------------------------------- | ------------------------------------------------------------------- |

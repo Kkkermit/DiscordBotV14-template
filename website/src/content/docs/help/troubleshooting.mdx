@@ -1,0 +1,90 @@
+---
+title: Troubleshooting
+description: Fixes for the most common problems when setting up the Discord bot template, from token errors to slash commands that don't appear.
+---
+
+The bot explains most problems in the console when it starts, so read the last few lines first. If your problem isn't
+here, set `LOG_LEVEL=debug` in `.env` to see more detail, then ask in the
+[support server](https://discord.gg/xcMVwAVjSD) or [open an issue](https://github.com/Kkkermit/DiscordBotV14-template/issues/new/choose).
+
+:::danger[Asking for help?]
+Never paste your bot token or your `.env` file. If you shared it by accident, reset the token in the Developer Portal.
+:::
+
+## Installing
+
+### `npm install` fails with "Unsupported engine"
+
+Your Node.js version is too old. Install Node.js 24 or newer (see [What you need](../../setup/prerequisites/#nodejs)),
+open a new terminal, and check with `node --version`. With nvm, run `nvm install` in the project folder.
+
+### "node" or "npm" is not recognized
+
+The terminal can't find Node.js. Close and reopen it after installing. On Windows, restart your computer if that
+doesn't help, so the new `PATH` is picked up.
+
+## Starting the bot
+
+### "DISCORD_TOKEN is required"
+
+The bot can't find your token. Check that:
+
+- the file is called exactly `.env`, not `.env.txt` or `example.env` (Windows hides file extensions by default),
+- it's in the project folder, next to `package.json`,
+- the line reads `DISCORD_TOKEN=your-token`, with no spaces around `=`.
+
+Running `npm run setup` creates the file for you.
+
+### "Discord rejected the token" or "An invalid token was provided"
+
+The token is wrong or was reset. In the Developer Portal, open **Bot → Reset Token**, copy the new token, and update
+`DISCORD_TOKEN`. Make sure you copied the **bot token**, not the **client secret** from the OAuth2 page.
+
+### "Used disallowed intents"
+
+The bot asks for a privileged intent that isn't switched on. Open **Developer Portal → Bot → Privileged Gateway
+Intents** and turn on **Message Content Intent**, plus any other privileged intent you added in `src/client.js`.
+
+### "Could not connect to MongoDB"
+
+- Check the connection string, including the password. Special characters must be URL-encoded: `@` becomes `%40`.
+- In MongoDB Atlas, add your computer's IP address under **Network Access**.
+- Don't need a database? Leave `MONGODB_URI` empty.
+
+See [Add a database](../../extras/database/).
+
+## In Discord
+
+### Slash commands don't show up
+
+- Commands are registered when the bot starts. Check for `Registered N slash command(s)` in the console.
+- The bot must be invited with the `applications.commands` scope. Invite it again with the link from
+  [Create your Discord bot](../../setup/create-a-bot/#invite-the-bot-to-your-server).
+- If a command file is broken, the console says so, and no commands are registered until you fix it. That stops a
+  typo from deleting a command from Discord.
+- Press <kbd>Ctrl</kbd> + <kbd>R</kbd> (<kbd>Cmd</kbd> + <kbd>R</kbd> on macOS) in Discord to reload it.
+
+### Prefix commands don't reply
+
+- Turn on **Message Content Intent** in the Developer Portal. Without it, the bot can't read messages.
+- Use the prefix from `src/config.js` (`?` by default), or mention the bot: `@MyBot ping`.
+- The bot needs **View Channel**, **Send Messages**, **Embed Links** and **Read Message History** in that channel.
+- Prefix commands don't work in DMs.
+
+### "This command is no longer available"
+
+Discord still lists a command the bot no longer has, usually because you deleted or renamed its file. Restart the bot
+to update Discord's list, then reload Discord.
+
+### The bot answers every command twice
+
+Two copies of the bot are running with the same token, for example one with `npm start` and one in Docker or on a
+server. Stop one of them.
+
+## Committing
+
+### My commit was stopped by the pre-commit hook
+
+The hook runs ESLint and Prettier on the files you commit. Prettier fixes formatting by itself, but ESLint stops the
+commit when it finds a real mistake, such as a variable that's never used. Read the message, fix the line it points
+to (`npm run lint` lists every problem), and commit again.

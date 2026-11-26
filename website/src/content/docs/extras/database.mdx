@@ -1,0 +1,85 @@
+---
+title: Add a database
+description: Connect the Discord bot template to MongoDB with MongoDB Atlas or a local database in Docker. Optional.
+---
+
+import { Steps, TabItem, Tabs } from '@astrojs/starlight/components';
+
+The bot runs fine without a database. Add one when you want to **save data**, such as a welcome channel for each
+server. The template uses [MongoDB](https://www.mongodb.com/) with [Mongoose](https://mongoosejs.com/).
+
+All you need is a **connection string**: the address of your database, with its password.
+
+## Get a connection string
+
+<Tabs>
+  <TabItem label="MongoDB Atlas (free, hosted)">
+    Atlas runs the database for you, so it's the easiest way to start, and the free tier is plenty for a small bot.
+
+    <Steps>
+
+    1. Create a free account at [mongodb.com/atlas](https://www.mongodb.com/atlas) and create a free cluster.
+
+    2. Under **Database Access**, add a database user with a strong password.
+
+    3. Under **Network Access**, add the IP address of the computer that runs your bot. (`0.0.0.0/0` allows any
+       address. It's handy while testing but less safe, so use your server's address in production.)
+
+    4. Click **Connect → Drivers** and copy the connection string. Replace `<password>` with your user's password,
+       and add a database name after `.net/`:
+
+       ```text
+       mongodb+srv://bot:your-password@cluster0.abcde.mongodb.net/discord-bot?retryWrites=true&w=majority
+       ```
+
+    </Steps>
+
+  </TabItem>
+  <TabItem label="On your computer (Docker)">
+    With [Docker](https://www.docker.com/products/docker-desktop/) installed, start a database from the project
+    folder:
+
+    ```bash
+    docker compose --profile database up -d mongo
+    ```
+
+    Your connection string is:
+
+    ```text
+    mongodb://localhost:27017/discord-bot
+    ```
+
+    Running the bot in Docker too? Then use `mongodb://mongo:27017/discord-bot` instead. See
+    [Run with Docker](../docker/).
+
+  </TabItem>
+</Tabs>
+
+## Connect the bot
+
+Put the connection string in your `.env` file:
+
+```ini title=".env"
+MONGODB_URI=mongodb+srv://bot:your-password@cluster0.abcde.mongodb.net/discord-bot
+```
+
+Restart the bot. It connects to the database before it logs in to Discord:
+
+```text frame="terminal" title="npm start" wrap
+INFO    [Database] Connecting to MongoDB...
+SUCCESS [Database] Connected to MongoDB (database "discord-bot").
+```
+
+If it can't connect, it explains why and stops, so you never end up with a bot that's missing its database.
+
+:::caution[Special characters in the password]
+Characters like `@`, `:` or `/` in the password must be
+[URL-encoded](https://www.mongodb.com/docs/manual/reference/connection-string/) in the connection string. For
+example, `@` becomes `%40`. A password with only letters and numbers avoids the problem.
+:::
+
+## Save your first data
+
+The template includes an example model, `src/database/models/GuildSettings.js`, that stores settings for each
+server. [`docs/database.md`](https://github.com/Kkkermit/DiscordBotV14-template/blob/main/docs/database.md) shows how
+to read and save it in a command, step by step.

@@ -1,0 +1,70 @@
+---
+title: Run with Docker
+description: Run the Discord bot template in Docker with Docker Compose, with an optional MongoDB container, or from the published image.
+---
+
+import { TabItem, Tabs } from '@astrojs/starlight/components';
+
+Docker runs the bot in a container: it brings its own Node.js, restarts the bot if it crashes, and works the same on
+every computer and server. You don't need it to develop your bot, but it's an easy way to keep it running.
+
+You need [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows and macOS) or
+[Docker Engine](https://docs.docker.com/engine/install/) (Linux), and a [`.env` file](../../setup/configuration/).
+
+## Start the bot
+
+<Tabs>
+  <TabItem label="Bot only">
+    From the project folder:
+
+    ```bash
+    docker compose up -d --build
+    ```
+
+  </TabItem>
+  <TabItem label="Bot and MongoDB">
+    Set this in `.env`, so the bot finds the database container by its name:
+
+    ```ini title=".env"
+    MONGODB_URI=mongodb://mongo:27017/discord-bot
+    ```
+
+    Then start both:
+
+    ```bash
+    docker compose --profile database up -d --build
+    ```
+
+    The database is saved in a Docker volume, so it survives restarts.
+
+  </TabItem>
+</Tabs>
+
+`-d` runs it in the background, and `--build` rebuilds the image with your latest code. Run the same command again
+after you change the code.
+
+## Everyday commands
+
+| To                         | Run                            |
+| -------------------------- | ------------------------------ |
+| See the bot's console      | `docker compose logs -f bot`   |
+| Stop everything            | `docker compose down`          |
+| Restart after code changes | `docker compose up -d --build` |
+| See what's running         | `docker compose ps`            |
+
+:::caution[One copy at a time]
+Don't run the bot in Docker and with `npm start` at the same time. Two copies with the same token both answer every
+command.
+:::
+
+## Use the published image
+
+Every release of the template is also published as a ready-made image, so you can run it without the source code:
+
+```bash
+docker run -d --env-file .env --restart unless-stopped ghcr.io/kkkermit/discordbotv14-template:latest
+```
+
+That's the template's own bot, without your changes. For your bot, build your own image with `docker compose`, as
+above. [`docs/deployment.md`](https://github.com/Kkkermit/DiscordBotV14-template/blob/main/docs/deployment.md) explains
+how to publish yours, and how to run the bot on a VPS with PM2 or on a hosting platform.
