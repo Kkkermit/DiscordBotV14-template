@@ -7,7 +7,7 @@ ENV NODE_ENV=production
 
 # Install production dependencies first so this layer is cached between code changes.
 COPY package.json package-lock.json .npmrc ./
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
 
 COPY src ./src
 COPY scripts ./scripts

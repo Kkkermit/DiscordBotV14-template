@@ -35,10 +35,12 @@
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
 		"test": "node --test \"test/**/*.test.js\"",
-		"check": "npm run lint && npm run format:check && npm test"
+		"check": "npm run lint && npm run format:check && npm test",
+		"prepare": "node scripts/install-git-hooks.js"
 	},
 	"dependencies": {
 		"discord.js": "^14.28.1",
+		"figlet": "^1.13.0",
 		"mongoose": "^9.13.1"
 	},
 	"devDependencies": {
@@ -46,7 +48,16 @@
 		"eslint": "^10.15.0",
 		"eslint-config-prettier": "^10.1.8",
 		"globals": "^17.14.0",
+		"husky": "^9.1.7",
+		"lint-staged": "^16.4.0",
 		"prettier": "^3.10.1"
+	},
+	"lint-staged": {
+		"*.js": [
+			"eslint --fix",
+			"prettier --write"
+		],
+		"!(*.js)": "prettier --write --ignore-unknown"
 	},
 	"engines": {
 		"node": ">=22.12.0"
