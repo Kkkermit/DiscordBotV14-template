@@ -1,7 +1,7 @@
 # Events
 
 Events let your bot react to anything that happens on Discord: messages, members joining, reactions, voice changes
-and much more. Every `.js` file in `src/events/<Category>/` is registered automatically on startup.
+and much more. Every `.js` file in `src/events/<category>/` is registered automatically on startup.
 
 ## Writing an event
 

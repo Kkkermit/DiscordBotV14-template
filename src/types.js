@@ -13,7 +13,7 @@
  */
 
 /**
- * A slash command in `src/commands/slash/<Category>/<name>.js`.
+ * A slash command in `src/commands/slash/<category>/<name>.js`.
  *
  * @typedef {object} SlashCommand
  * @property {{ name: string, description?: string, toJSON(): import('discord.js').RESTPostAPIApplicationCommandsJSONBody }} data
@@ -27,7 +27,7 @@
  */
 
 /**
- * A context menu command (right-click on a user or message) in `src/commands/slash/<Category>/<name>.js`,
+ * A context menu command (right-click on a user or message) in `src/commands/slash/<category>/<name>.js`,
  * built with `ContextMenuCommandBuilder`. It supports the same `cooldown` and `developerOnly` options.
  *
  * @typedef {object} ContextMenuCommand
@@ -38,7 +38,7 @@
  */
 
 /**
- * A prefix (message) command in `src/commands/prefix/<Category>/<name>.js`.
+ * A prefix (message) command in `src/commands/prefix/<category>/<name>.js`.
  *
  * @typedef {object} PrefixCommand
  * @property {string} name The word typed after the prefix, e.g. `ping` for `?ping`.
@@ -54,7 +54,7 @@
  */
 
 /**
- * An event listener in `src/events/<Category>/<name>.js`.
+ * An event listener in `src/events/<category>/<name>.js`.
  * `execute` receives the event's arguments followed by the client.
  *
  * @typedef {object} BotEvent

@@ -6,8 +6,8 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { describe, it } = require('node:test');
-const { loadEvents, validateEvent } = require('../src/handlers/eventHandler');
-require('./helpers/fakes'); // Silences the logger.
+const { loadEvents, validateEvent } = require('../../src/handlers/eventHandler');
+require('../helpers/fakes'); // Silences the logger.
 
 describe('validateEvent', () => {
 	it('accepts a valid event and explains invalid ones', () => {

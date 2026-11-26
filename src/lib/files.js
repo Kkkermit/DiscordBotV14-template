@@ -36,17 +36,17 @@ function findJsFiles(directory) {
 }
 
 /**
- * Returns the category of a file: the name of the first folder below `baseDirectory`.
+ * Returns the category of a file for display: its first folder below `baseDirectory`, capitalised.
  * Files placed directly in `baseDirectory` are put in the `General` category.
  *
- * @example getCategory('/bot/commands/slash', '/bot/commands/slash/Utility/ping.js') // 'Utility'
+ * @example getCategory('/bot/commands/slash', '/bot/commands/slash/utility/ping.js') // 'Utility'
  * @param {string} baseDirectory
  * @param {string} filePath
- * @returns {string}
  */
 function getCategory(baseDirectory, filePath) {
-	const segments = path.relative(baseDirectory, filePath).split(path.sep);
-	return segments.length > 1 ? segments[0] : 'General';
+	const [folder, ...rest] = path.relative(baseDirectory, filePath).split(path.sep);
+	if (rest.length === 0) return 'General';
+	return folder.charAt(0).toUpperCase() + folder.slice(1);
 }
 
 module.exports = { findJsFiles, getCategory };

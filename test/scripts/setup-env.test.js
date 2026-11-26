@@ -6,8 +6,8 @@ const os = require('node:os');
 const path = require('node:path');
 const { describe, it } = require('node:test');
 const util = require('node:util');
-const { buildEnvFile, formatEnvValue, validateField } = require('../scripts/setup-env');
-const { parseEnv } = require('../src/env');
+const { buildEnvFile, formatEnvValue, validateField } = require('../../scripts/setup-env');
+const { parseEnv } = require('../../src/env');
 
 describe('setup-env', () => {
 	it('quotes values only when needed, using a quote the value does not contain', () => {

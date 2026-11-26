@@ -90,7 +90,7 @@ prefix too.
 
 ## Adding a command
 
-Create a file in a category folder, for example `src/commands/slash/Fun/hello.js`:
+Create a file in a category folder, for example `src/commands/slash/fun/hello.js`:
 
 ```js
 'use strict';
@@ -119,12 +119,12 @@ Restart the bot and `/hello` is ready. Prefix commands work the same way in `src
 │   └── setup-env.js         # npm run setup: interactive .env creator
 ├── src/
 │   ├── commands/
-│   │   ├── prefix/<Category>/*.js
-│   │   └── slash/<Category>/*.js
+│   │   ├── prefix/<category>/*.js
+│   │   └── slash/<category>/*.js
 │   ├── database/
 │   │   ├── connection.js    # MongoDB connect / disconnect
 │   │   └── models/          # Mongoose models (an example is included)
-│   ├── events/<Category>/*.js
+│   ├── events/<category>/*.js
 │   ├── handlers/            # Loads commands and events, handles process signals
 │   ├── lib/                 # Logger, embeds, cooldowns, help, update checker, ...
 │   ├── client.js            # BotClient: the discord.js Client with the template's helpers

@@ -11,7 +11,7 @@ const {
 	createInteraction,
 	createMessage,
 	createUser,
-} = require('./helpers/fakes');
+} = require('../helpers/fakes');
 
 /**
  * Runs the real command files against fake Discord objects. Building the embeds also runs
@@ -112,7 +112,7 @@ describe('slash commands', () => {
 			data: new ContextMenuCommandBuilder().setName('Avatar').setType(ApplicationCommandType.User),
 			execute: async () => {},
 			category: 'Info',
-			filePath: 'Info/avatar.js',
+			filePath: 'info/avatar.js',
 		});
 		const help = client.slashCommands.get('help');
 

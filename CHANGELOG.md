@@ -63,8 +63,8 @@ Version 4 is a rewrite of the template with modern discord.js, safer defaults, t
 
 1. Install Node.js 22.12 or newer.
 2. Update your `.env` file with the new variable names (or run `npm run setup`).
-3. Move your slash commands to `src/commands/slash/<Category>/` and your prefix commands to
-   `src/commands/prefix/<Category>/`. Their shape is unchanged: slash commands export `data` and
+3. Move your slash commands to `src/commands/slash/<category>/` and your prefix commands to
+   `src/commands/prefix/<category>/`. Their shape is unchanged: slash commands export `data` and
    `execute(interaction, client)`, prefix commands export `name`, `aliases` and `execute(message, client, args)`.
 4. Move files from `src/triggers/` to a folder in `src/events/`.
 5. Replace `client.commands`, `client.pcommands` and `client.aliases` in your code with `client.slashCommands`,

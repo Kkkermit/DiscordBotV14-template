@@ -2,8 +2,13 @@
 
 const assert = require('node:assert/strict');
 const { describe, it } = require('node:test');
-const { checkForUpdates, compareVersions, fetchLatestReleaseTag, parseVersion } = require('../src/lib/updateChecker');
-require('./helpers/fakes'); // Silences the logger.
+const {
+	checkForUpdates,
+	compareVersions,
+	fetchLatestReleaseTag,
+	parseVersion,
+} = require('../../src/lib/updateChecker');
+require('../helpers/fakes'); // Silences the logger.
 
 const jsonResponse = (status, body) => new Response(JSON.stringify(body), { status });
 

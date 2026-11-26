@@ -2,8 +2,8 @@
 
 const assert = require('node:assert/strict');
 const { describe, it } = require('node:test');
-const ready = require('../src/events/client/ready');
-const { createClient } = require('./helpers/fakes');
+const ready = require('../../src/events/client/ready');
+const { createClient } = require('../helpers/fakes');
 
 /** A client whose REST calls are recorded instead of sent to Discord. */
 function createReadyClient(t) {
@@ -37,7 +37,7 @@ describe('ready', () => {
 
 	it("does not overwrite Discord's commands while a command file is broken", async (t) => {
 		const { client, calls } = createReadyClient(t);
-		client.failedSlashCommandFiles = ['Utility/broken.js'];
+		client.failedSlashCommandFiles = ['utility/broken.js'];
 
 		await ready.execute(client);
 		assert.equal(calls.put.length, 0, 'registering would delete the broken command from Discord');

@@ -2,7 +2,7 @@
 
 const assert = require('node:assert/strict');
 const { describe, it } = require('node:test');
-const { escapeCodeBlock, formatDuration, formatMessage, joinLines, truncate } = require('../src/lib/format');
+const { escapeCodeBlock, formatDuration, formatMessage, joinLines, truncate } = require('../../src/lib/format');
 
 describe('formatDuration', () => {
 	it('drops leading zero units but keeps the ones after the first non-zero unit', () => {

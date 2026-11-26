@@ -3,7 +3,7 @@
 const assert = require('node:assert/strict');
 const { describe, it } = require('node:test');
 const { styleText } = require('node:util');
-const { Logger, formatTimestamp, supportsColor } = require('../src/lib/logger');
+const { Logger, formatTimestamp, supportsColor } = require('../../src/lib/logger');
 
 function createStream() {
 	const output = { text: '' };

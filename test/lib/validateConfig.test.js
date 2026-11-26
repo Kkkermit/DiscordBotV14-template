@@ -2,8 +2,8 @@
 
 const assert = require('node:assert/strict');
 const { describe, it } = require('node:test');
-const config = require('../src/config');
-const { validateConfig } = require('../src/lib/validateConfig');
+const config = require('../../src/config');
+const { validateConfig } = require('../../src/lib/validateConfig');
 
 /** Returns a copy of the default config with some top-level keys replaced. */
 const withChanges = (changes) => ({ ...config, ...changes });

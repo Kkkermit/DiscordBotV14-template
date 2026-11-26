@@ -2,9 +2,9 @@
 
 The template supports two kinds of commands:
 
-- **Slash commands** (`/ping`) in `src/commands/slash/<Category>/`. Discord shows them in the command picker with
+- **Slash commands** (`/ping`) in `src/commands/slash/<category>/`. Discord shows them in the command picker with
   their options, so they are the recommended way for users to interact with your bot.
-- **Prefix commands** (`?ping`) in `src/commands/prefix/<Category>/`. Classic text commands, read from messages.
+- **Prefix commands** (`?ping`) in `src/commands/prefix/<category>/`. Classic text commands, read from messages.
 
 Every `.js` file inside a category folder is loaded automatically when the bot starts. The folder name becomes the
 command's category in `/help`. Files and folders starting with `_` are skipped, so you can keep shared helpers such as
@@ -15,7 +15,7 @@ If a command file has a mistake, the bot logs which file and why, skips it, and 
 ## Slash commands
 
 ```js
-// src/commands/slash/Fun/roll.js
+// src/commands/slash/fun/roll.js
 'use strict';
 
 const { SlashCommandBuilder } = require('discord.js');
@@ -132,7 +132,7 @@ administrators see it, and register it in your own server only.
 ### Autocomplete
 
 Add `.setAutocomplete(true)` to a string, integer or number option and export an `autocomplete` function. The
-bundled [`/help`](../src/commands/slash/Utility/help.js) command is a complete example.
+bundled [`/help`](../src/commands/slash/utility/help.js) command is a complete example.
 
 ```js
 const FRUITS = ['apple', 'banana', 'cherry'];
@@ -207,7 +207,7 @@ module.exports = {
 ## Prefix commands
 
 ```js
-// src/commands/prefix/Fun/say.js
+// src/commands/prefix/fun/say.js
 'use strict';
 
 const { PermissionFlagsBits } = require('discord.js');
@@ -255,7 +255,7 @@ warning is logged; a command's name always wins over another command's alias.
 
 If a command exists in both forms, move the shared logic into a helper and call it from both files. The bundled
 `bot-info` commands do this with [`src/lib/botInfo.js`](../src/lib/botInfo.js). Helpers inside a command folder must
-start with `_` (e.g. `src/commands/slash/Fun/_jokes.js`) so they aren't loaded as commands.
+start with `_` (e.g. `src/commands/slash/fun/_jokes.js`) so they aren't loaded as commands.
 
 ## Useful helpers
 

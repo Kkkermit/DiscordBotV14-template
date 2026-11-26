@@ -2,8 +2,8 @@
 
 const assert = require('node:assert/strict');
 const { describe, it } = require('node:test');
-const { printBanner, renderAsciiArt } = require('../src/lib/banner');
-const { createClient } = require('./helpers/fakes');
+const { printBanner, renderAsciiArt } = require('../../src/lib/banner');
+const { createClient } = require('../helpers/fakes');
 
 describe('renderAsciiArt', () => {
 	it('draws the text with the chosen figlet font', () => {

@@ -10,7 +10,7 @@ const {
 	loadSlashCommands,
 	validatePrefixCommand,
 	validateSlashCommand,
-} = require('../src/handlers/commandHandler');
+} = require('../../src/handlers/commandHandler');
 
 /**
  * Writes files into a temporary directory and returns its path.
@@ -100,13 +100,13 @@ describe('validatePrefixCommand', () => {
 });
 
 describe('loadSlashCommands', () => {
-	it('assigns categories, skips "_" files and reports broken files', (t) => {
+	it('capitalises folder names as categories, skips "_" files and reports broken files', (t) => {
 		const directory = createFixture(t, {
-			'Fun/joke.js': slashCommandSource('joke'),
+			'fun/joke.js': slashCommandSource('joke'),
 			'root.js': slashCommandSource('root'),
-			'Fun/_helpers.js': 'throw new Error("should not be loaded");',
-			'Fun/syntax.js': 'module.exports = {',
-			'Fun/invalid.js': `
+			'fun/_helpers.js': 'throw new Error("should not be loaded");',
+			'fun/syntax.js': 'module.exports = {',
+			'fun/invalid.js': `
 const { SlashCommandBuilder } = require(${discordJsPath});
 module.exports = { data: new SlashCommandBuilder().setName('Invalid Name').setDescription('x'), async execute() {} };`,
 		});
@@ -117,7 +117,7 @@ module.exports = { data: new SlashCommandBuilder().setName('Invalid Name').setDe
 		assert.equal(commands.get('root').category, 'General');
 
 		const failedFiles = failures.map(({ file }) => file).sort();
-		assert.deepEqual(failedFiles, [path.join('Fun', 'invalid.js'), path.join('Fun', 'syntax.js')]);
+		assert.deepEqual(failedFiles, [path.join('fun', 'invalid.js'), path.join('fun', 'syntax.js')]);
 	});
 
 	it('reports duplicate names', (t) => {

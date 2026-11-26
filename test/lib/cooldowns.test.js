@@ -2,7 +2,7 @@
 
 const assert = require('node:assert/strict');
 const { describe, it } = require('node:test');
-const { CooldownManager } = require('../src/lib/cooldowns');
+const { CooldownManager } = require('../../src/lib/cooldowns');
 
 describe('CooldownManager', () => {
 	it('allows the first use and blocks repeats until the cooldown ends', () => {
