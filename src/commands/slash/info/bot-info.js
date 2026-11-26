@@ -1,7 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { collectRefreshClicks, createBotInfoPayload } = require('../../../lib/botInfo');
 
-/** @type {import('../../../types').SlashCommand} */
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('bot-info')

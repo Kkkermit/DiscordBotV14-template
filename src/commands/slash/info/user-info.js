@@ -10,7 +10,6 @@ function formatRoles(roles) {
 	return hiddenCount > 0 ? `${shown} and ${hiddenCount} more` : shown;
 }
 
-/** @type {import('../../../types').SlashCommand} */
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('user-info')

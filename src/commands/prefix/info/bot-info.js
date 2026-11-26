@@ -1,6 +1,5 @@
 const { collectRefreshClicks, createBotInfoPayload } = require('../../../lib/botInfo');
 
-/** @type {import('../../../types').PrefixCommand} */
 module.exports = {
 	name: 'bot-info',
 	description: 'Show information and statistics about the bot.',

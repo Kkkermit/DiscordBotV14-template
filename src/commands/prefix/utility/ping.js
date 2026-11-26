@@ -1,6 +1,5 @@
 const { createEmbed } = require('../../../lib/embeds');
 
-/** @type {import('../../../types').PrefixCommand} */
 module.exports = {
 	name: 'ping',
 	description: 'Check how fast the bot is responding.',

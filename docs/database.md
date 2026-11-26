@@ -55,7 +55,6 @@ const {
 const { isDatabaseConnected } = require('../../../database/connection');
 const GuildSettings = require('../../../database/models/GuildSettings');
 
-/** @type {import('../../../types').SlashCommand} */
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('set-welcome')

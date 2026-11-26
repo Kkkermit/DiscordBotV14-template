@@ -2,7 +2,6 @@ const { time, TimestampStyles } = require('discord.js');
 const { createEmbed } = require('../../../lib/embeds');
 const { formatDuration } = require('../../../lib/format');
 
-/** @type {import('../../../types').PrefixCommand} */
 module.exports = {
 	name: 'uptime',
 	description: 'Show how long the bot has been online.',

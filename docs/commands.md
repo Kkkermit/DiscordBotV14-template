@@ -18,7 +18,6 @@ If a command file has a mistake, the bot logs which file and why, skips it, and 
 // src/commands/slash/fun/roll.js
 const { SlashCommandBuilder } = require('discord.js');
 
-/** @type {import('../../../types').SlashCommand} */
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('roll')
@@ -36,9 +35,6 @@ module.exports = {
   },
 };
 ```
-
-The `/** @type ... */` comment is optional, but it gives you autocompletion for `interaction` and `client` in your
-editor.
 
 ### Properties
 
@@ -181,7 +177,6 @@ Context menu commands appear when right-clicking a user or a message. Put them i
 ```js
 const { ApplicationCommandType, ContextMenuCommandBuilder, MessageFlags } = require('discord.js');
 
-/** @type {import('../../../types').ContextMenuCommand} */
 module.exports = {
   data: new ContextMenuCommandBuilder().setName('Avatar').setType(ApplicationCommandType.User),
 
@@ -200,7 +195,6 @@ module.exports = {
 // src/commands/prefix/fun/say.js
 const { PermissionFlagsBits } = require('discord.js');
 
-/** @type {import('../../../types').PrefixCommand} */
 module.exports = {
   name: 'say',
   description: 'Make the bot say something.',

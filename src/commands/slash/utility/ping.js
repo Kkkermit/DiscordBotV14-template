@@ -1,7 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { createEmbed } = require('../../../lib/embeds');
 
-/** @type {import('../../../types').SlashCommand} */
 module.exports = {
 	data: new SlashCommandBuilder().setName('ping').setDescription('Check how fast the bot is responding.'),
 	cooldown: 5,

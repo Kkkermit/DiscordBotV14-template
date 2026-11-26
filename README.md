@@ -60,7 +60,7 @@
 - **Production ready**: graceful shutdown, minimal gateway intents, safe mention defaults, Docker and Compose.
 - **Modern, simple tooling**: Node.js 24+, ESLint, Prettier on every commit, tests with the built-in Node.js
   test runner, GitHub Actions for CI, releases and CodeQL, and Dependabot. No build step and no TypeScript needed,
-  and VS Code still autocompletes your commands thanks to a one-line type hint.
+  and nothing to compile: it's plain JavaScript.
 
 ## Quick start
 
@@ -116,7 +116,6 @@ Create a file in a category folder, for example `src/commands/slash/fun/hello.js
 ```js
 const { SlashCommandBuilder } = require('discord.js');
 
-/** @type {import('../../../types').SlashCommand} */
 module.exports = {
   data: new SlashCommandBuilder().setName('hello').setDescription('Say hello!'),
   cooldown: 5, // Optional, in seconds.
@@ -150,8 +149,7 @@ more.
 │   ├── client.js              The Discord client, with the template's helpers
 │   ├── config.js              Your bot's settings
 │   ├── env.js                 Loads and checks the .env file
-│   ├── index.js               Starts the bot
-│   └── types.js               Types for editor autocompletion
+│   └── index.js               Starts the bot
 ├── test/                      Tests, in the same folders as the code they test
 ├── .env.example               Every environment variable, explained
 ├── AGENTS.md                  The codebase explained for AI coding agents (and curious humans)

@@ -1,6 +1,5 @@
 const { createPrefixCommandEmbed, createPrefixHelpEmbed } = require('../../../lib/help');
 
-/** @type {import('../../../types').PrefixCommand} */
 module.exports = {
 	name: 'help',
 	description: 'List all prefix commands, or get details about one.',

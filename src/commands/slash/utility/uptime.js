@@ -2,7 +2,6 @@ const { SlashCommandBuilder, time, TimestampStyles } = require('discord.js');
 const { createEmbed } = require('../../../lib/embeds');
 const { formatDuration } = require('../../../lib/format');
 
-/** @type {import('../../../types').SlashCommand} */
 module.exports = {
 	data: new SlashCommandBuilder().setName('uptime').setDescription('Show how long the bot has been online.'),
 

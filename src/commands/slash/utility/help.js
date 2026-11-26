@@ -3,7 +3,6 @@ const { createSlashCommandEmbed, createSlashHelpEmbed, getVisibleCommands } = re
 
 const MAX_SUGGESTIONS = 25;
 
-/** @type {import('../../../types').SlashCommand} */
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('help')
