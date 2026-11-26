@@ -16,8 +16,10 @@ Version 4 is a rewrite of the template with modern discord.js, safer defaults, t
 - **Environment variables are renamed:** `token` → `DISCORD_TOKEN`, `guildid` → `DISCORD_GUILD_ID`,
   `devid` → `DEVELOPER_IDS` (now a comma-separated list), `mongodb` → `MONGODB_URI`. `clientid` is no longer needed.
 - **Commands moved:** `src/commands/` → `src/commands/slash/` and `src/prefix/` → `src/commands/prefix/`.
+  Category folders are lower case (`utility`); `/help` shows them capitalised.
+- **Prefix command names and aliases** must be lower case. Users can still type them in any case.
 - **Triggers are events now:** `src/triggers/` is gone. Put message listeners in `src/events/` instead.
-- **`config.js` is reorganised** into groups (`presence`, `commands`, `logging`, `updateCheck`, `messages`).
+- **`config.js` is reorganised** into groups (`banner`, `presence`, `commands`, `logging`, `updateCheck`, `messages`).
   `botVersion` is replaced by the `version` in `package.json`; `eventListeners`, `devBy` and `arrowEmoji` are removed.
 - **Slash command logging** is disabled until you set `logging.commandLogChannelId`.
 - The bot requests only the gateway intents it uses. Add the ones your features need in `src/client.js`.
@@ -35,8 +37,12 @@ Version 4 is a rewrite of the template with modern discord.js, safer defaults, t
 - Validation of `.env` and `config.js` with clear startup errors, and of every command and event file.
 - Graceful shutdown on `SIGINT`/`SIGTERM`, and handling of uncaught errors.
 - A levelled logger with scopes, `LOG_LEVEL`, and `NO_COLOR`/`FORCE_COLOR` support.
+- The bot's name is printed in ASCII art on startup with figlet; choose the font with `banner.font`.
 - Dockerfile and Compose file with an optional MongoDB service.
-- ESLint, Prettier, EditorConfig, tests with the Node.js test runner, GitHub Actions CI and Dependabot.
+- ESLint, Prettier, EditorConfig and a pre-commit hook (Husky and lint-staged) that formats staged files.
+- Tests with the Node.js test runner and a coverage gate (`npm run test:coverage`).
+- GitHub Actions: CI on Node.js 22 and 24, a release workflow that publishes a GitHub release and a Docker image
+  to the GitHub Container Registry, CodeQL scanning, and Dependabot.
 - Documentation in `docs/`, a contributing guide, code of conduct, security policy and issue templates.
 
 ### Fixed
@@ -64,8 +70,9 @@ Version 4 is a rewrite of the template with modern discord.js, safer defaults, t
 1. Install Node.js 22.12 or newer.
 2. Update your `.env` file with the new variable names (or run `npm run setup`).
 3. Move your slash commands to `src/commands/slash/<category>/` and your prefix commands to
-   `src/commands/prefix/<category>/`. Their shape is unchanged: slash commands export `data` and
-   `execute(interaction, client)`, prefix commands export `name`, `aliases` and `execute(message, client, args)`.
+   `src/commands/prefix/<category>/`, with lower case folder names. Their shape is unchanged: slash commands export
+   `data` and `execute(interaction, client)`, prefix commands export `name`, `aliases` and
+   `execute(message, client, args)`.
 4. Move files from `src/triggers/` to a folder in `src/events/`.
 5. Replace `client.commands`, `client.pcommands` and `client.aliases` in your code with `client.slashCommands`,
    `client.prefixCommands` and `client.prefixAliases`, and `client.logs` with

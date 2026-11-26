@@ -60,6 +60,33 @@ The bot writes all logs to standard output, in order, so Docker, PM2 and hosting
 Colours are turned off automatically when the output isn't a terminal. Set `NO_COLOR=1` to always disable them or
 `FORCE_COLOR=1` to always enable them. Set `LOG_LEVEL=debug` to see more detail when investigating a problem.
 
+## Releasing a new version
+
+The [release workflow](../.github/workflows/release.yml) publishes a version of your bot whenever you push a tag that
+starts with `v`:
+
+```bash
+npm version patch          # or minor / major: updates package.json and creates a tag such as v4.0.1
+git push --follow-tags     # pushes the commit and the tag
+```
+
+GitHub Actions then:
+
+1. runs the same checks as CI (lint, format, tests, Docker build),
+2. checks that the tag matches the version in `package.json`,
+3. creates a GitHub release with the notes from that version's section in [`CHANGELOG.md`](../CHANGELOG.md),
+4. publishes a Docker image to the GitHub Container Registry as `ghcr.io/<owner>/<repository>`, tagged with the full
+   version (`4.0.1`), the minor version (`4.0`) and the major version (`4`).
+
+Write the changelog section (`## 4.0.1`) before you tag. To run a published image:
+
+```bash
+docker run -d --env-file .env --restart unless-stopped ghcr.io/<owner>/<repository>:4
+```
+
+Images are private by default for private repositories. Change the visibility under **Packages** on your GitHub
+profile if you want others to pull it.
+
 ## Updating
 
 ```bash

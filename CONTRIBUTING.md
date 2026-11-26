@@ -30,6 +30,10 @@ npm run dev     # Start the bot and restart it when you save
 Use a separate test bot and server for development, and set `DISCORD_GUILD_ID` so slash command changes show up
 instantly.
 
+`npm install` also sets up a pre-commit hook. Every time you commit, it runs ESLint (fixing what it can) and Prettier
+on the files you changed, so you never have to think about formatting. If ESLint finds a problem it can't fix, the
+commit stops and shows you where it is.
+
 ## Before opening a pull request
 
 ```bash
@@ -38,8 +42,9 @@ npm run check   # ESLint, Prettier check and the tests. CI runs the same checks.
 
 - `npm run lint:fix` and `npm run format` fix most style problems automatically. With the recommended VS Code
   extensions, files are formatted when you save.
-- Add or update tests in `test/` for behaviour you change. [`test/helpers/fakes.js`](test/helpers/fakes.js) has fake
-  messages and interactions so commands can be tested without Discord.
+- Add or update tests for behaviour you change. Put them at the same path as the code, e.g. `test/lib/format.test.js`
+  for `src/lib/format.js`. [`test/helpers/fakes.js`](test/helpers/fakes.js) has fake messages and interactions so
+  commands can be tested without Discord. `npm run test:coverage` shows which lines are still untested.
 - Update the docs (`README.md`, `docs/`, `.env.example`) when you change setup steps, configuration or commands.
 - Add a line to the `Unreleased` section of [`CHANGELOG.md`](CHANGELOG.md).
 - Never commit tokens, `.env` files or other secrets.

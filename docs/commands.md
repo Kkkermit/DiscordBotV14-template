@@ -6,8 +6,8 @@ The template supports two kinds of commands:
   their options, so they are the recommended way for users to interact with your bot.
 - **Prefix commands** (`?ping`) in `src/commands/prefix/<category>/`. Classic text commands, read from messages.
 
-Every `.js` file inside a category folder is loaded automatically when the bot starts. The folder name becomes the
-command's category in `/help`. Files and folders starting with `_` are skipped, so you can keep shared helpers such as
+Every `.js` file inside a category folder is loaded automatically when the bot starts. Name folders in lower case:
+`utility` is shown as **Utility** in `/help`. Files and folders starting with `_` are skipped, so you can keep shared helpers such as
 `_utils.js` next to your commands.
 
 If a command file has a mistake, the bot logs which file and why, skips it, and starts anyway.

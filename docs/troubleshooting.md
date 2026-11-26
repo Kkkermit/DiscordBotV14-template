@@ -64,3 +64,9 @@ the bot (with `registerOnStartup` enabled) or run `npm run deploy` to update Dis
 
 Your Node.js version is too old. Install Node.js 22.12 or newer from [nodejs.org](https://nodejs.org/), or run
 `nvm install` in the project folder if you use nvm.
+
+### My commit was stopped by the pre-commit hook
+
+The hook runs ESLint and Prettier on the files you commit. Prettier fixes formatting on its own, but ESLint stops the
+commit when it finds a real problem, such as a variable that is never used or a typo in a name. Read the message, fix
+the line it points to (`npm run lint` shows every problem), then commit again.
