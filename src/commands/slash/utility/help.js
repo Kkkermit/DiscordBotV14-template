@@ -1,4 +1,5 @@
 const { MessageFlags, SlashCommandBuilder } = require('discord.js');
+const { truncate } = require('../../../lib/format');
 const { createSlashCommandEmbed, createSlashHelpEmbed, getVisibleCommands } = require('../../../lib/help');
 
 const MAX_SUGGESTIONS = 25;
@@ -41,7 +42,7 @@ module.exports = {
 		);
 		if (!command) {
 			await interaction.reply({
-				content: `There is no command called \`${name.replaceAll('`', '')}\`. Use \`/help\` to see every command.`,
+				content: `There is no command called \`${truncate(name.replaceAll('`', ''), 100)}\`. Use \`/help\` to see every command.`,
 				flags: MessageFlags.Ephemeral,
 				allowedMentions: { parse: [] },
 			});

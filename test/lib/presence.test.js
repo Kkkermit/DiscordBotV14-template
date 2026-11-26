@@ -29,24 +29,41 @@ describe('startPresenceRotation', () => {
 		t.mock.timers.tick(30_000);
 		t.mock.timers.tick(30_000);
 
+		const commandCount = `${client.slashCommands.size} commands`;
 		assert.deepEqual(
 			updates.map(({ activities }) => activities[0].name),
-			['5 commands', 'with code', '5 commands'],
+			[commandCount, 'with code', commandCount],
 		);
 		assert.ok(updates.every(({ status }) => status === 'idle'));
 	});
 
-	it('does not rotate a single activity', (t) => {
+	it('keeps a single activity up to date', (t) => {
 		t.mock.timers.enable({ apis: ['setInterval'] });
+		let servers = 1;
 		const { client, updates } = createPresenceClient(t, {
 			status: 'online',
 			rotateIntervalSeconds: 30,
-			activities: [{ type: ActivityType.Playing, name: 'alone' }],
+			activities: [{ type: ActivityType.Watching, name: () => `${servers} servers` }],
 		});
 
 		startPresenceRotation(client);
-		t.mock.timers.tick(120_000);
-		assert.equal(updates.length, 1);
-		assert.equal(client.presenceTimer, null);
+		servers = 2;
+		t.mock.timers.tick(30_000);
+		assert.deepEqual(
+			updates.map(({ activities }) => activities[0].name),
+			['1 servers', '2 servers'],
+		);
+	});
+
+	it('keeps extra activity fields such as a streaming url', (t) => {
+		const { client, updates } = createPresenceClient(t, {
+			status: 'online',
+			rotateIntervalSeconds: 0,
+			activities: [{ type: ActivityType.Streaming, name: 'live', url: 'https://twitch.tv/example' }],
+		});
+
+		startPresenceRotation(client);
+		assert.equal(updates[0].activities[0].url, 'https://twitch.tv/example');
+		assert.equal(client.presenceTimer, null, 'an interval of 0 never updates');
 	});
 });

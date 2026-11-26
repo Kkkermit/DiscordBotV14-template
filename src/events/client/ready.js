@@ -1,7 +1,6 @@
 const { Events } = require('discord.js');
 const { printBanner } = require('../../lib/banner');
 const { logger } = require('../../lib/logger');
-const { startPresenceRotation } = require('../../lib/presence');
 const { checkForUpdates } = require('../../lib/updateChecker');
 
 const log = logger.child('Ready');
@@ -22,8 +21,6 @@ module.exports = {
 	once: true,
 	async execute(client) {
 		log.success(`Logged in as ${client.user.tag} (${client.user.id}).`);
-
-		startPresenceRotation(client);
 
 		try {
 			await registerSlashCommands(client);

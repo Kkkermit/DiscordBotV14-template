@@ -93,13 +93,13 @@ function createPrefixHelpEmbed(client, userId) {
 }
 
 function createPrefixCommandEmbed(client, command) {
-	const usage = `${client.config.prefix}${command.name}${command.usage ? ` ${command.usage}` : ''}`;
-	const aliases = command.aliases?.map((alias) => `\`${alias}\``).join(', ');
+	const usage = truncate(`${client.config.prefix}${command.name}${command.usage ? ` ${command.usage}` : ''}`, 1000);
+	const aliases = truncate(command.aliases?.map((alias) => `\`${alias}\``).join(', ') ?? '', MAX_FIELD_LENGTH);
 	const permissions = command.permissions ? new PermissionsBitField(command.permissions).toArray().join(', ') : '';
 
 	return createEmbed(client)
 		.setTitle(`Command: ${command.name}`)
-		.setDescription(command.description ?? 'No description.')
+		.setDescription(truncate(command.description || 'No description.', 4096))
 		.addFields(
 			{ name: 'Usage', value: `\`${usage}\``, inline: true },
 			{ name: 'Category', value: command.category, inline: true },

@@ -4,7 +4,8 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { describe, it } = require('node:test');
-const { loadEvents, validateEvent } = require('../../src/handlers/eventHandler');
+const { EVENTS_DIR, loadEvents, validateEvent } = require('../../src/handlers/eventHandler');
+const { findJsFiles } = require('../../src/lib/files');
 require('../helpers/fakes'); // Silences the logger.
 
 describe('validateEvent', () => {
@@ -19,10 +20,10 @@ describe('validateEvent', () => {
 describe('loadEvents', () => {
 	it('registers the bundled events', () => {
 		const client = new EventEmitter();
-		assert.equal(loadEvents(client), 8);
-		assert.equal(client.listenerCount('messageCreate'), 2);
-		assert.equal(client.listenerCount('clientReady'), 1);
-		assert.equal(client.listenerCount('error'), 1);
+		const registered = loadEvents(client);
+		const listeners = client.eventNames().reduce((total, name) => total + client.listenerCount(name), 0);
+		assert.equal(registered, findJsFiles(EVENTS_DIR).length);
+		assert.equal(listeners, registered);
 	});
 
 	it('passes the client last and catches errors thrown by events', async (t) => {

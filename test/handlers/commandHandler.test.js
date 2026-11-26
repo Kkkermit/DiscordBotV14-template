@@ -32,15 +32,16 @@ describe('the bundled commands', () => {
 	it('all slash commands load without errors', () => {
 		const { commands, failures } = loadSlashCommands();
 		assert.deepEqual(failures, []);
-		assert.deepEqual([...commands.keys()].sort(), ['bot-info', 'help', 'ping', 'uptime', 'user-info']);
+		assert.ok(commands.size > 0);
 	});
 
 	it('all prefix commands load without errors or alias conflicts', () => {
 		const { commands, aliases, failures, warnings } = loadPrefixCommands();
 		assert.deepEqual(failures, []);
 		assert.deepEqual(warnings, []);
-		assert.deepEqual([...commands.keys()].sort(), ['bot-info', 'help', 'ping', 'uptime']);
-		assert.equal(aliases.get('bi'), 'bot-info');
+		for (const [alias, name] of aliases) {
+			assert.ok(commands.has(name), `alias "${alias}" points to a missing command "${name}"`);
+		}
 	});
 
 	it('every command has a description for the help menu', () => {
@@ -153,9 +154,9 @@ describe('loadCommands', () => {
 			failedSlashCommandFiles: null,
 		};
 		loadCommands(client);
-		assert.equal(client.slashCommands.size, 5);
-		assert.equal(client.prefixCommands.size, 4);
-		assert.equal(client.prefixAliases.get('h'), 'help');
+		assert.equal(client.slashCommands.size, loadSlashCommands().commands.size);
+		assert.equal(client.prefixCommands.size, loadPrefixCommands().commands.size);
+		assert.equal(client.prefixAliases.size, loadPrefixCommands().aliases.size);
 		assert.deepEqual(client.failedSlashCommandFiles, []);
 	});
 });

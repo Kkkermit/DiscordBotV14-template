@@ -13,7 +13,7 @@ function printBanner(client, stream = process.stdout) {
 	const art = renderAsciiArt(client.user.username, client.config.banner.font, stream.columns ?? 100);
 
 	const summary = [
-		`${client.user.tag} is online! (template v${version})`,
+		`${client.user.tag} is online! (v${version})`,
 		`Servers: ${client.guilds.cache.size} • Members: ${client.countMembers()} • Prefix: ${client.config.prefix}`,
 		`Commands: ${client.slashCommands.size} slash, ${client.prefixCommands.size} prefix`,
 	];

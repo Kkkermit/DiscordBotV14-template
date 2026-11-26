@@ -32,7 +32,7 @@ class BotClient extends Client {
 
 	getPrefixCommand(name) {
 		const key = name.toLowerCase();
-		return this.prefixCommands.get(key) ?? this.prefixCommands.get(this.prefixAliases.get(key) ?? '');
+		return this.prefixCommands.get(this.prefixAliases.get(key) ?? key);
 	}
 
 	countMembers() {

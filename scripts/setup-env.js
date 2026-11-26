@@ -94,8 +94,8 @@ async function main() {
 			values[field.key] = await askField(ask, field);
 		}
 
-		fs.writeFileSync(ENV_FILE_PATH, buildEnvFile(values));
-		// Make the file readable only by you.
+		// Make the file readable only by you (chmod also covers a file that already existed).
+		fs.writeFileSync(ENV_FILE_PATH, buildEnvFile(values), { mode: 0o600 });
 		fs.chmodSync(ENV_FILE_PATH, 0o600);
 		log.success(`Saved ${relativePath}. Start the bot with "npm start".`);
 	} finally {

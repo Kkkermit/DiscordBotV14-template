@@ -19,11 +19,14 @@ module.exports = {
 		),
 
 	async execute(interaction, client) {
-		const user = interaction.options.getUser('user') ?? interaction.user;
-		// `getMember` returns null outside servers or when the user isn't a member of this one.
-		const member = interaction.inCachedGuild()
-			? (interaction.options.getMember('user') ?? interaction.member)
-			: null;
+		const chosenUser = interaction.options.getUser('user');
+		const user = chosenUser ?? interaction.user;
+
+		// Server details only exist inside a server. getMember() is null if the chosen user isn't in this one.
+		let member = null;
+		if (interaction.inCachedGuild()) {
+			member = chosenUser ? interaction.options.getMember('user') : interaction.member;
+		}
 
 		const embed = createEmbed(client)
 			.setAuthor({ name: user.tag, iconURL: user.displayAvatarURL() })
@@ -34,7 +37,7 @@ module.exports = {
 				{ name: 'Bot', value: user.bot ? 'Yes' : 'No', inline: true },
 			);
 
-		if (member && member.id === user.id) {
+		if (member) {
 			// Every member has the @everyone role, whose ID is the server's ID, so leave it out.
 			const roles = member.roles.cache
 				.filter((role) => role.id !== interaction.guildId)

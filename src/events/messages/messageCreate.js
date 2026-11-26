@@ -1,4 +1,4 @@
-const { Events, PermissionsBitField } = require('discord.js');
+const { Events } = require('discord.js');
 const { logCommandUsage } = require('../../lib/commandLogger');
 const { checkCooldown } = require('../../lib/cooldowns');
 const { createNoticeEmbed } = require('../../lib/embeds');
@@ -22,7 +22,8 @@ async function sendNotice(message, client, text) {
 module.exports = {
 	name: Events.MessageCreate,
 	async execute(message, client) {
-		if (message.author.bot || message.webhookId || message.system || !message.inGuild()) return;
+		// Prefix commands only run for people in servers, not for bots, webhooks or DMs.
+		if (message.author.bot || message.webhookId || message.system || !message.inGuild() || !message.member) return;
 
 		const parsed = parsePrefixCommand(message.content, getPrefixes(client));
 		if (!parsed) return;
@@ -47,9 +48,7 @@ module.exports = {
 
 		if (command.permissions) {
 			// permissionsIn() also counts the channel's own permission settings.
-			const missing =
-				message.member?.permissionsIn(message.channel).missing(command.permissions) ??
-				new PermissionsBitField(command.permissions).toArray();
+			const missing = message.member.permissionsIn(message.channel).missing(command.permissions);
 			if (missing.length > 0) {
 				await sendNotice(
 					message,

@@ -4,7 +4,8 @@ const log = logger.child('Presence');
 
 function resolveActivity(activity, client) {
 	const name = typeof activity.name === 'function' ? activity.name(client) : activity.name;
-	return { type: activity.type, name: String(name) };
+	// Keep the other fields too, like `url` for a Streaming activity.
+	return { ...activity, name: String(name) };
 }
 
 function startPresenceRotation(client) {
@@ -23,7 +24,8 @@ function startPresenceRotation(client) {
 
 	apply();
 	clearInterval(client.presenceTimer);
-	if (activities.length > 1 && rotateIntervalSeconds > 0) {
+	// Update on a timer, so activities rotate and numbers like the server count stay current.
+	if (activities.length > 0 && rotateIntervalSeconds > 0) {
 		client.presenceTimer = setInterval(() => {
 			index += 1;
 			apply();

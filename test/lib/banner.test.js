@@ -29,7 +29,9 @@ describe('printBanner', () => {
 
 		printBanner(client, stream);
 		assert.ok(output.includes(renderAsciiArt('TemplateBot', client.config.banner.font, 120)));
-		assert.match(output, /TemplateBot is online! \(template v\d+\.\d+\.\d+\)/);
-		assert.match(output, /Commands: 5 slash, 4 prefix/);
+		assert.match(output, /TemplateBot is online! \(v\d+\.\d+\.\d+\)/);
+		assert.ok(
+			output.includes(`Commands: ${client.slashCommands.size} slash, ${client.prefixCommands.size} prefix`),
+		);
 	});
 });

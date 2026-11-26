@@ -1,6 +1,14 @@
 const assert = require('node:assert/strict');
 const { describe, it } = require('node:test');
-const { ComponentType } = require('discord.js');
+const {
+	ApplicationCommandType,
+	Collection,
+	ComponentType,
+	ContextMenuCommandBuilder,
+	SlashCommandBuilder,
+	embedLength,
+} = require('discord.js');
+const { loadPrefixCommands, loadSlashCommands } = require('../../src/handlers/commandHandler');
 const {
 	DEVELOPER_ID,
 	GUILD_ID,
@@ -11,10 +19,23 @@ const {
 	createUser,
 } = require('../helpers/fakes');
 
+// These tests cover the commands that come with the template.
+// If you delete one of those commands, its tests are skipped instead of failing.
+const slashNames = new Set(loadSlashCommands().commands.keys());
+const prefixNames = new Set(loadPrefixCommands().commands.keys());
+const needsSlash = (...names) => {
+	const missing = names.find((name) => !slashNames.has(name));
+	return { skip: missing ? `/${missing} was removed` : false };
+};
+const needsPrefix = (...names) => {
+	const missing = names.find((name) => !prefixNames.has(name));
+	return { skip: missing ? `${missing} was removed` : false };
+};
+
 const embedOf = (payload) => payload.embeds[0].data;
 
 describe('slash commands', () => {
-	it('/ping reports the latency', async (t) => {
+	it('/ping reports the latency', needsSlash('ping'), async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());
 		const interaction = createInteraction('ping');
@@ -23,7 +44,7 @@ describe('slash commands', () => {
 		assert.equal(embedOf(interaction.edits[0]).title, '🏓 Pong!');
 	});
 
-	it('/uptime shows the uptime', async (t) => {
+	it('/uptime shows the uptime', needsSlash('uptime'), async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());
 		const interaction = createInteraction('uptime');
@@ -32,53 +53,62 @@ describe('slash commands', () => {
 		assert.equal(embedOf(interaction.replies[0]).fields[0].value, '`1m 30s`');
 	});
 
-	it('/help lists every category and shows command details', async (t) => {
+	it('/help lists every category and shows command details', needsSlash('help'), async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());
 		const help = client.slashCommands.get('help');
 
 		const list = createInteraction('help');
 		await help.execute(list, client);
+		const categories = [...new Set(client.slashCommands.map((command) => command.category))].sort();
 		assert.deepEqual(
 			embedOf(list.replies[0]).fields.map(({ name }) => name),
-			['Info', 'Utility'],
+			categories,
 		);
 
-		const detail = createInteraction('help', { options: { command: 'user-info' } });
+		const detail = createInteraction('help', { options: { command: 'help' } });
 		await help.execute(detail, client);
-		assert.equal(embedOf(detail.replies[0]).title, 'Command: user-info');
+		assert.equal(embedOf(detail.replies[0]).title, 'Command: help');
 
 		const missing = createInteraction('help', { options: { command: 'nope' } });
 		await help.execute(missing, client);
 		assert.match(missing.replies[0].content, /no command called `nope`/);
+
+		// Discord rejects messages over 2000 characters, so a long name must be shortened.
+		const long = createInteraction('help', { options: { command: 'x'.repeat(3000) } });
+		await help.execute(long, client);
+		assert.ok(long.replies[0].content.length < 2000);
 	});
 
-	it('/help suggests matching names and hides developer-only commands from other users', async (t) => {
+	it('/help hides developer-only commands from other users', needsSlash('help'), async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());
-		const { SlashCommandBuilder } = require('discord.js');
 		client.slashCommands.set('secret', {
 			data: new SlashCommandBuilder().setName('secret').setDescription('Developers only.'),
 			developerOnly: true,
 			execute: async () => {},
 			category: 'Admin',
-			filePath: 'Admin/secret.js',
+			filePath: 'admin/secret.js',
 		});
-		const help = client.slashCommands.get('help');
 		const suggestionsFor = async (userId) => {
 			const interaction = createInteraction('help', { userId, focused: 'e' });
-			await help.autocomplete(interaction, client);
+			await client.slashCommands.get('help').autocomplete(interaction, client);
 			return interaction.responses[0].map(({ name }) => name);
 		};
 
-		assert.deepEqual(await suggestionsFor(USER_ID), ['help', 'uptime', 'user-info']);
-		assert.deepEqual(await suggestionsFor(DEVELOPER_ID), ['help', 'secret', 'uptime', 'user-info']);
+		const forUser = await suggestionsFor(USER_ID);
+		const forDeveloper = await suggestionsFor(DEVELOPER_ID);
+		assert.ok(
+			forUser.every((name) => name.includes('e')),
+			'suggestions should match what was typed',
+		);
+		assert.ok(!forUser.includes('secret'));
+		assert.ok(forDeveloper.includes('secret'));
 	});
 
-	it('/help stays within Discord embed limits with many commands', async (t) => {
+	it('/help stays within Discord embed limits with many commands', needsSlash('help'), async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());
-		const { SlashCommandBuilder, embedLength } = require('discord.js');
 		for (let i = 0; i < 200; i += 1) {
 			const name = `command-${i}`;
 			client.slashCommands.set(name, {
@@ -97,10 +127,9 @@ describe('slash commands', () => {
 		assert.ok(embed.fields.some((field) => /…and \d+ more$/.test(field.value)));
 	});
 
-	it('/help finds context menu commands regardless of case', async (t) => {
+	it('/help finds context menu commands regardless of case', needsSlash('help'), async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());
-		const { ApplicationCommandType, ContextMenuCommandBuilder } = require('discord.js');
 		client.slashCommands.set('Avatar', {
 			data: new ContextMenuCommandBuilder().setName('Avatar').setType(ApplicationCommandType.User),
 			execute: async () => {},
@@ -119,7 +148,7 @@ describe('slash commands', () => {
 		assert.match(embedOf(detail.replies[0]).fields[0].value, /right-click menu/);
 	});
 
-	it('/bot-info can only be refreshed by the user who ran it', async (t) => {
+	it('/bot-info can only be refreshed by the user who ran it', needsSlash('bot-info'), async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());
 		const interaction = createInteraction('bot-info');
@@ -149,10 +178,9 @@ describe('slash commands', () => {
 		assert.equal(row.components[0].data.disabled, true);
 	});
 
-	it('/user-info shows server details for members', async (t) => {
+	it('/user-info shows server details for members', needsSlash('user-info'), async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());
-		const { Collection } = require('discord.js');
 		const role = (id, position) => ({ id, position, toString: () => `<@&${id}>` });
 		const roles = new Collection([[GUILD_ID, role(GUILD_ID, 0)]]); // The @everyone role has the server's ID.
 		for (let i = 1; i <= 20; i += 1) roles.set(`role-${i}`, role(`role-${i}`, i));
@@ -177,7 +205,7 @@ describe('slash commands', () => {
 		assert.ok(!fields['Roles (20)'].includes(GUILD_ID), '@everyone should not be listed');
 	});
 
-	it('/user-info describes the requested user', async (t) => {
+	it('/user-info describes the requested user', needsSlash('user-info'), async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());
 		const target = createUser('100000000000000009', 'someone');
@@ -191,7 +219,7 @@ describe('slash commands', () => {
 
 describe('prefix commands', () => {
 	for (const name of ['ping', 'uptime', 'help', 'bot-info']) {
-		it(`${name} replies with an embed`, async (t) => {
+		it(`${name} replies`, needsPrefix(name), async (t) => {
 			const client = createClient();
 			t.after(() => client.destroy());
 			const message = createMessage(`?${name}`);
@@ -201,7 +229,7 @@ describe('prefix commands', () => {
 		});
 	}
 
-	it('help says when a command does not exist, without echoing pings or code', async (t) => {
+	it('help says when a command does not exist, without echoing pings or code', needsPrefix('help'), async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());
 		const message = createMessage('?help x`<@1>`');
@@ -211,7 +239,28 @@ describe('prefix commands', () => {
 		assert.deepEqual(message.replies[0].allowedMentions, { parse: [] });
 	});
 
-	it('help shows the details of a command by alias', async (t) => {
+	it('help copes with long names and commands without a description', needsPrefix('help'), async (t) => {
+		const client = createClient();
+		t.after(() => client.destroy());
+		client.prefixCommands.set('quiet', {
+			name: 'quiet',
+			description: '',
+			execute: async () => {},
+			category: 'Test',
+			filePath: 'test/quiet.js',
+		});
+		const help = client.prefixCommands.get('help');
+
+		const quiet = createMessage('?help quiet');
+		await help.execute(quiet, client, ['quiet']);
+		assert.equal(embedOf(quiet.replies[0]).description, 'No description.');
+
+		const long = createMessage(`?help ${'x'.repeat(4000)}`);
+		await help.execute(long, client, ['x'.repeat(4000)]);
+		assert.ok(long.replies[0].content.length < 2000);
+	});
+
+	it('help shows the details of a command by alias', needsPrefix('help', 'bot-info'), async (t) => {
 		const client = createClient();
 		t.after(() => client.destroy());
 		const message = createMessage('?help bi');
