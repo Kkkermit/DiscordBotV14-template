@@ -1,0 +1,61 @@
+name: Bug report
+description: Something in the template doesn't work as expected.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Please check the [troubleshooting guide](https://github.com/Kkkermit/DiscordBotV14-template/blob/main/docs/troubleshooting.md) and existing issues first.
+        **Never paste your bot token or `.env` file.** If you did by accident, reset your token in the Developer Portal right away.
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Run `npm start`
+        2. Use `/help`
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console output
+      description: Relevant logs, ideally with `LOG_LEVEL=debug`. Remove anything private first.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Template version
+      description: The `version` in `package.json`, or the commit you're on.
+      placeholder: 4.0.0
+    validations:
+      required: true
+  - type: input
+    id: node
+    attributes:
+      label: Node.js version
+      description: The output of `node --version`.
+      placeholder: v24.11.0
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options: [Windows, macOS, Linux, Docker, Hosting platform, Other]
+    validations:
+      required: true

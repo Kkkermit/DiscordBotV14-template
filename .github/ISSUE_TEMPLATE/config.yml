@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and help
+    url: https://discord.gg/xcMVwAVjSD
+    about: Ask questions and get help building your bot in the Discord server.
+  - name: discord.js documentation
+    url: https://discord.js.org/docs
+    about: Questions about the discord.js library itself.

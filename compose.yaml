@@ -1,0 +1,30 @@
+# Run the bot in Docker:
+#   docker compose up -d --build
+#
+# Run only a local MongoDB, for a bot you start with `npm start` or `npm run dev`:
+#   docker compose --profile database up -d mongo
+#   and set MONGODB_URI=mongodb://localhost:27017/discord-bot in .env
+#
+# Run both the bot and MongoDB in Docker:
+#   docker compose --profile database up -d --build
+#   and set MONGODB_URI=mongodb://mongo:27017/discord-bot in .env
+
+services:
+  bot:
+    build: .
+    env_file: .env
+    restart: unless-stopped
+    init: true
+
+  mongo:
+    image: mongo:8
+    profiles: [database]
+    restart: unless-stopped
+    # Only reachable from this computer, not from the internet.
+    ports:
+      - 127.0.0.1:27017:27017
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

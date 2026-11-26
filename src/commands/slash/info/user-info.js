@@ -1,0 +1,60 @@
+const { SlashCommandBuilder, time, TimestampStyles } = require('discord.js');
+const { createEmbed } = require('../../../lib/embeds');
+
+const MAX_ROLES_SHOWN = 15;
+
+function formatRoles(roles) {
+	if (roles.length === 0) return 'None';
+	const shown = roles.slice(0, MAX_ROLES_SHOWN).join(' ');
+	const hiddenCount = roles.length - MAX_ROLES_SHOWN;
+	return hiddenCount > 0 ? `${shown} and ${hiddenCount} more` : shown;
+}
+
+module.exports = {
+	data: new SlashCommandBuilder()
+		.setName('user-info')
+		.setDescription('Show information about a user.')
+		.addUserOption((option) =>
+			option.setName('user').setDescription('The user to look up. Defaults to you.').setRequired(false),
+		),
+
+	async execute(interaction, client) {
+		const chosenUser = interaction.options.getUser('user');
+		const user = chosenUser ?? interaction.user;
+
+		// Server details only exist inside a server. getMember() is null if the chosen user isn't in this one.
+		let member = null;
+		if (interaction.inCachedGuild()) {
+			member = chosenUser ? interaction.options.getMember('user') : interaction.member;
+		}
+
+		const embed = createEmbed(client)
+			.setAuthor({ name: user.tag, iconURL: user.displayAvatarURL() })
+			.setThumbnail(user.displayAvatarURL({ size: 256 }))
+			.addFields(
+				{ name: 'User', value: `${user} (\`${user.id}\`)` },
+				{ name: 'Account created', value: time(user.createdAt, TimestampStyles.RelativeTime), inline: true },
+				{ name: 'Bot', value: user.bot ? 'Yes' : 'No', inline: true },
+			);
+
+		if (member) {
+			// Every member has the @everyone role, whose ID is the server's ID, so leave it out.
+			const roles = member.roles.cache
+				.filter((role) => role.id !== interaction.guildId)
+				.sort((a, b) => b.position - a.position)
+				.map((role) => role.toString());
+
+			embed.setColor(member.displayColor || client.config.embedColor).addFields(
+				{
+					name: 'Joined server',
+					value: member.joinedAt ? time(member.joinedAt, TimestampStyles.RelativeTime) : 'Unknown',
+					inline: true,
+				},
+				{ name: 'Nickname', value: member.nickname ?? 'None', inline: true },
+				{ name: `Roles (${roles.length})`, value: formatRoles(roles) },
+			);
+		}
+
+		await interaction.reply({ embeds: [embed], allowedMentions: { parse: [] } });
+	},
+};
