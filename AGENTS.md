@@ -11,32 +11,34 @@ matching section here in the same change.
 A beginner-friendly **discord.js v14** bot template. People fork it to start their own bot, so the code must stay
 simple, readable and well documented above all else.
 
-| Topic           | Details                                                                                          |
-| --------------- | ------------------------------------------------------------------------------------------------ |
-| Runtime         | Node.js **24+** (`engines` in `package.json`, enforced by `engine-strict` in `.npmrc`)           |
-| Language        | JavaScript, **CommonJS** (`require` / `module.exports`). No build step, no TypeScript.           |
-| Types           | None: plain JavaScript with no JSDoc.                                                            |
-| Dependencies    | `discord.js` 14, `mongoose` 9 (optional database), `figlet` (startup banner)                     |
-| Dev tooling     | ESLint 10 (flat config), Prettier 3, Husky + lint-staged (pre-commit), Node's test runner        |
-| Entry point     | `src/index.js` (`npm start`)                                                                     |
-| Configuration   | Secrets in `.env` (validated by `src/env.js`), settings in `src/config.js` (validated too)       |
-| Package version | `package.json` `version` is the template version, used by the banner and update checker          |
-| Branches        | `feature/*`, `bugfix/*`, `release/*` → `develop` → `main`. Every merge into `main` is a release. |
+| Topic           | Details                                                                                                 |
+| --------------- | ------------------------------------------------------------------------------------------------------- |
+| Runtime         | Node.js **24+** (`engines` in `package.json`, enforced by `engine-strict` in `.npmrc`)                  |
+| Language        | JavaScript, **CommonJS** (`require` / `module.exports`). No build step, no TypeScript.                  |
+| Types           | None: plain JavaScript with no JSDoc.                                                                   |
+| Dependencies    | `discord.js` 14, `mongoose` 9 (optional database), `figlet` (startup banner)                            |
+| Dev tooling     | ESLint 10 (flat config), Prettier 3, Husky + lint-staged (pre-commit), Node's test runner               |
+| Entry point     | `src/index.js` (`npm start`)                                                                            |
+| Configuration   | Secrets in `.env` (validated by `src/env.js`), settings in `src/config.js` (validated too)              |
+| Package version | `package.json` `version` is the template version, used by the banner and update checker                 |
+| Branches        | `feature/*`, `bugfix/*`, `release/*` → `develop` → `main`. Every merge into `main` is a release.        |
+| Docs site       | `website/`: Astro Starlight (MDX pages), its own `package.json`, published to GitHub Pages from `main`. |
 
 ## Commands
 
-| Command                                         | Use it to                                                                      |
-| ----------------------------------------------- | ------------------------------------------------------------------------------ |
-| `npm install`                                   | Install dependencies. Also installs the pre-commit hook (`prepare` → `husky`). |
-| `npm run setup`                                 | Create `.env` interactively (`scripts/setup-env.js`).                          |
-| `npm start`                                     | Run the bot. Needs a real `DISCORD_TOKEN` and network access to Discord.       |
-| `npm run dev`                                   | Run the bot with `node --watch`, restarting on file changes.                   |
-| `npm test`                                      | Run every test (`node --test "test/**/*.test.js"`).                            |
-| `npm run test:coverage`                         | Tests plus coverage. Fails below 85% lines, 80% branches, 80% functions.       |
-| `npm run lint`                                  | ESLint. `npm run lint:fix` fixes what it can.                                  |
-| `npm run format`                                | Prettier on every file. `npm run format:check` only checks.                    |
-| `npm run check`                                 | Lint, format check and tests: **run this before you finish any change.**       |
-| `npm run prepare-release <patch\|minor\|major>` | Set the next version and move the `## Unreleased` changelog notes under it.    |
+| Command                                         | Use it to                                                                                             |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `npm install`                                   | Install dependencies. Also installs the pre-commit hook (`prepare` → `husky`).                        |
+| `npm run setup`                                 | Create `.env` interactively (`scripts/setup-env.js`).                                                 |
+| `npm start`                                     | Run the bot. Needs a real `DISCORD_TOKEN` and network access to Discord.                              |
+| `npm run dev`                                   | Run the bot with `node --watch`, restarting on file changes.                                          |
+| `npm test`                                      | Run every test (`node --test "test/**/*.test.js"`).                                                   |
+| `npm run test:coverage`                         | Tests plus coverage. Fails below 85% lines, 80% branches, 80% functions.                              |
+| `npm run lint`                                  | ESLint. `npm run lint:fix` fixes what it can.                                                         |
+| `npm run format`                                | Prettier on every file. `npm run format:check` only checks.                                           |
+| `npm run check`                                 | Lint, format check and tests: **run this before you finish any change.**                              |
+| `npm run prepare-release <patch\|minor\|major>` | Set the next version and move the `## Unreleased` changelog notes under it.                           |
+| `cd website && npm run dev`                     | Preview the docs site at `http://localhost:4321/DiscordBotV14-template/` (after `npm install` there). |
 
 Run a single test file with `node --test test/lib/format.test.js`.
 
@@ -87,31 +89,32 @@ A timer forces exit after 8 s (below Docker's 10 s stop timeout). Unhandled reje
 
 ### Root
 
-| File                                | Purpose                                                                                                                        |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `package.json`                      | Scripts, dependencies, `engines`, and the `lint-staged` config (`*.js`: eslint --fix + prettier; others: prettier).            |
-| `package-lock.json`                 | Locked dependency tree. Always commit it with dependency changes.                                                              |
-| `.env.example`                      | Every environment variable with an explanation. Copy to `.env`. Keep in sync with `src/env.js`.                                |
-| `eslint.config.js`                  | Flat config: `@eslint/js` recommended, Node globals, CommonJS, extra rules (see [Code style](#code-style)), prettier last.     |
-| `.prettierrc.json`                  | Tabs (width 4), 120 columns, single quotes, trailing commas. Markdown and YAML use 2 spaces.                                   |
-| `.prettierignore`                   | `node_modules/`, `coverage/`, `package-lock.json`.                                                                             |
-| `.editorconfig`                     | Same indentation and LF line endings for editors without Prettier.                                                             |
-| `.gitattributes`                    | Forces LF line endings in the repository.                                                                                      |
-| `.gitignore`                        | Ignores `node_modules`, `.env*` (except `.env.example`), logs, coverage, editor files (keeps `.vscode` settings).              |
-| `.npmrc`                            | `engine-strict=true`: installing on an unsupported Node.js version fails with a clear error.                                   |
-| `.nvmrc`                            | `24`, the Node.js version for nvm and the CI lint job.                                                                         |
-| `.husky/pre-commit`                 | Runs `npx lint-staged` on every commit.                                                                                        |
-| `.vscode/settings.json`             | Format on save with Prettier, ESLint fix on save, LF line endings.                                                             |
-| `.vscode/extensions.json`           | Recommends ESLint, Prettier and EditorConfig.                                                                                  |
-| `Dockerfile`                        | `node:24-alpine`, `npm ci --omit=dev --ignore-scripts`, copies `src`, runs as `node`, `CMD node src/index.js`.                 |
-| `.dockerignore`                     | Keeps `.env`, `node_modules`, `.git`, tests, docs and Markdown out of the image.                                               |
-| `compose.yaml`                      | `bot` service (reads `.env`, restarts, `init: true`) and an optional `mongo:8` service (`database` profile, `127.0.0.1` only). |
-| `README.md`                         | Project overview, quick start, features, structure, scripts, configuration.                                                    |
-| `CHANGELOG.md`                      | Keep a Changelog format. Add entries under `## Unreleased`. Release notes are taken from here.                                 |
-| `CONTRIBUTING.md`                   | Contributor guide: setup, checks, code style, commit messages, pull requests.                                                  |
-| `CODE_OF_CONDUCT.md`, `SECURITY.md` | Contributor Covenant 2.1; how to report vulnerabilities privately.                                                             |
-| `LICENSE`                           | MIT.                                                                                                                           |
-| `AGENTS.md`                         | This file.                                                                                                                     |
+| File                                | Purpose                                                                                                                                                                                        |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `package.json`                      | Scripts, dependencies, `engines`, and the `lint-staged` config (`*.js`: eslint --fix + prettier; others: prettier).                                                                            |
+| `package-lock.json`                 | Locked dependency tree. Always commit it with dependency changes.                                                                                                                              |
+| `.env.example`                      | Every environment variable with an explanation. Copy to `.env`. Keep in sync with `src/env.js`.                                                                                                |
+| `eslint.config.js`                  | Flat config: `@eslint/js` recommended, Node globals, CommonJS (`.mjs` as ES modules), extra rules (see [Code style](#code-style)), prettier last. Ignores `website/dist` and `website/.astro`. |
+| `.prettierrc.json`                  | Tabs (width 4), 120 columns, single quotes, trailing commas. Markdown, MDX and YAML use 2 spaces.                                                                                              |
+| `.prettierignore`                   | `node_modules/`, `coverage/`, `website/dist/`, `website/.astro/`, `package-lock.json`.                                                                                                         |
+| `.editorconfig`                     | Same indentation and LF line endings for editors without Prettier.                                                                                                                             |
+| `.gitattributes`                    | Forces LF line endings in the repository.                                                                                                                                                      |
+| `.gitignore`                        | Ignores `node_modules`, `.env*` (except `.env.example`), logs, coverage, the docs site build output, editor files.                                                                             |
+| `.npmrc`                            | `engine-strict=true`: installing on an unsupported Node.js version fails with a clear error.                                                                                                   |
+| `.nvmrc`                            | `24`, the Node.js version for nvm and the CI lint job.                                                                                                                                         |
+| `.husky/pre-commit`                 | Runs `npx lint-staged` on every commit.                                                                                                                                                        |
+| `.vscode/settings.json`             | Format on save with Prettier, ESLint fix on save, LF line endings.                                                                                                                             |
+| `.vscode/extensions.json`           | Recommends ESLint, Prettier and EditorConfig.                                                                                                                                                  |
+| `Dockerfile`                        | `node:24-alpine`, `npm ci --omit=dev --ignore-scripts`, copies `src`, runs as `node`, `CMD node src/index.js`.                                                                                 |
+| `.dockerignore`                     | Keeps `.env`, `node_modules`, `.git`, tests, docs, `website/` and Markdown out of the image.                                                                                                   |
+| `compose.yaml`                      | `bot` service (reads `.env`, restarts, `init: true`) and an optional `mongo:8` service (`database` profile, `127.0.0.1` only).                                                                 |
+| `README.md`                         | Project overview, quick start, features, structure, scripts, configuration.                                                                                                                    |
+| `CHANGELOG.md`                      | Keep a Changelog format. Add entries under `## Unreleased`. Release notes are taken from here.                                                                                                 |
+| `CONTRIBUTING.md`                   | Contributor guide: setup, checks, code style, commit messages, pull requests.                                                                                                                  |
+| `CODE_OF_CONDUCT.md`, `SECURITY.md` | Contributor Covenant 2.1; how to report vulnerabilities privately.                                                                                                                             |
+| `LICENSE`                           | MIT.                                                                                                                                                                                           |
+| `.claude/skills/release/SKILL.md`   | Claude Code skill that runs a whole release (prepare, merge into `develop`, merge into `main`, confirm). Keep it in sync with the release flow.                                                |
+| `AGENTS.md`                         | This file.                                                                                                                                                                                     |
 
 ### `.github/`
 
@@ -121,7 +124,8 @@ A timer forces exit after 8 s (below Docker's 10 s stop timeout). Unhandled reje
 | `workflows/release.yml`              | On push to `main`: runs CI; if tag `v<package.json version>` doesn't exist, creates the release and tag (notes from `scripts/release-notes.js`) and pushes the image to GHCR (`x.y.z`, `x.y`, `x`, `latest`).                       |
 | `workflows/branch-rules.yml`         | On pull requests into `main`/`develop`: **Source branch** (`main` ← this repo's `develop` only; `develop` ← `feature/*`, `bugfix/*`, `release/*`, `dependabot/*`) and, into `main`, **Release version** (new tag, changelog notes). |
 | `workflows/codeql.yml`               | CodeQL security scan on push to `main`/`develop`, pull requests and weekly.                                                                                                                                                         |
-| `dependabot.yml`                     | Weekly npm updates (dev dependencies grouped), monthly GitHub Actions updates, both into `develop`.                                                                                                                                 |
+| `workflows/docs.yml`                 | Builds `website/` on pull requests that change it; on push to `main`, publishes it to GitHub Pages (`upload-pages-artifact` + `deploy-pages`).                                                                                      |
+| `dependabot.yml`                     | Weekly npm updates (dev dependencies grouped), monthly `website/` and GitHub Actions updates (grouped), all into `develop`.                                                                                                         |
 | `rulesets/main.json`, `develop.json` | Branch rulesets to import on GitHub: no deletion or force push, pull requests only, required checks (names must match the job names).                                                                                               |
 | `rulesets/release-tags.json`         | Tag ruleset: `v*` tags can't be deleted or moved.                                                                                                                                                                                   |
 | `ISSUE_TEMPLATE/bug_report.yml`      | Bug report form (version, Node.js version, OS, logs; warns not to paste tokens).                                                                                                                                                    |
@@ -137,6 +141,22 @@ User guides: `getting-started.md`, `commands.md`, `events.md`, `configuration.md
 `troubleshooting.md`. `docs/assets/` holds `banner.svg` (README banner),
 `console.png` (screenshot of the startup console) and `social-preview.png` (1280×640 image to upload under
 **Settings → Social preview** on GitHub). Update the guides whenever behaviour, settings or commands change.
+`getting-started.md` covers the same setup as the docs site's `setup/` pages: change both together.
+
+### `website/`
+
+The documentation site, built with [Starlight](https://starlight.astro.build) (Astro). It's independent of the bot:
+own `package.json` (`"type": "module"`), own `package-lock.json`, not in the Docker image.
+
+| File                     | Purpose                                                                                                                                                                                                                  |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `astro.config.mjs`       | `SITE` + `BASE` (`https://kkkermit.github.io` + `/DiscordBotV14-template`), title, logo, social links, edit links, `customCss`, **sidebar**.                                                                             |
+| `src/content.config.mjs` | The `docs` collection (`docsLoader` + `docsSchema`).                                                                                                                                                                     |
+| `src/content/docs/`      | The pages (MDX): `index.mdx` (splash home), `setup/` (quick start, prerequisites, create a bot, installation, configuration, first run), `extras/` (database, Docker), `help/` (troubleshooting, next steps), `404.mdx`. |
+| `src/styles/custom.css`  | Blurple accent for both themes, home page glow, card hover, rounded asides and images, `<kbd>`, long-word wrapping.                                                                                                      |
+| `src/assets/`            | `logo.svg` (the robot from the README banner) and `console.png` (startup screenshot).                                                                                                                                    |
+| `public/`                | `favicon.svg` and `social-preview.png` (the `og:image`).                                                                                                                                                                 |
+| `README.md`              | How to run, write and publish the site.                                                                                                                                                                                  |
 
 ### `scripts/`
 
@@ -331,18 +351,20 @@ module.exports = {
 
 ## Common tasks
 
-| Task                     | What to change                                                                                                                                                                                                                 |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Add a slash command      | New file in `src/commands/slash/<category>/`. Add a test in `test/commands/`. Update the command table in `README.md` if it ships with the template.                                                                           |
-| Add a prefix command     | New file in `src/commands/prefix/<category>/`. Name and aliases lower case and unique.                                                                                                                                         |
-| Add an event             | New file in `src/events/<category>/`. If it needs another gateway intent, add it in `src/client.js` and document it in `docs/events.md`.                                                                                       |
-| Add a `config.js` option | `src/config.js` (with a comment), a check in `src/lib/validateConfig.js`, a test in `test/lib/validateConfig.test.js`, and `docs/configuration.md`.                                                                            |
-| Add an env variable      | `parseEnv` in `src/env.js`, `.env.example`, `FIELDS` in `scripts/setup-env.js` if users should be asked, tests, `docs/configuration.md`, the README table.                                                                     |
-| Add a helper             | `src/lib/<name>.js` plus `test/lib/<name>.test.js`. Document it in `docs/commands.md` ("Useful helpers") if command authors should use it.                                                                                     |
-| Add a Mongoose model     | `src/database/models/<Name>.js`. Check `isDatabaseConnected()` in commands that need it, since the database is optional.                                                                                                       |
-| Change behaviour         | Update tests, the relevant `docs/` guide, `README.md` if affected, and add a line under `## Unreleased` in `CHANGELOG.md`.                                                                                                     |
-| Cut a release            | `npm run prepare-release <type>` on `develop`, commit it on `release/<version>`, pull request into `develop`, then a pull request from `develop` into `main` merged with a merge commit. See `docs/branching-and-releases.md`. |
-| Rename a CI job          | Update the required check names in `.github/rulesets/main.json` and `develop.json`, and `docs/branching-and-releases.md`.                                                                                                      |
+| Task                     | What to change                                                                                                                                                                                                                                                                               |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Add a slash command      | New file in `src/commands/slash/<category>/`. Add a test in `test/commands/`. Update the command table in `README.md` if it ships with the template.                                                                                                                                         |
+| Add a prefix command     | New file in `src/commands/prefix/<category>/`. Name and aliases lower case and unique.                                                                                                                                                                                                       |
+| Add an event             | New file in `src/events/<category>/`. If it needs another gateway intent, add it in `src/client.js` and document it in `docs/events.md`.                                                                                                                                                     |
+| Add a `config.js` option | `src/config.js` (with a comment), a check in `src/lib/validateConfig.js`, a test in `test/lib/validateConfig.test.js`, and `docs/configuration.md`.                                                                                                                                          |
+| Add an env variable      | `parseEnv` in `src/env.js`, `.env.example`, `FIELDS` in `scripts/setup-env.js` if users should be asked, tests, `docs/configuration.md`, the README table.                                                                                                                                   |
+| Add a helper             | `src/lib/<name>.js` plus `test/lib/<name>.test.js`. Document it in `docs/commands.md` ("Useful helpers") if command authors should use it.                                                                                                                                                   |
+| Add a Mongoose model     | `src/database/models/<Name>.js`. Check `isDatabaseConnected()` in commands that need it, since the database is optional.                                                                                                                                                                     |
+| Change behaviour         | Update tests, the relevant `docs/` guide, `README.md` if affected, and add a line under `## Unreleased` in `CHANGELOG.md`.                                                                                                                                                                   |
+| Cut a release            | Ask Claude Code to release (the `release` skill), or by hand: `npm run prepare-release <type>` on `develop`, commit it on `release/<version>`, pull request into `develop`, then a pull request from `develop` into `main` merged with a merge commit. See `docs/branching-and-releases.md`. |
+| Rename a CI job          | Update the required check names in `.github/rulesets/main.json` and `develop.json`, and `docs/branching-and-releases.md`.                                                                                                                                                                    |
+| Change the setup steps   | `docs/getting-started.md` **and** the matching pages in `website/src/content/docs/setup/`.                                                                                                                                                                                                   |
+| Add a docs site page     | An `.mdx` file in `website/src/content/docs/<section>/` with `title` and `description`, plus its slug in `sidebar` in `website/astro.config.mjs`. Check with `npm run build` in `website/`.                                                                                                  |
 
 ## Testing
 
@@ -384,6 +406,8 @@ covered module, because testing it needs a real MongoDB server.
   if that tag doesn't exist: a GitHub release with the notes from `CHANGELOG.md` (`scripts/release-notes.js`) and
   the image `ghcr.io/<owner>/<repo>` tagged `x.y.z`, `x.y`, `x` and `latest`. Versions are set with
   `npm run prepare-release`, never by pushing tags.
+- **Docs** (`.github/workflows/docs.yml`): builds `website/` on pull requests that touch it and publishes it to GitHub
+  Pages on `main`. Not a required check, because it only runs when `website/` changes.
 - **CodeQL** (`.github/workflows/codeql.yml`) and **Dependabot** (`.github/dependabot.yml`, into `develop`) run
   automatically.
 
@@ -406,5 +430,8 @@ covered module, because testing it needs a real MongoDB server.
 - **Optional database:** the bot must keep working when `MONGODB_URI` is empty.
 - **Required check names** in `.github/rulesets/*.json` must match the workflow job names exactly, or pull requests
   wait forever for a check that never reports.
+- **Docs site MDX:** indent with 2 spaces (Prettier corrupts tab-indented content inside components like `<Tabs>`),
+  link between pages with relative links ending in `/` (`../prerequisites/`) because of the `/DiscordBotV14-template/`
+  base, and don't put components such as `<Badge>` inside headings (they change the heading's anchor).
 - **Docs are part of the change.** Behaviour, settings or file changes need matching updates in `docs/`, `README.md`,
   `CHANGELOG.md` and this file.

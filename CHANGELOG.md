@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file. The format is b
 
 ## Unreleased
 
+## 4.1.0 - 2026-11-26
+
+### Added
+
+- A [documentation site](https://kkkermit.github.io/DiscordBotV14-template/) that walks through the whole setup, from
+  installing Node.js to running the bot, on Windows, macOS and Linux. It's built with Starlight in `website/` and
+  published to GitHub Pages.
+- A release skill for Claude Code (`.claude/skills/release/`): ask Claude to "release a minor version" and it prepares
+  the release, merges it through `develop` into `main`, and checks that everything was published.
+
 ## 4.0.1 - 2026-11-26
 
 ### Added

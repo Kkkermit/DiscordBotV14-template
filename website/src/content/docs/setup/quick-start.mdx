@@ -1,0 +1,60 @@
+---
+title: Quick start
+description: Get the Discord bot template running in a few commands.
+---
+
+import { LinkCard, Steps } from '@astrojs/starlight/components';
+
+Already have Node.js 24+ and a bot token? This is the whole setup. Each step links to a page that explains it in
+detail if you need it.
+
+<Steps>
+
+1. **Get the code and install it.**
+
+   ```bash
+   git clone https://github.com/Kkkermit/DiscordBotV14-template.git my-bot
+   cd my-bot
+   npm install
+   ```
+
+2. **Create your `.env` file.** It asks for your bot token and checks every answer.
+
+   ```bash
+   npm run setup
+   ```
+
+3. **Enable Message Content Intent** in the [Developer Portal](https://discord.com/developers/applications) under
+   **Bot → Privileged Gateway Intents**, so prefix commands like `?ping` work.
+
+4. **Invite the bot** with the `bot` and `applications.commands` scopes. Replace `YOUR_CLIENT_ID` with your
+   **Application ID**:
+
+   ```text
+   https://discord.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&scope=bot+applications.commands&permissions=274877991936
+   ```
+
+5. **Start it.**
+
+   ```bash
+   npm start
+   ```
+
+6. **Try it.** Type `/help` or `?help` in your server.
+
+</Steps>
+
+:::tip
+While you're working on your bot, run `npm run dev` instead of `npm start`. It restarts the bot every time you save a
+file in `src/`.
+:::
+
+## New to this?
+
+Start with the full guide. It explains every step, including installing Node.js and creating the bot.
+
+<LinkCard
+  title="What you need"
+  description="The tools to install before you start, and how to check them."
+  href="../prerequisites/"
+/>

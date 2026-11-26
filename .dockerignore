@@ -9,6 +9,7 @@ npm-debug.log*
 .vscode
 coverage
 docs
+website
 test
 *.md
 Dockerfile

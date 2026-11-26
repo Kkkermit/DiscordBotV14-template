@@ -1,0 +1,111 @@
+---
+title: Install the template
+description: Download the Discord bot template with GitHub's template button, Git or a ZIP file, and install its packages with npm.
+---
+
+import { FileTree, LinkCard, Steps, TabItem, Tabs } from '@astrojs/starlight/components';
+
+## Get the code
+
+Choose one of these. **Use this template** is the best choice if you want your own GitHub repository for your bot.
+
+<Tabs>
+  <TabItem label="Use this template">
+    <Steps>
+
+    1. Open the [template on GitHub](https://github.com/Kkkermit/DiscordBotV14-template) and click **Use this
+       template → Create a new repository**.
+
+    2. Give your repository a name, such as `my-bot`, and click **Create repository**. It's a copy of the template
+       that belongs to you.
+
+    3. Download your copy. Replace `your-username` with your GitHub username:
+
+       ```bash
+       git clone https://github.com/your-username/my-bot.git
+       cd my-bot
+       ```
+
+    </Steps>
+
+  </TabItem>
+  <TabItem label="Git clone">
+    Download the template straight into a new `my-bot` folder:
+
+    ```bash
+    git clone https://github.com/Kkkermit/DiscordBotV14-template.git my-bot
+    cd my-bot
+    ```
+
+    You can connect it to your own GitHub repository later.
+
+  </TabItem>
+  <TabItem label="Download ZIP">
+    <Steps>
+
+    1. Open the [template on GitHub](https://github.com/Kkkermit/DiscordBotV14-template) and click **Code →
+       Download ZIP**.
+
+    2. Unzip it and rename the folder to `my-bot`.
+
+    3. Open a terminal in that folder. In Visual Studio Code, use **File → Open Folder**, then **Terminal → New
+       Terminal**.
+
+    </Steps>
+
+  </TabItem>
+</Tabs>
+
+## Install the packages
+
+In the project folder, run:
+
+```bash
+npm install
+```
+
+This downloads everything the bot needs into a `node_modules` folder:
+
+- **discord.js** talks to Discord.
+- **mongoose** connects to MongoDB, if you add a database.
+- **figlet** draws your bot's name in big letters when it starts.
+- Development tools: **ESLint** finds mistakes, **Prettier** formats your code, and **Husky** sets up a Git hook that
+  runs them both on every commit.
+
+It takes a minute. Warnings that start with `npm warn` are normal.
+
+:::caution[Error: "Unsupported engine"]
+Your Node.js version is too old. Install Node.js 24 or newer (see [What you need](../prerequisites/#nodejs)), open
+a new terminal and run `npm install` again.
+:::
+
+## What's in the folder
+
+You'll mostly work in `src/commands/` and `src/config.js`. Everything else already works.
+
+<FileTree>
+
+- src/
+  - commands/
+    - slash/ Slash commands, one folder per category
+      - utility/
+        - ping.js
+        - …
+    - prefix/ Prefix commands like `?ping`
+  - events/ Code that runs when something happens on Discord
+  - database/ The MongoDB connection and models
+  - lib/ Helpers: logger, embeds, cooldowns…
+  - config.js **Your bot's settings**
+  - index.js Starts the bot
+- docs/ Guides for writing commands, events and more
+- test/ Tests for the bot
+- .env.example Every setting for your `.env` file, explained
+- package.json
+
+</FileTree>
+
+<LinkCard
+  title="Next: Configure your bot"
+  description="Add your token and choose your bot's settings."
+  href="../configuration/"
+/>

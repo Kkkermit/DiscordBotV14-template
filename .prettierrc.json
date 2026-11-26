@@ -7,8 +7,11 @@
 	"arrowParens": "always",
 	"overrides": [
 		{
-			"files": ["*.md", "*.yml", "*.yaml"],
-			"options": { "useTabs": false, "tabWidth": 2 }
+			"files": ["*.md", "*.mdx", "*.yml", "*.yaml"],
+			"options": {
+				"useTabs": false,
+				"tabWidth": 2
+			}
 		}
 	]
 }

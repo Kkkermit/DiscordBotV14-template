@@ -1,0 +1,107 @@
+/* Discord's blurple as the accent colour. Starlight uses these variables everywhere: links, buttons, the sidebar. */
+:root {
+	--sl-color-accent-low: #1d2054;
+	--sl-color-accent: #5865f2;
+	--sl-color-accent-high: #c5cafb;
+	--brand-glow: rgb(88 101 242 / 0.28);
+}
+
+:root[data-theme='light'] {
+	--sl-color-accent-low: #e0e3fd;
+	--sl-color-accent: #4752c4;
+	--sl-color-accent-high: #262d80;
+	--brand-glow: rgb(88 101 242 / 0.16);
+}
+
+/* Home page: a soft glow behind the hero, and a gradient on the title. */
+[data-has-hero] .hero {
+	position: relative;
+	isolation: isolate;
+}
+
+[data-has-hero] .hero::before {
+	content: '';
+	position: absolute;
+	inset: -10% -20%;
+	z-index: -1;
+	background: radial-gradient(closest-side, var(--brand-glow), transparent);
+	pointer-events: none;
+}
+
+[data-has-hero] .hero h1 {
+	background: linear-gradient(120deg, var(--sl-color-white) 30%, var(--sl-color-accent-high));
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+[data-has-hero] .hero > img {
+	filter: drop-shadow(0 1.5rem 3rem var(--brand-glow));
+}
+
+/* The glow is wider than the page on small screens, so clip it instead of letting the page scroll sideways. */
+[data-has-hero] .main-pane {
+	overflow-x: clip;
+}
+
+/* Cards lift slightly on hover. */
+.card,
+.sl-link-card {
+	border-radius: 0.75rem;
+	transition:
+		border-color 150ms ease,
+		transform 150ms ease,
+		box-shadow 150ms ease;
+}
+
+.card:hover,
+.sl-link-card:hover {
+	border-color: var(--sl-color-accent);
+	box-shadow: 0 0.5rem 1.5rem -0.75rem var(--brand-glow);
+}
+
+.sl-link-card:hover {
+	transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.card,
+	.sl-link-card {
+		transition: none;
+	}
+
+	.sl-link-card:hover {
+		transform: none;
+	}
+}
+
+/* Rounder buttons and asides to match Discord's style. */
+.sl-markdown-content .starlight-aside,
+.hero .sl-link-button {
+	border-radius: 0.75rem;
+}
+
+/* Screenshots get a border and rounded corners, and never overflow the page. */
+.sl-markdown-content img {
+	max-width: 100%;
+	height: auto;
+	border: 1px solid var(--sl-color-gray-5);
+	border-radius: 0.75rem;
+}
+
+/* Keyboard keys, e.g. <kbd>Ctrl</kbd> + <kbd>C</kbd>. */
+.sl-markdown-content kbd {
+	padding: 0.1em 0.45em;
+	border: 1px solid var(--sl-color-gray-4);
+	border-bottom-width: 2px;
+	border-radius: 0.35rem;
+	background-color: var(--sl-color-gray-6);
+	font-family: var(--sl-font-mono);
+	font-size: 0.85em;
+	white-space: nowrap;
+}
+
+/* Long words such as URLs and file paths wrap on small screens instead of widening the page. */
+.sl-markdown-content :is(p, li) {
+	overflow-wrap: break-word;
+}
