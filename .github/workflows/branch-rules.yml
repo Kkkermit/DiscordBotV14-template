@@ -1,7 +1,7 @@
 name: Branch rules
 
 # Checks that a pull request follows the branching model in docs/branching-and-releases.md:
-#   feature/*, bugfix/*, release/* (and Dependabot) → develop → main
+#   feature/*, bugfix/*, release/* (and the Dependabot and All Contributors bots) → develop → main
 # The rulesets in .github/rulesets/ make these checks required before merging.
 on:
   pull_request:
@@ -30,7 +30,7 @@ jobs:
             fi
           else
             case "$HEAD" in
-              feature/* | bugfix/* | release/* | dependabot/*) ;;
+              feature/* | bugfix/* | release/* | dependabot/* | all-contributors/*) ;;
               *)
                 echo "::error::Branches merged into develop must start with feature/, bugfix/ or release/, but this one is \"$HEAD\". Rename it, push it again and open a new pull request."
                 exit 1

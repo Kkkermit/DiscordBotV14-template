@@ -12,6 +12,9 @@
   <a href="https://nodejs.org"><img alt="Node.js 24 or newer" src="https://img.shields.io/badge/Node.js-24%2B-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"></a>
   <a href="https://prettier.io"><img alt="Code style: Prettier" src="https://img.shields.io/badge/code_style-prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black"></a>
   <a href="https://discord.gg/xcMVwAVjSD"><img alt="Support server" src="https://img.shields.io/badge/Discord-Get_help-5865F2?style=for-the-badge&logo=discord&logoColor=white"></a>
+  <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+<a href="#contributors"><img alt="All contributors" src="https://img.shields.io/badge/all_contributors-2-5865F2?style=for-the-badge"></a>
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 </p>
 
 <h1 align="center">Discord Bot Template for discord.js v14</h1>
@@ -46,6 +49,7 @@
 - [Documentation](#documentation)
 - [Upgrading from v3](#upgrading-from-v3)
 - [Contributing and support](#contributing-and-support)
+- [Contributors](#contributors)
 
 ## Features
 
@@ -235,5 +239,28 @@ migration guide.
 - Found a bug or have an idea? [Open an issue](https://github.com/Kkkermit/DiscordBotV14-template/issues/new/choose).
 - Want to help? Read the [contributing guide](CONTRIBUTING.md) and the [code of conduct](CODE_OF_CONDUCT.md).
 - Security problem? Follow the [security policy](SECURITY.md) instead of opening an issue.
+
+## Contributors
+
+Thanks to everyone who has helped make this template better
+([what the emoji mean](https://allcontributors.org/en/reference/emoji-key/)). Every kind of contribution counts: code, docs,
+ideas, bug reports, reviews. See [Getting credit](CONTRIBUTING.md#getting-credit) to be added.
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Kkkermit"><img src="https://avatars.githubusercontent.com/u/132657029?v=4&size=100" width="100px" height="100px" alt="Kkkermit"/><br /><sub><b>Kkkermit</b></sub></a><br /><a href="https://github.com/Kkkermit/DiscordBotV14-template/commits?author=Kkkermit" title="Code">💻</a> <a href="https://github.com/Kkkermit/DiscordBotV14-template/commits?author=Kkkermit" title="Documentation">📖</a> <a href="#design-Kkkermit" title="Design">🎨</a> <a href="#infra-Kkkermit" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#maintenance-Kkkermit" title="Maintenance">🚧</a> <a href="#ideas-Kkkermit" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/cayne469"><img src="https://avatars.githubusercontent.com/u/18515210?v=4&size=100" width="100px" height="100px" alt="cayne469"/><br /><sub><b>cayne469</b></sub></a><br /><a href="https://github.com/Kkkermit/DiscordBotV14-template/commits?author=cayne469" title="Code">💻</a> <a href="https://github.com/Kkkermit/DiscordBotV14-template/commits?author=cayne469" title="Tests">⚠️</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 Released under the [MIT License](LICENSE).

@@ -49,6 +49,20 @@ npm run check   # ESLint, Prettier check and the tests. CI runs the same checks.
 - Add a line to the `Unreleased` section of [`CHANGELOG.md`](CHANGELOG.md).
 - Never commit tokens, `.env` files or other secrets.
 
+## Getting credit
+
+Everyone who helps is listed in the README's [Contributors](README.md#contributors) section, whatever they did: code,
+docs, bug reports, ideas, reviews or answering questions. When your contribution is merged, a maintainer comments:
+
+```text
+@all-contributors please add @your-username for code, doc
+```
+
+The [All Contributors](https://allcontributors.org) bot then opens a pull request that adds you. Common types are
+`code`, `doc`, `bug`, `ideas`, `review`, `test`, `question` and `translation`; the
+[emoji key](https://allcontributors.org/en/reference/emoji-key/) lists them all. If you were missed, ask on your pull
+request.
+
 ## Working on the documentation site
 
 The [documentation site](https://kkkermit.github.io/DiscordBotV14-template/) lives in `website/` and has its own

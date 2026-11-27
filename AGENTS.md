@@ -11,18 +11,18 @@ matching section here in the same change.
 A beginner-friendly **discord.js v14** bot template. People fork it to start their own bot, so the code must stay
 simple, readable and well documented above all else.
 
-| Topic           | Details                                                                                                 |
-| --------------- | ------------------------------------------------------------------------------------------------------- |
-| Runtime         | Node.js **24+** (`engines` in `package.json`, enforced by `engine-strict` in `.npmrc`)                  |
-| Language        | JavaScript, **CommonJS** (`require` / `module.exports`). No build step, no TypeScript.                  |
-| Types           | None: plain JavaScript with no JSDoc.                                                                   |
-| Dependencies    | `discord.js` 14, `mongoose` 9 (optional database), `figlet` (startup banner)                            |
-| Dev tooling     | ESLint 10 (flat config), Prettier 3, Husky + lint-staged (pre-commit), Node's test runner               |
-| Entry point     | `src/index.js` (`npm start`)                                                                            |
-| Configuration   | Secrets in `.env` (validated by `src/env.js`), settings in `src/config.js` (validated too)              |
-| Package version | `package.json` `version` is the template version, used by the banner and update checker                 |
-| Branches        | `feature/*`, `bugfix/*`, `release/*` → `develop` → `main`. Every merge into `main` is a release.        |
-| Docs site       | `website/`: Astro Starlight (MDX pages), its own `package.json`, published to GitHub Pages from `main`. |
+| Topic           | Details                                                                                                               |
+| --------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Runtime         | Node.js **24+** (`engines` in `package.json`, enforced by `engine-strict` in `.npmrc`)                                |
+| Language        | JavaScript, **CommonJS** (`require` / `module.exports`). No build step, no TypeScript.                                |
+| Types           | None: plain JavaScript with no JSDoc.                                                                                 |
+| Dependencies    | `discord.js` 14, `mongoose` 9 (optional database), `figlet` (startup banner)                                          |
+| Dev tooling     | ESLint 10 (flat config), Prettier 3, Husky + lint-staged (pre-commit), Node's test runner                             |
+| Entry point     | `src/index.js` (`npm start`)                                                                                          |
+| Configuration   | Secrets in `.env` (validated by `src/env.js`), settings in `src/config.js` (validated too)                            |
+| Package version | `package.json` `version` is the template version, used by the banner and update checker                               |
+| Branches        | `feature/*`, `bugfix/*`, `release/*` → `develop` (the default branch) → `main`. Every merge into `main` is a release. |
+| Docs site       | `website/`: Astro Starlight (MDX pages), its own `package.json`, published to GitHub Pages from `main`.               |
 
 ## Commands
 
@@ -96,7 +96,8 @@ A timer forces exit after 8 s (below Docker's 10 s stop timeout). Unhandled reje
 | `.env.example`                      | Every environment variable with an explanation. Copy to `.env`. Keep in sync with `src/env.js`.                                                                                                |
 | `eslint.config.js`                  | Flat config: `@eslint/js` recommended, Node globals, CommonJS (`.mjs` as ES modules), extra rules (see [Code style](#code-style)), prettier last. Ignores `website/dist` and `website/.astro`. |
 | `.prettierrc.json`                  | Tabs (width 4), 120 columns, single quotes, trailing commas. Markdown, MDX and YAML use 2 spaces.                                                                                              |
-| `.prettierignore`                   | `node_modules/`, `coverage/`, `website/dist/`, `website/.astro/`, `package-lock.json`.                                                                                                         |
+| `.prettierignore`                   | `node_modules/`, `coverage/`, `website/dist/`, `website/.astro/`, `package-lock.json`, `.all-contributorsrc`.                                                                                  |
+| `.all-contributorsrc`               | All Contributors config and the contributor list. The bot rewrites it, so Prettier ignores it. The README list between the `ALL-CONTRIBUTORS` markers is generated from it.                    |
 | `.editorconfig`                     | Same indentation and LF line endings for editors without Prettier.                                                                                                                             |
 | `.gitattributes`                    | Forces LF line endings in the repository.                                                                                                                                                      |
 | `.gitignore`                        | Ignores `node_modules`, `.env*` (except `.env.example`), logs, coverage, the docs site build output, editor files.                                                                             |
@@ -118,21 +119,21 @@ A timer forces exit after 8 s (below Docker's 10 s stop timeout). Unhandled reje
 
 ### `.github/`
 
-| File                                 | Purpose                                                                                                                                                                                                                             |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `workflows/ci.yml`                   | On push to `main`/`develop`, pull requests and `workflow_call`: lint + format check, `test:coverage` on Node 24.x and 26.x, Docker build. Only older runs of the same pull request are cancelled.                                   |
-| `workflows/release.yml`              | On push to `main`: runs CI; if tag `v<package.json version>` doesn't exist, creates the release and tag (notes from `scripts/release-notes.js`) and pushes the image to GHCR (`x.y.z`, `x.y`, `x`, `latest`).                       |
-| `workflows/branch-rules.yml`         | On pull requests into `main`/`develop`: **Source branch** (`main` ← this repo's `develop` only; `develop` ← `feature/*`, `bugfix/*`, `release/*`, `dependabot/*`) and, into `main`, **Release version** (new tag, changelog notes). |
-| `workflows/codeql.yml`               | CodeQL security scan on push to `main`/`develop`, pull requests and weekly.                                                                                                                                                         |
-| `workflows/docs.yml`                 | Builds `website/` on pull requests that change it; on push to `main`, publishes it to GitHub Pages (`upload-pages-artifact` + `deploy-pages`).                                                                                      |
-| `dependabot.yml`                     | Weekly npm updates (dev dependencies grouped), monthly `website/` and GitHub Actions updates (grouped), all into `develop`.                                                                                                         |
-| `rulesets/main.json`, `develop.json` | Branch rulesets to import on GitHub: no deletion or force push, pull requests only, required checks (names must match the job names).                                                                                               |
-| `rulesets/release-tags.json`         | Tag ruleset: `v*` tags can't be deleted or moved.                                                                                                                                                                                   |
-| `ISSUE_TEMPLATE/bug_report.yml`      | Bug report form (version, Node.js version, OS, logs; warns not to paste tokens).                                                                                                                                                    |
-| `ISSUE_TEMPLATE/feature_request.yml` | Feature request form.                                                                                                                                                                                                               |
-| `ISSUE_TEMPLATE/config.yml`          | Disables blank issues; links to the Discord server and the discord.js docs.                                                                                                                                                         |
-| `PULL_REQUEST_TEMPLATE.md`           | Pull request summary, type of change and checklist (into `develop`, `npm run check`, tests, docs, changelog).                                                                                                                       |
-| `FUNDING.yml`                        | The Sponsor button (Buy Me a Coffee). GitHub reads it from `main`, so changes show after a release.                                                                                                                                 |
+| File                                 | Purpose                                                                                                                                                                                                                                                   |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `workflows/ci.yml`                   | On push to `main`/`develop`, pull requests and `workflow_call`: lint + format check, `test:coverage` on Node 24.x and 26.x, Docker build. Only older runs of the same pull request are cancelled.                                                         |
+| `workflows/release.yml`              | On push to `main`: runs CI; if tag `v<package.json version>` doesn't exist, creates the release and tag (notes from `scripts/release-notes.js`) and pushes the image to GHCR (`x.y.z`, `x.y`, `x`, `latest`).                                             |
+| `workflows/branch-rules.yml`         | On pull requests into `main`/`develop`: **Source branch** (`main` ← this repo's `develop` only; `develop` ← `feature/*`, `bugfix/*`, `release/*`, `dependabot/*`, `all-contributors/*`) and, into `main`, **Release version** (new tag, changelog notes). |
+| `workflows/codeql.yml`               | CodeQL security scan on push to `main`/`develop`, pull requests and weekly.                                                                                                                                                                               |
+| `workflows/docs.yml`                 | Builds `website/` on pull requests that change it; on push to `main`, publishes it to GitHub Pages (`upload-pages-artifact` + `deploy-pages`).                                                                                                            |
+| `dependabot.yml`                     | Weekly npm updates (dev dependencies grouped), monthly `website/` and GitHub Actions updates (grouped), all into `develop`.                                                                                                                               |
+| `rulesets/main.json`, `develop.json` | Branch rulesets to import on GitHub: no deletion or force push, pull requests only, required checks (names must match the job names).                                                                                                                     |
+| `rulesets/release-tags.json`         | Tag ruleset: `v*` tags can't be deleted or moved.                                                                                                                                                                                                         |
+| `ISSUE_TEMPLATE/bug_report.yml`      | Bug report form (version, Node.js version, OS, logs; warns not to paste tokens).                                                                                                                                                                          |
+| `ISSUE_TEMPLATE/feature_request.yml` | Feature request form.                                                                                                                                                                                                                                     |
+| `ISSUE_TEMPLATE/config.yml`          | Disables blank issues; links to the Discord server and the discord.js docs.                                                                                                                                                                               |
+| `PULL_REQUEST_TEMPLATE.md`           | Pull request summary, type of change and checklist (into `develop`, `npm run check`, tests, docs, changelog).                                                                                                                                             |
+| `FUNDING.yml`                        | The Sponsor button (Buy Me a Coffee). GitHub reads it from `main`, so changes show after a release.                                                                                                                                                       |
 
 ### `docs/`
 
@@ -363,6 +364,7 @@ module.exports = {
 | Change behaviour         | Update tests, the relevant `docs/` guide, `README.md` if affected, and add a line under `## Unreleased` in `CHANGELOG.md`.                                                                                                                                                                   |
 | Cut a release            | Ask Claude Code to release (the `release` skill), or by hand: `npm run prepare-release <type>` on `develop`, commit it on `release/<version>`, pull request into `develop`, then a pull request from `develop` into `main` merged with a merge commit. See `docs/branching-and-releases.md`. |
 | Rename a CI job          | Update the required check names in `.github/rulesets/main.json` and `develop.json`, and `docs/branching-and-releases.md`.                                                                                                                                                                    |
+| Credit a contributor     | Comment `@all-contributors please add @user for code, doc` on their issue or pull request (the bot opens a pull request into the default branch), or run `npx @all-contributors/cli add <user> <types>` on a `feature/` branch. Never edit the generated README list by hand.                |
 | Change the setup steps   | `docs/getting-started.md` **and** the matching pages in `website/src/content/docs/setup/`.                                                                                                                                                                                                   |
 | Add a docs site page     | An `.mdx` file in `website/src/content/docs/<section>/` with `title` and `description`, plus its slug in `sidebar` in `website/astro.config.mjs`. Check with `npm run build` in `website/`.                                                                                                  |
 

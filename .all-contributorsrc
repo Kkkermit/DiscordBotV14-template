@@ -1,0 +1,31 @@
+{
+  "projectName": "DiscordBotV14-template",
+  "projectOwner": "Kkkermit",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": ["README.md"],
+  "imageSize": 100,
+  "commit": false,
+  "commitConvention": "angular",
+  "commitType": "docs",
+  "contributorsPerLine": 7,
+  "linkToUsage": false,
+  "skipCi": false,
+  "badgeTemplate": "<a href=\"#contributors\"><img alt=\"All contributors\" src=\"https://img.shields.io/badge/all_contributors-<%= contributors.length %>-5865F2?style=for-the-badge\"></a>",
+  "contributors": [
+    {
+      "login": "Kkkermit",
+      "name": "Kkkermit",
+      "avatar_url": "https://avatars.githubusercontent.com/u/132657029?v=4",
+      "profile": "https://github.com/Kkkermit",
+      "contributions": ["code", "doc", "design", "infra", "maintenance", "ideas"]
+    },
+    {
+      "login": "cayne469",
+      "name": "cayne469",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18515210?v=4",
+      "profile": "https://github.com/cayne469",
+      "contributions": ["code", "test"]
+    }
+  ]
+}

@@ -9,6 +9,8 @@ All notable changes to this project are documented in this file. The format is b
 ### Added
 
 - Show the bot's own version in `/bot-info` (and `?bot-info`), alongside the Node.js and discord.js versions.
+- A Contributors section in the README, kept up to date by the [All Contributors](https://allcontributors.org) bot
+  (`.all-contributorsrc`). Comment `@all-contributors please add @username for code` to credit someone.
 
 ## 4.1.0 - 2026-11-26
 

@@ -3,3 +3,5 @@ coverage/
 website/dist/
 website/.astro/
 package-lock.json
+# Written by the All Contributors bot in its own format.
+.all-contributorsrc
