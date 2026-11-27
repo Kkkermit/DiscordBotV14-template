@@ -9,6 +9,7 @@ const {
 	embedLength,
 } = require('discord.js');
 const { loadPrefixCommands, loadSlashCommands } = require('../../src/handlers/commandHandler');
+const { version: botVersion } = require('../../package.json');
 const {
 	DEVELOPER_ID,
 	GUILD_ID,
@@ -149,6 +150,21 @@ describe('slash commands', () => {
 		await help.execute(detail, client);
 		assert.equal(embedOf(detail.replies[0]).title, 'Command: Avatar');
 		assert.match(embedOf(detail.replies[0]).fields[0].value, /right-click menu/);
+	});
+
+	it('/bot-info shows the bot version', needsSlash('bot-info'), async (t) => {
+		const client = createClient();
+		t.after(() => client.destroy());
+		const interaction = createInteraction('bot-info');
+
+		await client.slashCommands.get('bot-info').execute(interaction, client);
+		const fields = Object.fromEntries(
+			embedOf(interaction.replies[0]).fields.map(({ name, value }) => [name, value]),
+		);
+		assert.ok(
+			fields.Versions.includes(`Bot \`v${botVersion}\``),
+			`Versions should show the bot version, got: ${fields.Versions}`,
+		);
 	});
 
 	it('/bot-info can only be refreshed by the user who ran it', needsSlash('bot-info'), async (t) => {

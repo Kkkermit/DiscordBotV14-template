@@ -8,6 +8,7 @@ const {
 	TimestampStyles,
 	version: discordJsVersion,
 } = require('discord.js');
+const { version: botVersion } = require('../../package.json');
 const { createEmbed } = require('./embeds');
 const { formatDuration } = require('./format');
 const { logger } = require('./logger');
@@ -33,7 +34,10 @@ function createBotInfoEmbed(client) {
 			{ name: 'Latency', value: `\`${ping}\``, inline: true },
 			{ name: 'Uptime', value: `\`${formatDuration(client.uptime)}\``, inline: true },
 			{ name: 'Online since', value: time(client.readyAt, TimestampStyles.RelativeTime), inline: true },
-			{ name: 'Versions', value: `Node.js \`${process.version}\` • discord.js \`v${discordJsVersion}\`` },
+			{
+				name: 'Versions',
+				value: `Bot \`v${botVersion}\` • Node.js \`${process.version}\` • discord.js \`v${discordJsVersion}\``,
+			},
 		)
 		.setTimestamp();
 }
