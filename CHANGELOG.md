@@ -6,6 +6,10 @@ All notable changes to this project are documented in this file. The format is b
 
 ## Unreleased
 
+### Added
+
+- Show the bot's own version in `/bot-info` (and `?bot-info`), alongside the Node.js and discord.js versions.
+
 ## 4.1.0 - 2026-11-26
 
 ### Added
